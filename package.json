@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SalesBoard - 営業フリーランス案件マッチング</title>
+    <meta name="description" content="営業フリーランス専門の案件マッチングサービス。法人営業・新規開拓・ルート営業など厳選案件が見つかる。" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
