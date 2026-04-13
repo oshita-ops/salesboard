@@ -602,21 +602,6 @@ export default function App() {
               法人営業・新規開拓・ルート営業など、あなたの営業スキルを活かせる厳選案件が見つかるフリーランス専門マッチングサービス
             </p>
 
-            <div className="stats-row">
-              <div className="stat">
-                <div className="stat-num">1,200+</div>
-                <div className="stat-label">掲載案件数</div>
-              </div>
-              <div className="stat">
-                <div className="stat-num">8,500+</div>
-                <div className="stat-label">登録フリーランス</div>
-              </div>
-              <div className="stat">
-                <div className="stat-num">92%</div>
-                <div className="stat-label">継続率</div>
-              </div>
-            </div>
-
             <div className="cta-buttons">
               <button className="btn-cta-primary" onClick={() => setPage("register")}>
                 無料で会員登録 →
