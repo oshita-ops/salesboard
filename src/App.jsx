@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, sendEmailVerification } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, sendEmailVerification, applyActionCode, checkActionCode } from "firebase/auth";
 import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp, setDoc, getDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
@@ -50,6 +50,8 @@ export default function App() {
   const [authLoading, setAuthLoading] = useState(true);
   const [emailVerified, setEmailVerified] = useState(false);
   const [verificationSent, setVerificationSent] = useState(false);
+  const [verifyError, setVerifyError] = useState("");
+  const [isPolling, setIsPolling] = useState(false);
 
   // Forms
   const [regForm, setRegForm] = useState({ name:"", email:"", password:"", experience:"", specialties:[] });
@@ -216,8 +218,14 @@ export default function App() {
     try {
       const result = await createUserWithEmailAndPassword(auth, regForm.email, regForm.password);
       await updateProfile(result.user, { displayName: regForm.name });
-      await sendEmailVerification(result.user);
+      // actionCodeSettings でリダイレクト先を現在のURLに設定（リンク期限切れ問題を解消）
+      const actionCodeSettings = {
+        url: window.location.origin + window.location.pathname,
+        handleCodeInApp: false,
+      };
+      await sendEmailVerification(result.user, actionCodeSettings);
       setVerificationSent(true);
+      setVerifyError("");
       setPage("verify-email");
       try {
         await fetch("https://api.emailjs.com/api/v1.0/email/send", {
@@ -870,30 +878,64 @@ export default function App() {
       </>
     );
   }
+  // verify-email ページ用：自動ポーリング（3秒ごとに認証状態をチェック）
+  useEffect(() => {
+    if (page !== "verify-email" || !auth.currentUser) return;
+    setIsPolling(true);
+    const interval = setInterval(async () => {
+      try {
+        await auth.currentUser.reload();
+        if (auth.currentUser.emailVerified) {
+          clearInterval(interval);
+          setIsPolling(false);
+          setEmailVerified(true);
+          setDashTab("mypage");
+          setPage("dashboard");
+          showToast("メール認証が完了しました！プロフィールを入力してください😊");
+        }
+      } catch(e) {}
+    }, 3000);
+    return () => { clearInterval(interval); setIsPolling(false); };
+  }, [page]);
+
   // VERIFY EMAIL PAGE
   if (page === "verify-email") {
     const handleResendVerification = async () => {
+      setVerifyError("");
       try {
         const currentUser = auth.currentUser;
         if (currentUser) {
-          await sendEmailVerification(currentUser);
-          showToast("認証メールを再送信しました");
+          const actionCodeSettings = {
+            url: window.location.origin + window.location.pathname,
+            handleCodeInApp: false,
+          };
+          await sendEmailVerification(currentUser, actionCodeSettings);
+          showToast("認証メールを再送信しました📧");
         }
-      } catch(e) { showToast("送信に失敗しました。しばらくしてから再試行してください"); }
+      } catch(e) {
+        if (e.code === "auth/too-many-requests") {
+          setVerifyError("送信回数が多すぎます。しばらく待ってから再試行してください。");
+        } else {
+          setVerifyError("送信に失敗しました。しばらくしてから再試行してください。");
+        }
+      }
     };
 
     const handleCheckVerification = async () => {
+      setVerifyError("");
       try {
         await auth.currentUser?.reload();
         if (auth.currentUser?.emailVerified) {
           setEmailVerified(true);
           setDashTab("mypage");
           setPage("dashboard");
-          showToast("認証完了！プロフィールを入力してください😊");
+          showToast("メール認証が完了しました！プロフィールを入力してください😊");
         } else {
-          showToast("まだ認証が完了していません。メールをご確認ください");
+          setVerifyError("まだ認証が完了していません。メール内のリンクをクリックしてから、このボタンを押してください。");
         }
-      } catch(e) {}
+      } catch(e) {
+        setVerifyError("確認中にエラーが発生しました。もう一度お試しください。");
+      }
     };
 
     return (
@@ -905,20 +947,44 @@ export default function App() {
             <div className="verify-title">メールアドレスを認証してください</div>
             <div className="verify-desc">
               以下のメールアドレスに認証メールを送信しました。<br/>
-              メール内のリンクをクリックして認証を完了してください。
+              <strong>メール内のリンクをクリック</strong>すると、このページが自動的にダッシュボードに切り替わります。
             </div>
             <div className="verify-email-badge">{user?.email}</div>
+
+            {/* 認証手順 */}
+            <div style={{background:"var(--blue-soft)",borderRadius:12,padding:"16px 20px",marginBottom:24,textAlign:"left"}}>
+              <div style={{fontSize:13,fontWeight:700,color:"var(--blue)",marginBottom:10}}>📋 認証の手順</div>
+              <div style={{fontSize:13,color:"var(--gray700)",lineHeight:2}}>
+                <div>① 受信メール内の「メールアドレスを確認」リンクをクリック</div>
+                <div>② ブラウザで認証完了のメッセージが表示される</div>
+                <div>③ このページに戻ると<strong>自動的</strong>にログイン完了</div>
+              </div>
+            </div>
+
+            {/* 自動検知インジケーター */}
+            <div style={{display:"flex",alignItems:"center",gap:8,background:"var(--green-soft)",borderRadius:10,padding:"10px 16px",marginBottom:20,fontSize:13,color:"var(--green)"}}>
+              <span style={{fontSize:16}}>🔄</span>
+              <span>認証完了を自動で検知しています...</span>
+            </div>
+
+            {verifyError && (
+              <div style={{background:"var(--red-soft)",color:"var(--red)",padding:"12px 16px",borderRadius:10,fontSize:13,marginBottom:16,border:"1px solid #fecaca",textAlign:"left",lineHeight:1.6}}>
+                ⚠️ {verifyError}
+              </div>
+            )}
+
             <button className="verify-btn" onClick={handleCheckVerification}>
               認証完了を確認する ✓
             </button>
             <button className="verify-btn secondary" onClick={handleResendVerification}>
-              認証メールを再送する
+              📨 認証メールを再送する
             </button>
             <button className="verify-btn secondary" onClick={handleLogout} style={{marginTop:4}}>
               ログアウト
             </button>
-            <div className="verify-note">
-              メールが届かない場合は迷惑メールフォルダをご確認ください
+            <div className="verify-note" style={{marginTop:16,lineHeight:1.8}}>
+              ⚠️ メールが届かない場合は<strong>迷惑メールフォルダ</strong>をご確認ください<br/>
+              ⚠️ リンクの有効期限は<strong>24時間</strong>です。期限切れの場合は「認証メールを再送する」を押してください
             </div>
           </div>
         </div>
