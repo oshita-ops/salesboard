@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, sendEmailVerification, applyActionCode } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "firebase/auth";
 import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp, setDoc, getDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
@@ -44,26 +44,12 @@ function daysAgo(dateStr) {
 }
 
 
-// ── アプリ起動時に1回だけURLパラメータを読む（handleCodeInApp:true の場合にここに届く）──
-const _params = new URLSearchParams(window.location.search);
-const INIT_MODE = _params.get("mode");
-const INIT_OOB  = _params.get("oobCode");
-if (INIT_OOB) {
-  // パラメータをすぐ消す（Reactの再レンダリングで何度も読まないように）
-  window.history.replaceState({}, document.title, window.location.pathname);
-}
-
 export default function App() {
   // Auth
-  const [page, setPage] = useState(
-    INIT_MODE === "verifyEmail" && INIT_OOB ? "verifying" : "landing"
-  );
+  const [page, setPage] = useState("landing");
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [emailVerified, setEmailVerified] = useState(false);
-  const [verificationSent, setVerificationSent] = useState(false);
-  const [verifyError, setVerifyError] = useState("");
-  const [isPolling, setIsPolling] = useState(false);
 
   // Forms
   const [regForm, setRegForm] = useState({ name:"", email:"", password:"", experience:"", specialties:[] });
@@ -125,66 +111,20 @@ export default function App() {
 
   const isAdmin = user?.email === ADMIN_EMAIL;
 
-  // ── handleCodeInApp:true で届いたoobCodeを処理 ──
-  useEffect(() => {
-    if (INIT_MODE !== "verifyEmail" || !INIT_OOB) return;
-    // "verifying"ページを表示してから処理
-    applyActionCode(auth, INIT_OOB)
-      .then(() => {
-        // 認証成功→ 現在のユーザー情報をリロードしてダッシュボードへ
-        const cu = auth.currentUser;
-        if (cu) {
-          cu.reload().then(() => {
-            const r = auth.currentUser;
-            setUser({ name: r.displayName || r.email, email: r.email });
-            setEmailVerified(true);
-            setPage("dashboard");
-            setDashTab("mypage");
-            showToast("メール認証が完了しました！プロフィールを入力してください😊");
-          });
-        } else {
-          // 未ログインの場合はログイン画面へ
-          setPage("login");
-          showToast("メール認証が完了しました！ログインしてください。");
-        }
-        setAuthLoading(false);
-      })
-      .catch((err) => {
-        const code = err.code || "";
-        let msg = "認証リンクが無効か期限切れです。「認証メールを再送する」から新しいリンクを取得してください。";
-        if (code === "auth/invalid-action-code")  msg = "認証リンクが無効です（使用済みまたはURL着尊）。「認証メールを再送する」を押してください。";
-        if (code === "auth/expired-action-code") msg = "認証リンクの有効期限（24時間）が切れています。「認証メールを再送する」を押してください。";
-        console.error("applyActionCode error:", code, err.message);
-        setVerifyError(msg);
-        setPage("verify-email");
-        setAuthLoading(false);
-      });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   // ── Auth listener（onAuthStateChanged） ──
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (fu) => {
-      // oobCode処理中はスキップ（上のuseEffectが担当）
-      if (INIT_MODE === "verifyEmail" && INIT_OOB) return;
+    const unsub = onAuthStateChanged(auth, (fu) => {
       try {
         if (fu) {
-          try { await fu.reload(); } catch(e) { /* reloadが失敗してもキャッシュ値で続行 */ }
-          const refreshed = auth.currentUser;
-          setUser({ name: refreshed.displayName || refreshed.email, email: refreshed.email });
-          setEmailVerified(refreshed.emailVerified);
-          if (refreshed.emailVerified) {
-            setPage("dashboard");
-          } else {
-            setPage("verify-email");
-          }
+          setUser({ name: fu.displayName || fu.email, email: fu.email });
+          setEmailVerified(true);
+          setPage("dashboard");
         } else {
           setUser(null);
           setEmailVerified(false);
           setPage("landing");
         }
       } catch(e) {
-        console.error("onAuthStateChanged error:", e);
         setPage("landing");
       } finally {
         setAuthLoading(false);
@@ -279,22 +219,9 @@ export default function App() {
     try {
       const result = await createUserWithEmailAndPassword(auth, regForm.email, regForm.password);
       await updateProfile(result.user, { displayName: regForm.name });
-      // continueUrl をアプリURLに設定し、認証後にアプリへ戻れるようにする
-      const actionCodeSettings = {
-        url: "https://salesboard.jcon.co.jp/",
-        handleCodeInApp: true,
-      };
-      await sendEmailVerification(result.user, actionCodeSettings);
-      setVerificationSent(true);
-      setVerifyError("");
-      setPage("verify-email");
-      try {
-        await fetch("https://api.emailjs.com/api/v1.0/email/send", {
-          method:"POST", headers:{"Content-Type":"application/json"},
-          body: JSON.stringify({ service_id:"service_kgfb1pp", template_id:"template_hfoiagq", user_id:"l-4JMsbbRt5ETL0Su", template_params:{ name:regForm.name, email:regForm.email } })
-        });
-      } catch(e) {}
-    } catch(e) { setAuthError(getErrorMessage(e.code)); }
+      // 登録成功→ そのままダッシュボードへ（メール認証なし）
+      showToast("登録が完了しました！ようこそ😊");
+        } catch(e) { setAuthError(getErrorMessage(e.code)); }
   };
 
   const handleLogin = async () => {
@@ -405,25 +332,6 @@ export default function App() {
     return () => unsub();
   }, [chatAppId]);
 
-  // verify-email ページ用：自動ポーリング（3秒ごとに認証状態をチェック）
-  useEffect(() => {
-    if (page !== "verify-email" || !auth.currentUser) return;
-    setIsPolling(true);
-    const interval = setInterval(async () => {
-      try {
-        await auth.currentUser.reload();
-        if (auth.currentUser.emailVerified) {
-          clearInterval(interval);
-          setIsPolling(false);
-          setEmailVerified(true);
-          setDashTab("mypage");
-          setPage("dashboard");
-          showToast("メール認証が完了しました！プロフィールを入力してください😊");
-        }
-      } catch(e) {}
-    }, 3000);
-    return () => { clearInterval(interval); setIsPolling(false); };
-  }, [page]);
 
   const handleSendMessage = async () => {
     if (!chatInput.trim() || !chatAppId) return;
@@ -494,25 +402,6 @@ export default function App() {
   };
 
   if (authLoading) return <div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"100vh",fontFamily:"sans-serif",color:"#8a8a7a"}}>読み込み中...</div>;
-
-  // oobCode処理中のローディング画面
-  if (page === "verifying") {
-    return (
-      <div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"100vh",fontFamily:"'Noto Sans JP',sans-serif",background:"linear-gradient(135deg,#f5f5f0,#fafaf7)"}}>
-        <div style={{textAlign:"center",background:"white",borderRadius:20,padding:"48px 40px",boxShadow:"0 16px 48px rgba(26,26,46,0.16)",maxWidth:400,width:"100%"}}>
-          <div style={{fontSize:56,marginBottom:20}}>✉️</div>
-          <div style={{fontSize:22,fontWeight:700,marginBottom:12,color:"#1a1a2e"}}>メール認証を処理中...</div>
-          <div style={{fontSize:14,color:"#8a8a7a",lineHeight:1.8}}>しばらくお待ちください</div>
-          <div style={{marginTop:24,display:"flex",justifyContent:"center",gap:8}}>
-            {[0,1,2].map(i=>(
-              <div key={i} style={{width:10,height:10,borderRadius:"50%",background:"#e8530e",animation:`pulse 1.2s ease-in-out ${i*0.2}s infinite`}} />
-            ))}
-          </div>
-          <style>{`@keyframes pulse{0%,80%,100%{opacity:0.3;transform:scale(0.8)}40%{opacity:1;transform:scale(1)}}`}</style>
-        </div>
-      </div>
-    );
-  }
 
 
   const css = `
@@ -980,120 +869,6 @@ export default function App() {
   }
 
   // VERIFY EMAIL PAGE
-  if (page === "verify-email") {
-    const handleResendVerification = async () => {
-      setVerifyError("");
-      try {
-        const currentUser = auth.currentUser;
-        if (currentUser) {
-          const actionCodeSettings = {
-            url: "https://salesboard.jcon.co.jp/",
-            handleCodeInApp: true,
-          };
-          await sendEmailVerification(currentUser, actionCodeSettings);
-          showToast("認証メールを再送信しました📧");
-        }
-      } catch(e) {
-        if (e.code === "auth/too-many-requests") {
-          setVerifyError("送信回数が多すぎます。しばらく待ってから再試行してください。");
-        } else {
-          setVerifyError("送信に失敗しました。しばらくしてから再試行してください。");
-        }
-      }
-    };
-
-    const handleCheckVerification = async () => {
-      setVerifyError("");
-      try {
-        await auth.currentUser?.reload();
-        if (auth.currentUser?.emailVerified) {
-          setEmailVerified(true);
-          setDashTab("mypage");
-          setPage("dashboard");
-          showToast("メール認証が完了しました！プロフィールを入力してください😊");
-        } else {
-          setVerifyError("まだ認証が完了していません。メール内のリンクをクリックしてから、このボタンを押してください。");
-        }
-      } catch(e) {
-        setVerifyError("確認中にエラーが発生しました。もう一度お試しください。");
-      }
-    };
-
-    const isExpiredError = verifyError.includes("期限切れ") || verifyError.includes("無効");
-
-    return (
-      <>
-        <style>{css}</style>
-        <div className="verify-page">
-          <div className="verify-card">
-            {/* エラー状態（期限切れ）と通常状態でアイコン・タイトルを切り替え */}
-            <div className="verify-icon">{isExpiredError ? "⏰" : "📧"}</div>
-            <div className="verify-title">
-              {isExpiredError ? "認証リンクが期限切れです" : "メールアドレスを認証してください"}
-            </div>
-            <div className="verify-desc">
-              {isExpiredError
-                ? <>認証リンクの有効期限（24時間）が切れています。<br/>下の「認証メールを再送する」から新しいリンクを取得してください。</>
-                : <>以下のメールアドレスに認証メールを送信しました。<br/><strong>メール内のリンクをクリック</strong>すると、自動的にダッシュボードに移動します。</>
-              }
-            </div>
-            <div className="verify-email-badge">{user?.email}</div>
-
-            {/* エラーメッセージ */}
-            {verifyError && (
-              <div style={{background:"var(--red-soft)",color:"var(--red)",padding:"14px 18px",borderRadius:10,fontSize:13,marginBottom:20,border:"1px solid #fecaca",textAlign:"left",lineHeight:1.8}}>
-                ⚠️ {verifyError}
-              </div>
-            )}
-
-            {/* 通常状態：認証手順 + 自動検知インジケーター */}
-            {!isExpiredError && (
-              <>
-                <div style={{background:"var(--blue-soft)",borderRadius:12,padding:"14px 18px",marginBottom:16,textAlign:"left"}}>
-                  <div style={{fontSize:13,fontWeight:700,color:"var(--blue)",marginBottom:8}}>📋 認証の手順</div>
-                  <div style={{fontSize:13,color:"var(--gray700)",lineHeight:2.2}}>
-                    <div>① 受信メール内の「メールアドレスを確認」リンクをクリック</div>
-                    <div>② ブラウザで「認証完了」と表示される</div>
-                    <div>③ このページが<strong>自動的に</strong>ダッシュボードへ切り替わる</div>
-                  </div>
-                </div>
-                <div style={{display:"flex",alignItems:"center",gap:8,background:"var(--green-soft)",borderRadius:10,padding:"10px 16px",marginBottom:20,fontSize:13,color:"var(--green)"}}>
-                  <span style={{animation:"spin 2s linear infinite",display:"inline-block"}}>🔄</span>
-                  <span>認証完了を自動で検知しています...</span>
-                </div>
-                <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
-              </>
-            )}
-
-            {/* 期限切れ時は再送ボタンを最優先で表示 */}
-            {isExpiredError && (
-              <button className="verify-btn" onClick={handleResendVerification} style={{marginBottom:8}}>
-                📨 新しい認証メールを送る
-              </button>
-            )}
-
-            {!isExpiredError && (
-              <button className="verify-btn" onClick={handleCheckVerification}>
-                認証完了を確認する ✓
-              </button>
-            )}
-            <button className="verify-btn secondary" onClick={handleResendVerification}>
-              {isExpiredError ? "再送する（もう一度）" : "📨 認証メールを再送する"}
-            </button>
-            <button className="verify-btn secondary" onClick={handleLogout} style={{marginTop:4}}>
-              ログアウト
-            </button>
-            <div className="verify-note" style={{marginTop:16,lineHeight:1.9}}>
-              📩 メールが届かない場合は<strong>迷惑メールフォルダ</strong>をご確認ください<br/>
-              ⏱ リンクの有効期限は<strong>24時間</strong>です
-            </div>
-          </div>
-        </div>
-        {toast && <div className="toast">{toast}</div>}
-      </>
-    );
-  }
-
   if (page === "landing") {
     const featuredJobs = jobs.filter(j=>j.highPay && j.published!==false).slice(0,3);
     return (
