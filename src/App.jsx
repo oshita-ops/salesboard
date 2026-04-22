@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, sendEmailVerification, applyActionCode, checkActionCode } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, sendEmailVerification } from "firebase/auth";
 import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp, setDoc, getDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
@@ -42,6 +42,7 @@ function daysAgo(dateStr) {
   if (diff === 1) return "1日前";
   return `${diff}日前`;
 }
+
 
 export default function App() {
   // Auth
@@ -113,13 +114,16 @@ export default function App() {
 
   const isAdmin = user?.email === ADMIN_EMAIL;
 
-  // Auth listener
+  // ── Auth listener（onAuthStateChanged） ──
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (fu) => {
+    const unsub = onAuthStateChanged(auth, async (fu) => {
       if (fu) {
-        setUser({ name: fu.displayName || fu.email, email: fu.email });
-        setEmailVerified(fu.emailVerified);
-        if (fu.emailVerified) {
+        // ユーザー情報を最新に更新してからemailVerifiedを確認
+        await fu.reload();
+        const refreshed = auth.currentUser;
+        setUser({ name: refreshed.displayName || refreshed.email, email: refreshed.email });
+        setEmailVerified(refreshed.emailVerified);
+        if (refreshed.emailVerified) {
           setPage("dashboard");
         } else {
           setPage("verify-email");
@@ -127,14 +131,16 @@ export default function App() {
       } else {
         setUser(null);
         setEmailVerified(false);
+        setPage("landing");
       }
       setAuthLoading(false);
     });
     return () => unsub();
   }, []);
 
-  // Firestore jobs listener
+  // Firestore jobs listener（認証済みユーザーのみ）
   useEffect(() => {
+    if (!emailVerified) return; // 未認証時はリスナーを張らない
     const unsub = onSnapshot(collection(db, "jobs"), (snap) => {
       if (!snap.empty) {
         const fsJobs = snap.docs.map(d => ({
@@ -146,7 +152,7 @@ export default function App() {
       }
     }, () => {});
     return () => unsub();
-  }, []);
+  }, [emailVerified]);
 
   // Profile listener
   useEffect(() => {
@@ -218,9 +224,9 @@ export default function App() {
     try {
       const result = await createUserWithEmailAndPassword(auth, regForm.email, regForm.password);
       await updateProfile(result.user, { displayName: regForm.name });
-      // actionCodeSettings でリダイレクト先を現在のURLに設定（リンク期限切れ問題を解消）
+      // continueUrl をアプリURLに設定し、認証後にアプリへ戻れるようにする
       const actionCodeSettings = {
-        url: window.location.origin + window.location.pathname,
+        url: window.location.origin + "/",
         handleCodeInApp: false,
       };
       await sendEmailVerification(result.user, actionCodeSettings);
@@ -413,6 +419,7 @@ export default function App() {
   };
 
   if (authLoading) return <div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"100vh",fontFamily:"sans-serif",color:"#8a8a7a"}}>読み込み中...</div>;
+
 
 
   const css = `
@@ -906,7 +913,7 @@ export default function App() {
         const currentUser = auth.currentUser;
         if (currentUser) {
           const actionCodeSettings = {
-            url: window.location.origin + window.location.pathname,
+            url: window.location.origin + "/",
             handleCodeInApp: false,
           };
           await sendEmailVerification(currentUser, actionCodeSettings);
@@ -938,53 +945,73 @@ export default function App() {
       }
     };
 
+    const isExpiredError = verifyError.includes("期限切れ") || verifyError.includes("無効");
+
     return (
       <>
         <style>{css}</style>
         <div className="verify-page">
           <div className="verify-card">
-            <div className="verify-icon">📧</div>
-            <div className="verify-title">メールアドレスを認証してください</div>
+            {/* エラー状態（期限切れ）と通常状態でアイコン・タイトルを切り替え */}
+            <div className="verify-icon">{isExpiredError ? "⏰" : "📧"}</div>
+            <div className="verify-title">
+              {isExpiredError ? "認証リンクが期限切れです" : "メールアドレスを認証してください"}
+            </div>
             <div className="verify-desc">
-              以下のメールアドレスに認証メールを送信しました。<br/>
-              <strong>メール内のリンクをクリック</strong>すると、このページが自動的にダッシュボードに切り替わります。
+              {isExpiredError
+                ? <>認証リンクの有効期限（24時間）が切れています。<br/>下の「認証メールを再送する」から新しいリンクを取得してください。</>
+                : <>以下のメールアドレスに認証メールを送信しました。<br/><strong>メール内のリンクをクリック</strong>すると、自動的にダッシュボードに移動します。</>
+              }
             </div>
             <div className="verify-email-badge">{user?.email}</div>
 
-            {/* 認証手順 */}
-            <div style={{background:"var(--blue-soft)",borderRadius:12,padding:"16px 20px",marginBottom:24,textAlign:"left"}}>
-              <div style={{fontSize:13,fontWeight:700,color:"var(--blue)",marginBottom:10}}>📋 認証の手順</div>
-              <div style={{fontSize:13,color:"var(--gray700)",lineHeight:2}}>
-                <div>① 受信メール内の「メールアドレスを確認」リンクをクリック</div>
-                <div>② ブラウザで認証完了のメッセージが表示される</div>
-                <div>③ このページに戻ると<strong>自動的</strong>にログイン完了</div>
-              </div>
-            </div>
-
-            {/* 自動検知インジケーター */}
-            <div style={{display:"flex",alignItems:"center",gap:8,background:"var(--green-soft)",borderRadius:10,padding:"10px 16px",marginBottom:20,fontSize:13,color:"var(--green)"}}>
-              <span style={{fontSize:16}}>🔄</span>
-              <span>認証完了を自動で検知しています...</span>
-            </div>
-
+            {/* エラーメッセージ */}
             {verifyError && (
-              <div style={{background:"var(--red-soft)",color:"var(--red)",padding:"12px 16px",borderRadius:10,fontSize:13,marginBottom:16,border:"1px solid #fecaca",textAlign:"left",lineHeight:1.6}}>
+              <div style={{background:"var(--red-soft)",color:"var(--red)",padding:"14px 18px",borderRadius:10,fontSize:13,marginBottom:20,border:"1px solid #fecaca",textAlign:"left",lineHeight:1.8}}>
                 ⚠️ {verifyError}
               </div>
             )}
 
-            <button className="verify-btn" onClick={handleCheckVerification}>
-              認証完了を確認する ✓
-            </button>
+            {/* 通常状態：認証手順 + 自動検知インジケーター */}
+            {!isExpiredError && (
+              <>
+                <div style={{background:"var(--blue-soft)",borderRadius:12,padding:"14px 18px",marginBottom:16,textAlign:"left"}}>
+                  <div style={{fontSize:13,fontWeight:700,color:"var(--blue)",marginBottom:8}}>📋 認証の手順</div>
+                  <div style={{fontSize:13,color:"var(--gray700)",lineHeight:2.2}}>
+                    <div>① 受信メール内の「メールアドレスを確認」リンクをクリック</div>
+                    <div>② ブラウザで「認証完了」と表示される</div>
+                    <div>③ このページが<strong>自動的に</strong>ダッシュボードへ切り替わる</div>
+                  </div>
+                </div>
+                <div style={{display:"flex",alignItems:"center",gap:8,background:"var(--green-soft)",borderRadius:10,padding:"10px 16px",marginBottom:20,fontSize:13,color:"var(--green)"}}>
+                  <span style={{animation:"spin 2s linear infinite",display:"inline-block"}}>🔄</span>
+                  <span>認証完了を自動で検知しています...</span>
+                </div>
+                <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
+              </>
+            )}
+
+            {/* 期限切れ時は再送ボタンを最優先で表示 */}
+            {isExpiredError && (
+              <button className="verify-btn" onClick={handleResendVerification} style={{marginBottom:8}}>
+                📨 新しい認証メールを送る
+              </button>
+            )}
+
+            {!isExpiredError && (
+              <button className="verify-btn" onClick={handleCheckVerification}>
+                認証完了を確認する ✓
+              </button>
+            )}
             <button className="verify-btn secondary" onClick={handleResendVerification}>
-              📨 認証メールを再送する
+              {isExpiredError ? "再送する（もう一度）" : "📨 認証メールを再送する"}
             </button>
             <button className="verify-btn secondary" onClick={handleLogout} style={{marginTop:4}}>
               ログアウト
             </button>
-            <div className="verify-note" style={{marginTop:16,lineHeight:1.8}}>
-              ⚠️ メールが届かない場合は<strong>迷惑メールフォルダ</strong>をご確認ください<br/>
-              ⚠️ リンクの有効期限は<strong>24時間</strong>です。期限切れの場合は「認証メールを再送する」を押してください
+            <div className="verify-note" style={{marginTop:16,lineHeight:1.9}}>
+              📩 メールが届かない場合は<strong>迷惑メールフォルダ</strong>をご確認ください<br/>
+              ⏱ リンクの有効期限は<strong>24時間</strong>です
             </div>
           </div>
         </div>
