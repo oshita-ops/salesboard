@@ -453,11 +453,8 @@ export default function App() {
     .hero h1{font-family:'Noto Sans JP',sans-serif;font-size:36px;font-weight:900;color:var(--ink);line-height:1.45;letter-spacing:-0.5px;margin-bottom:16px;}
     .hero h1 .highlight{color:var(--orange);}
     .hero p{font-size:15px;color:var(--gray500);line-height:1.9;margin-bottom:28px;max-width:420px;}
-    .hero-stats{display:flex;gap:24px;margin-bottom:32px;}
-    .hero-stat{display:flex;flex-direction:column;gap:2px;}
-    .hero-stat-num{font-family:'Outfit',sans-serif;font-size:28px;font-weight:800;color:var(--orange);line-height:1;}
-    .hero-stat-label{font-size:11px;color:var(--gray500);font-weight:500;}
-    .hero-stat-divider{width:1px;background:var(--gray200);}
+    .hero-trust{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px;}
+    .hero-trust-badge{display:inline-flex;align-items:center;gap:5px;background:var(--brand-soft);border:1px solid var(--brand-mid);border-radius:100px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--brand-dark);}
     .cta-buttons{display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
     .btn-cta-primary{padding:15px 36px;border-radius:100px;background:var(--orange);border:none;color:white;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(255,138,0,0.35);transition:all 0.2s;}
     .btn-cta-primary:hover{background:var(--orange-dark);transform:translateY(-2px);}
@@ -473,15 +470,13 @@ export default function App() {
     .cat-banner-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px;}
     .cat-banner-sub{font-size:11px;color:var(--gray500);}
 
-    /* FEATURES */
-    .features-section{background:var(--gray100);border-top:1px solid var(--gray200);border-bottom:1px solid var(--gray200);}
-    .features-strip{display:grid;grid-template-columns:repeat(4,1fr);max-width:1100px;margin:0 auto;}
-    .feature-item{padding:32px 24px;text-align:center;border-right:1px solid var(--gray200);transition:background 0.2s;}
-    .feature-item:last-child{border-right:none;}
-    .feature-item:hover{background:var(--white);}
-    .feature-icon{font-size:26px;margin-bottom:10px;}
-    .feature-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:5px;}
-    .feature-desc{font-size:12px;color:var(--gray500);line-height:1.6;}
+    /* WHY CARD */
+    .why-card{background:var(--white);border-radius:var(--radius-xl);border:1px solid var(--gray200);padding:36px 28px;text-align:center;box-shadow:var(--shadow-sm);transition:all 0.25s;}
+    .why-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);}
+    .why-ring{position:relative;width:140px;height:140px;margin:0 auto 24px;}
+    .why-ring-label{font-size:11px;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px;}
+    .why-title{font-size:18px;font-weight:800;color:var(--ink);margin-bottom:10px;}
+    .why-desc{font-size:14px;color:var(--gray500);line-height:1.85;}
 
     /* ABOUT */
     .about-section{padding:80px 64px;display:flex;align-items:center;gap:72px;max-width:1100px;margin:0 auto;}
@@ -498,7 +493,7 @@ export default function App() {
     .cases-section{max-width:1100px;margin:0 auto;padding:64px 40px;}
     .section-header{margin-bottom:36px;}
     .section-eyebrow{font-size:11px;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;}
-    .section-title{font-size:26px;font-weight:900;color:var(--ink);letter-spacing:-0.3px;margin-bottom:8px;}
+    .section-title{font-size:30px;font-weight:900;color:var(--ink);letter-spacing:-0.5px;margin-bottom:8px;}
     .section-subtitle{font-size:14px;color:var(--gray500);line-height:1.7;}
     .cases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:32px;}
     .case-card{background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--gray200);padding:0;box-shadow:var(--shadow-sm);transition:all 0.25s;cursor:pointer;overflow:hidden;}
@@ -523,8 +518,16 @@ export default function App() {
     .cases-cta{text-align:center;padding:40px;background:linear-gradient(135deg,var(--brand-soft) 0%,#f0fff4 100%);border-radius:var(--radius-xl);border:1.5px solid var(--brand-mid);}
     .cases-cta-title{font-size:20px;font-weight:700;color:var(--ink);margin-bottom:8px;}
     .cases-cta-sub{font-size:14px;color:var(--gray500);margin-bottom:24px;}
-    .landing-footer{background:var(--ink);color:rgba(255,255,255,0.45);text-align:center;padding:36px 48px;font-size:13px;}
-    .landing-footer .footer-logo{font-family:'Outfit',sans-serif;font-weight:800;color:white;font-size:18px;margin-bottom:10px;}
+    .landing-footer{background:var(--ink);color:rgba(255,255,255,0.45);text-align:center;padding:48px;font-size:13px;}
+    .landing-footer .footer-logo{font-family:'Outfit',sans-serif;font-weight:800;color:white;font-size:20px;margin-bottom:10px;}
+    .landing-footer .footer-links{display:flex;justify-content:center;gap:24px;margin-bottom:16px;}
+    .landing-footer .footer-links a{color:rgba(255,255,255,0.6);text-decoration:none;font-size:13px;transition:color 0.2s;}
+    .landing-footer .footer-links a:hover{color:white;}
+    /* CONSULTATION PAGE */
+    .consult-page{min-height:100vh;background:var(--paper);}
+    .consult-hero{background:var(--white);border-bottom:1px solid var(--gray200);padding:56px 40px;text-align:center;}
+    .consult-form-wrap{max-width:640px;margin:0 auto;padding:56px 24px;}
+    .consult-card{background:var(--white);border-radius:var(--radius-xl);border:1px solid var(--gray200);padding:40px;box-shadow:var(--shadow-md);}
 
     /* AUTH */
     .auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--paper);padding:40px 20px;}
@@ -731,7 +734,7 @@ export default function App() {
     @keyframes fadeIn{from{opacity:0}to{opacity:1}}
     @keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
     @media(max-width:900px){
-      .hero-section{min-height:auto;}.hero-bg-shape{display:none;}.hero-left{padding:48px 24px;max-width:100%;}.hero h1{font-size:26px;}.hero-right{display:none;}.category-banners{grid-template-columns:repeat(2,1fr);padding:20px;}.features-strip{grid-template-columns:repeat(2,1fr);}.about-section{flex-direction:column;padding:48px 24px;gap:32px;}.about-illo{flex:none;width:100%;max-width:320px;margin:0 auto;}.cases-grid{grid-template-columns:1fr;}.cases-section{padding:40px 20px;}.dash-body{flex-direction:column;padding:16px;}.sidebar{width:100%;position:static;}.landing-nav{padding:0 20px;}.admin-grid{grid-template-columns:1fr;}.mypage-wrap{padding:16px;}.mypage-grid{grid-template-columns:1fr;}
+      .hero-section{min-height:auto;}.hero-bg-shape{display:none;}.hero-left{padding:48px 24px;max-width:100%;}.hero h1{font-size:28px;}.hero-right{display:none;}.category-banners{grid-template-columns:repeat(2,1fr);padding:20px;}.about-section{flex-direction:column;padding:48px 24px;gap:32px;}.about-illo{flex:none;width:100%;max-width:320px;margin:0 auto;}.cases-grid{grid-template-columns:1fr;}.cases-section{padding:40px 20px;}.dash-body{flex-direction:column;padding:16px;}.sidebar{width:100%;position:static;}.landing-nav{padding:0 20px;}.admin-grid{grid-template-columns:1fr;}.mypage-wrap{padding:16px;}.mypage-grid{grid-template-columns:1fr;}.why-card{padding:24px 16px;}.consult-card{padding:24px 20px;}.consult-form-wrap{padding:32px 16px;}
     }
     /* CHAT */
     .chat-overlay{position:fixed;inset:0;background:rgba(26,26,46,0.5);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;}
@@ -905,6 +908,12 @@ export default function App() {
     );
   }
 
+  // EMPLOYER PAGE → consultation にリダイレクト
+  if (page === "employer") {
+    setPage("consultation");
+    return null;
+  }
+
   // LANDING PAGE
   if (page === "landing") {
     const featuredJobs = jobs.filter(j=>j.highPay && j.published!==false).slice(0,3);
@@ -918,7 +927,7 @@ export default function App() {
           <nav className="landing-nav">
             <div className="logo"><div className="logo-mark">S</div>SalesBoard</div>
             <div style={{display:"flex",alignItems:"center",gap:20}}>
-              <span style={{fontSize:13,color:"var(--gray500)",cursor:"pointer"}} onClick={()=>setPage("login")}>採用担当者様はこちら</span>
+              <span style={{fontSize:13,color:"var(--gray500)",cursor:"pointer",fontWeight:500}} onClick={()=>setPage("consultation")}>採用担当者様はこちら</span>
               <span style={{fontSize:13,color:"var(--gray700)",cursor:"pointer",fontWeight:600}} onClick={()=>setPage("login")}>案件を探す</span>
               <div className="nav-btns">
                 <button className="btn-ghost" onClick={()=>setPage("login")}>ログイン</button>
@@ -931,27 +940,16 @@ export default function App() {
           <div className="hero-section">
             <div className="hero-bg-shape"/>
             <div className="hero-left">
-              <div className="hero-eyebrow">営業フリーランス専門の案件紹介</div>
+              <div className="hero-eyebrow">✦ 営業フリーランス専門の案件紹介プラットフォーム</div>
               <h1 className="hero">
-                あなたの営業力を<br/>
-                <span className="highlight">最大限に活かす</span>案件が<br/>ここにあります
+                あなたの営業スキルで<br/>
+                <span className="highlight">自由な働き方</span>を<br/>実現しませんか
               </h1>
-              <p>SalesBoardは、営業フリーランス専門のマッチングサービス。<br/>高単価・リモート・長期案件を厳選してご紹介します。</p>
-              <div className="hero-stats">
-                <div className="hero-stat">
-                  <div className="hero-stat-num">300+</div>
-                  <div className="hero-stat-label">掲載案件数</div>
-                </div>
-                <div className="hero-stat-divider"/>
-                <div className="hero-stat">
-                  <div className="hero-stat-num">月100万</div>
-                  <div className="hero-stat-label">収入実績あり</div>
-                </div>
-                <div className="hero-stat-divider"/>
-                <div className="hero-stat">
-                  <div className="hero-stat-num">最短即日</div>
-                  <div className="hero-stat-label">稼働開始</div>
-                </div>
+              <p>SalesBoardは、営業フリーランス専門のマッチングサービス。<br/>高単価・リモート・副業OKな案件を厳選してご紹介します。</p>
+              <div className="hero-trust">
+                <span className="hero-trust-badge">✓ 高単価案件が豊富</span>
+                <span className="hero-trust-badge">✓ リモート案件多数</span>
+                <span className="hero-trust-badge">✓ 週2日〜OK</span>
               </div>
               <div className="cta-buttons">
                 <button className="btn-cta-primary" onClick={()=>setPage("register")}>無料で会員登録する →</button>
@@ -967,12 +965,12 @@ export default function App() {
           <div style={{background:"var(--white)",borderTop:"1px solid var(--gray200)",borderBottom:"1px solid var(--gray200)"}}>
             <div className="category-banners">
               {[
-                {icon:"🏠",bg:"#EAF7EE",title:"リモート案件",sub:"フルリモートで働ける案件",filter:"remote"},
-                {icon:"⚡",bg:"#FFF3CD",title:"急募案件",sub:"すぐに稼働できる案件",filter:"urgent"},
-                {icon:"💰",bg:"#FEE2E2",title:"高単価案件",sub:"月60万円以上の高収入案件",filter:"highPay"},
-                {icon:"🌱",bg:"#EDE9FE",title:"未経験OK案件",sub:"営業経験少なめでも応募可",filter:"lowExp"},
+                {icon:"🏠",bg:"#EAF7EE",title:"リモート案件",sub:"フルリモートで働ける案件"},
+                {icon:"⚡",bg:"#FFF3CD",title:"急募案件",sub:"すぐに稼働できる案件"},
+                {icon:"💰",bg:"#FEE2E2",title:"高単価案件",sub:"月60万円以上の高収入案件"},
+                {icon:"🌱",bg:"#EDE9FE",title:"未経験OK案件",sub:"営業経験少なめでも応募可"},
               ].map(cat=>(
-                <div key={cat.title} className="cat-banner" onClick={()=>{setPage("login");}}>
+                <div key={cat.title} className="cat-banner" onClick={()=>setPage("register")}>
                   <div className="cat-banner-icon" style={{background:cat.bg}}>{cat.icon}</div>
                   <div className="cat-banner-text">
                     <div className="cat-banner-title">{cat.title}</div>
@@ -984,54 +982,80 @@ export default function App() {
             </div>
           </div>
 
-          {/* FEATURES */}
-          <div className="features-section">
-            <div className="features-strip">
-              {[["💼","営業特化","営業職に特化した案件のみ掲載。ミスマッチなし"],["🏠","リモート案件","フルリモート・一部リモート案件を多数掲載"],["💰","高単価案件","月60万円〜の高単価案件を厳選してお届け"],["⚡","最短即日","応募から稼働開始まで最短即日マッチング"]].map(([icon,title,desc])=>(
-                <div key={title} className="feature-item">
-                  <div className="feature-icon">{icon}</div>
-                  <div className="feature-title">{title}</div>
-                  <div className="feature-desc">{desc}</div>
+          {/* SalesBoardが選ばれる3つの理由 */}
+          <div style={{background:"var(--paper)",padding:"80px 40px",borderTop:"1px solid var(--gray200)"}}>
+            <div style={{textAlign:"center",marginBottom:56}}>
+              <div style={{fontSize:12,fontWeight:700,color:"var(--brand)",letterSpacing:"2px",textTransform:"uppercase",marginBottom:10}}>Why SalesBoard</div>
+              <div style={{fontSize:32,fontWeight:900,color:"var(--ink)",letterSpacing:"-0.5px",lineHeight:1.25}}>SalesBoardが選ばれる<br/>3つの理由</div>
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:24,maxWidth:960,margin:"0 auto"}}>
+              {[
+                {main:"高単価",sub:"案件が豊富",icon:"💰",desc:"月60万円〜の高単価案件を厳選して掲載。業務内容・スキルに見合った報酬で働けます。",color:"#24A64A",bg:"#EAF7EE",ring:"#24A64A"},
+                {main:"リモート",sub:"案件多数",icon:"🏡",desc:"フルリモート〜週1出社など、多様な働き方に対応した案件をラインナップ。場所を選ばず活躍できます。",color:"#FF8A00",bg:"#FFF3E0",ring:"#FF8A00"},
+                {main:"週2日〜",sub:"副業OK",icon:"📅",desc:"週2日〜の稼働が可能な案件が多数。本業と並行しながら、自分のペースでキャリアを広げられます。",color:"#2563eb",bg:"#eff4ff",ring:"#2563eb"},
+              ].map((m,i)=>(
+                <div key={i} className="why-card">
+                  <div style={{position:"relative",width:140,height:140,margin:"0 auto 24px"}}>
+                    <svg style={{position:"absolute",top:0,left:0}} width="140" height="140" viewBox="0 0 140 140">
+                      <circle cx="70" cy="70" r="64" fill={m.bg} stroke={m.ring} strokeWidth="5" strokeLinecap="round"/>
+                      <circle cx="70" cy="70" r="50" fill="white"/>
+                    </svg>
+                    <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+                      <div style={{fontSize:28,marginBottom:4}}>{m.icon}</div>
+                      <div style={{fontSize:17,fontWeight:900,color:m.color,lineHeight:1.15,textAlign:"center"}}>{m.main}</div>
+                      <div style={{fontSize:12,color:m.color,fontWeight:700,marginTop:2}}>{m.sub}</div>
+                    </div>
+                  </div>
+                  <div style={{fontSize:17,fontWeight:800,color:"var(--ink)",marginBottom:10}}>{m.main}{m.sub}</div>
+                  <div style={{fontSize:14,color:"var(--gray500)",lineHeight:1.85}}>{m.desc}</div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* ABOUT */}
-          <div style={{background:"var(--white)"}}>
-            <div className="about-section">
-              <div className="about-illo">
-                <img src="/undraw_process_0wew.svg" alt="サービス説明" style={{width:"100%",maxWidth:360,display:"block"}} />
-              </div>
-              <div className="about-text">
-                <div className="about-eyebrow">About SalesBoard</div>
-                <div className="about-title">営業フリーランスに<br/>特化したサービス</div>
-                <div className="about-desc">SalesBoardは、営業フリーランスのための案件紹介サービスです。豊富な案件からご希望にあった案件をご紹介。最短1週間でお仕事への参画が可能です。</div>
-                <div style={{marginBottom:24}}>
-                  <div style={{fontSize:13,fontWeight:700,color:"var(--ink)",marginBottom:12}}>こんな方におすすめ</div>
-                  {["他案件が落ち着いたので掛け持ちしたい","案件探しの負担を減らしたい","今より案件の単価を上げたい","スキルを広げたい・極めたい","独立に向けて経験を積みたい"].map(t=>(
-                    <div key={t} className="target-check">
-                      <div className="target-check-icon">✓</div>
-                      {t}
-                    </div>
-                  ))}
+          {/* マッチングまでの流れ — SOKUDANスタイルステップ */}
+          <div style={{background:"var(--paper)",borderTop:"1px solid var(--gray200)",borderBottom:"1px solid var(--gray200)",padding:"72px 40px"}}>
+            <div style={{textAlign:"center",marginBottom:52}}>
+              <div style={{fontSize:11,fontWeight:700,color:"var(--brand)",letterSpacing:"1.5px",textTransform:"uppercase",marginBottom:8}}>How it works</div>
+              <div style={{fontSize:28,fontWeight:900,color:"var(--ink)",letterSpacing:"-0.3px"}}>登録から稼働開始まで</div>
+              <div style={{fontSize:14,color:"var(--gray500)",marginTop:8}}>最短1週間でお仕事への参画が可能です</div>
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:24,maxWidth:860,margin:"0 auto"}}>
+              {[
+                {step:"1",title:"まずは基本情報を登録",badge:"たったの30秒",badgeColor:"#24A64A",desc:"FacebookやGoogleアカウントでもOK。メールアドレスだけで最短30秒で完了します。",icon:"📝",iconBg:"#EAF7EE"},
+                {step:"2",title:"職務経歴とスキルを入力",badge:"面談率UP",badgeColor:"#FF8A00",desc:"過去の実績・得意なスキルを入力。充実した情報で企業からオファーが来やすくなります。",icon:"💼",iconBg:"#FFF3E0"},
+                {step:"3",title:"希望案件へ応募",badge:"応募上限なし",badgeColor:"#24A64A",desc:"気になる案件に何件でも応募OK。担当エージェントがマッチングをサポートします。",icon:"🔍",iconBg:"#EAF7EE"},
+                {step:"4",title:"面談・契約・稼働スタート",badge:"即マッチング",badgeColor:"#2563eb",desc:"企業と面談し、条件が合えばそのまま契約。早ければ翌週から稼働スタートも可能です。",icon:"🚀",iconBg:"#eff4ff"},
+              ].map((s,i)=>(
+                <div key={i} style={{background:"var(--white)",borderRadius:14,border:"1px solid var(--gray200)",overflow:"hidden",display:"flex",gap:0,boxShadow:"0 2px 8px rgba(0,0,0,0.04)"}}>
+                  <div style={{background:s.iconBg,width:80,flexShrink:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:8,padding:"20px 0"}}>
+                    <div style={{width:36,height:36,borderRadius:"50%",background:"var(--brand)",color:"white",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Outfit',sans-serif",fontWeight:800,fontSize:16}}>{s.step}</div>
+                    <div style={{fontSize:28}}>{s.icon}</div>
+                  </div>
+                  <div style={{padding:"18px 20px",flex:1}}>
+                    <div style={{display:"inline-block",background:"var(--brand)",color:"white",fontSize:11,fontWeight:700,padding:"3px 10px",borderRadius:100,marginBottom:8}}>{s.badge}</div>
+                    <div style={{fontSize:15,fontWeight:700,color:"var(--ink)",marginBottom:6}}>{s.title}</div>
+                    <div style={{fontSize:13,color:"var(--gray500)",lineHeight:1.7}}>{s.desc}</div>
+                  </div>
                 </div>
-                <button className="btn-cta-primary" onClick={()=>setPage("register")}>無料で会員登録する →</button>
-              </div>
+              ))}
+            </div>
+            <div style={{textAlign:"center",marginTop:36}}>
+              <button className="btn-cta-primary" onClick={()=>setPage("register")}>無料で会員登録する →</button>
             </div>
           </div>
 
           {/* CASES */}
-          <div style={{background:"var(--paper)",borderTop:"1px solid var(--gray200)",borderBottom:"1px solid var(--gray200)"}}>
-            <div className="cases-section">
-              <div className="section-header">
+          <div style={{background:"var(--white)",padding:"72px 40px"}}>
+            <div style={{maxWidth:1060,margin:"0 auto"}}>
+              <div style={{marginBottom:36}}>
                 <div className="section-eyebrow">Case Examples</div>
                 <div className="section-title">ご紹介案件例</div>
                 <div className="section-subtitle">高単価・リモート・フレックスなど、希望に合った案件をご紹介します</div>
               </div>
               <div className="cases-grid">
                 {displayJobs.map(job=>(
-                  <div key={job.id} className="case-card" onClick={()=>setPage("login")}>
+                  <div key={job.id} className="case-card" onClick={()=>setPage("register")}>
                     <div className="case-card-banner">
                       <div className="case-card-top">
                         {job.tags.slice(0,2).map(t=><span key={t} className="case-industry">{t}</span>)}
@@ -1054,11 +1078,175 @@ export default function App() {
                   </div>
                 ))}
               </div>
-              <div className="cases-cta">
-                <div className="cases-cta-title">他にも多数の案件を掲載中</div>
-                <div className="cases-cta-sub">無料登録後、すべての案件にアクセスできます</div>
+              <div className="cases-cta" style={{marginTop:32}}>
+                <div className="cases-cta-title">登録後すべての案件が閲覧できます</div>
+                <div className="cases-cta-sub">無料・1分で登録完了</div>
                 <button className="btn-cta-primary" onClick={()=>setPage("register")}>無料で会員登録して案件を見る →</button>
               </div>
+            </div>
+          </div>
+
+          {/* 他社比較テーブル */}
+          <div style={{background:"var(--paper)",borderTop:"1px solid var(--gray200)",padding:"72px 40px"}}>
+            <div style={{maxWidth:800,margin:"0 auto"}}>
+              <div style={{textAlign:"center",marginBottom:40}}>
+                <div className="section-eyebrow">Comparison</div>
+                <div className="section-title">他社サービスとの比較</div>
+              </div>
+              <div style={{background:"var(--white)",borderRadius:14,border:"1px solid var(--gray200)",overflow:"hidden",boxShadow:"0 2px 12px rgba(0,0,0,0.05)"}}>
+                <table style={{width:"100%",borderCollapse:"collapse"}}>
+                  <thead>
+                    <tr style={{background:"var(--brand)"}}>
+                      <th style={{padding:"16px 20px",textAlign:"left",fontSize:14,fontWeight:700,color:"white",width:"34%"}}>比較項目</th>
+                      <th style={{padding:"16px 20px",textAlign:"center",fontSize:15,fontWeight:800,color:"white",width:"22%",background:"rgba(0,0,0,0.15)"}}>SalesBoard</th>
+                      <th style={{padding:"16px 20px",textAlign:"center",fontSize:14,fontWeight:700,color:"rgba(255,255,255,0.8)",width:"22%"}}>A社</th>
+                      <th style={{padding:"16px 20px",textAlign:"center",fontSize:14,fontWeight:700,color:"rgba(255,255,255,0.8)",width:"22%"}}>B社</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      ["営業特化",true,false,false],
+                      ["フルリモート案件",true,true,false],
+                      ["高単価案件（月60万〜）",true,true,false],
+                      ["週2日〜の副業案件",true,false,true],
+                      ["担当エージェントサポート",true,false,false],
+                      ["登録・利用料無料",true,true,true],
+                    ].map(([label,sb,a,b],i)=>(
+                      <tr key={i} style={{background:i%2===0?"var(--white)":"var(--gray50)",borderBottom:"1px solid var(--gray200)"}}>
+                        <td style={{padding:"14px 20px",fontSize:14,fontWeight:600,color:"var(--ink)"}}>{label}</td>
+                        <td style={{padding:"14px 20px",textAlign:"center",background:i%2===0?"rgba(36,166,74,0.04)":"rgba(36,166,74,0.08)"}}><span style={{fontSize:18,color:sb?"var(--brand)":"var(--gray300)"}}>{sb?"✓":"✕"}</span></td>
+                        <td style={{padding:"14px 20px",textAlign:"center"}}><span style={{fontSize:16,color:a?"var(--gray500)":"var(--gray300)"}}>{a?"○":"✕"}</span></td>
+                        <td style={{padding:"14px 20px",textAlign:"center"}}><span style={{fontSize:16,color:b?"var(--gray500)":"var(--gray300)"}}>{b?"○":"✕"}</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div className="landing-footer">
+            <div className="footer-logo">SalesBoard</div>
+            <div className="footer-links">
+              <span style={{cursor:"pointer",color:"rgba(255,255,255,0.6)"}} onClick={()=>setPage("consultation")}>採用担当者様・案件掲載相談</span>
+              <span style={{cursor:"pointer",color:"rgba(255,255,255,0.6)"}} onClick={()=>setPage("login")}>ログイン</span>
+              <span style={{cursor:"pointer",color:"rgba(255,255,255,0.6)"}} onClick={()=>setPage("register")}>新規登録</span>
+            </div>
+            <div>© 2026 SalesBoard. All rights reserved.</div>
+          </div>
+        </div>
+        {toast && <div className="toast">{toast}</div>}
+      </>
+    );
+  }
+
+
+  // CONSULTATION PAGE（案件掲載相談）
+  if (page === "consultation") {
+    return (
+      <>
+        <style>{css}</style>
+        <div className="consult-page">
+          {/* NAV */}
+          <nav className="landing-nav">
+            <div className="logo" onClick={()=>setPage("landing")}><div className="logo-mark">S</div>SalesBoard</div>
+            <div style={{display:"flex",alignItems:"center",gap:16}}>
+              <span style={{fontSize:13,color:"var(--gray700)",cursor:"pointer",fontWeight:600}} onClick={()=>setPage("login")}>案件を探す（求職者）</span>
+              <button className="btn-ghost" onClick={()=>setPage("login")}>ログイン</button>
+              <button className="btn-accent" onClick={()=>setPage("register")}>無料登録</button>
+            </div>
+          </nav>
+
+          {/* HERO */}
+          <div className="consult-hero">
+            <div style={{display:"inline-flex",alignItems:"center",gap:6,fontSize:12,fontWeight:700,color:"var(--brand)",background:"var(--brand-soft)",padding:"5px 14px",borderRadius:100,marginBottom:16}}>採用担当者様向け</div>
+            <h1 style={{fontSize:38,fontWeight:900,color:"var(--ink)",lineHeight:1.35,marginBottom:16,letterSpacing:"-0.5px"}}>優秀な営業フリーランスと<br/><span style={{color:"var(--brand)"}}>マッチングしませんか？</span></h1>
+            <p style={{fontSize:15,color:"var(--gray500)",lineHeight:1.9,maxWidth:540,margin:"0 auto 32px"}}>SalesBoardには即戦力の営業フリーランスが多数登録しています。<br/>まずはお気軽にご相談ください。担当者より1営業日以内にご連絡します。</p>
+            {/* 3つのポイント */}
+            <div style={{display:"flex",gap:24,justifyContent:"center",flexWrap:"wrap",marginTop:8}}>
+              {[
+                {icon:"⚡",text:"最短1週間で稼働開始"},
+                {icon:"💼",text:"即戦力の営業プロのみ"},
+                {icon:"✉️",text:"相談・掲載費用は無料"},
+              ].map((p,i)=>(
+                <div key={i} style={{display:"flex",alignItems:"center",gap:8,background:"var(--brand-soft)",border:"1px solid var(--brand-mid)",borderRadius:100,padding:"8px 18px",fontSize:14,fontWeight:600,color:"var(--brand-dark)"}}>
+                  <span>{p.icon}</span><span>{p.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* FORM */}
+          <div className="consult-form-wrap">
+            <div className="consult-card">
+              <h2 style={{fontSize:22,fontWeight:800,color:"var(--ink)",marginBottom:6}}>案件掲載・相談フォーム</h2>
+              <p style={{fontSize:13,color:"var(--gray500)",marginBottom:28,lineHeight:1.7}}>以下のフォームにご記入いただくか、直接メールにてお問い合わせください。<br/>
+                <a href="mailto:info@jcon.co.jp" style={{color:"var(--brand)",fontWeight:700}}>info@jcon.co.jp</a>
+              </p>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
+                <div className="form-group" style={{marginBottom:0}}>
+                  <label className="form-label">会社名 <span className="req">*</span></label>
+                  <input className="form-input" placeholder="株式会社〇〇" />
+                </div>
+                <div className="form-group" style={{marginBottom:0}}>
+                  <label className="form-label">ご担当者名 <span className="req">*</span></label>
+                  <input className="form-input" placeholder="山田 太郎" />
+                </div>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
+                <div className="form-group" style={{marginBottom:0}}>
+                  <label className="form-label">メールアドレス <span className="req">*</span></label>
+                  <input className="form-input" type="email" placeholder="taro@example.com" />
+                </div>
+                <div className="form-group" style={{marginBottom:0}}>
+                  <label className="form-label">電話番号</label>
+                  <input className="form-input" placeholder="03-0000-0000" />
+                </div>
+              </div>
+              <div className="form-group">
+                <label className="form-label">募集したい営業の種類</label>
+                <select className="form-select">
+                  <option value="">選択してください</option>
+                  {["新規開拓営業","ルート営業","インサイドセールス","カスタマーサクセス","営業マネージャー","その他"].map(v=><option key={v} value={v}>{v}</option>)}
+                </select>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
+                <div className="form-group" style={{marginBottom:0}}>
+                  <label className="form-label">募集人数</label>
+                  <select className="form-select">
+                    <option value="">選択してください</option>
+                    {["1名","2〜3名","4〜5名","5名以上","未定"].map(v=><option key={v} value={v}>{v}</option>)}
+                  </select>
+                </div>
+                <div className="form-group" style={{marginBottom:0}}>
+                  <label className="form-label">想定予算（月額）</label>
+                  <select className="form-select">
+                    <option value="">選択してください</option>
+                    {["〜30万円","30〜50万円","50〜80万円","80万円以上","応相談"].map(v=><option key={v} value={v}>{v}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div className="form-group">
+                <label className="form-label">その他・ご要望</label>
+                <textarea className="form-input" rows={4} placeholder="業種、必要なスキル、稼働条件など、ご自由にご記入ください" style={{resize:"vertical",lineHeight:1.7}} />
+              </div>
+              <button className="btn-submit" onClick={()=>{showToast("お問い合わせを受け付けました。担当者より1営業日以内にご連絡します。");setPage("landing");}}>
+                送信する（無料）
+              </button>
+              <p style={{fontSize:12,color:"var(--gray400)",textAlign:"center",marginTop:16}}>送信後、担当者より1営業日以内にご連絡いたします。</p>
+            </div>
+
+            {/* 実績紹介 */}
+            <div style={{marginTop:32,background:"var(--white)",borderRadius:14,border:"1px solid var(--gray200)",padding:"28px 32px",boxShadow:"var(--shadow-sm)"}}>
+              <div style={{fontSize:13,fontWeight:700,color:"var(--brand)",marginBottom:12}}>SalesBoardが選ばれる理由</div>
+              {[
+                "✅ 即戦力の営業フリーランスが多数登録",
+                "✅ 案件掲載・初期費用は完全無料",
+                "✅ 営業特化のため的確なマッチングが可能",
+                "✅ 担当エージェントが採用まで一貫サポート",
+              ].map((t,i)=>(
+                <div key={i} style={{fontSize:14,color:"var(--gray700)",padding:"8px 0",borderBottom:i<3?"1px solid var(--gray200)":"none"}}>{t}</div>
+              ))}
             </div>
           </div>
 
@@ -1071,7 +1259,6 @@ export default function App() {
       </>
     );
   }
-
 
   // REGISTER
   if (page === "register") {
