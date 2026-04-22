@@ -418,270 +418,296 @@ export default function App() {
   const css = `
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700;900&family=Outfit:wght@300;400;500;600;700;800&display=swap');
     :root {
-      --ink:#1a1a2e; --paper:#fafaf7; --accent:#e8530e; --accent2:#ff7b3a;
-      --green:#0d9f6e; --green-soft:#e6f7f0; --blue:#2563eb; --blue-soft:#eff4ff;
-      --purple:#7c3aed; --purple-soft:#f3eeff; --red:#dc2626; --red-soft:#fef2f2;
-      --gray100:#f5f5f0; --gray200:#e8e8e0; --gray300:#d4d4c8; --gray500:#8a8a7a; --gray700:#4a4a3e;
-      --shadow-sm:0 1px 3px rgba(26,26,46,0.06); --shadow-md:0 4px 16px rgba(26,26,46,0.08);
-      --shadow-lg:0 8px 32px rgba(26,26,46,0.12); --shadow-xl:0 16px 48px rgba(26,26,46,0.16);
+      --ink:#1a1a2e; --paper:#F5F5F0; --white:#FFFFFF;
+      --brand:#24A64A; --brand-dark:#1a7a36; --brand-soft:#EAF7EE; --brand-mid:#DCF3E3;
+      --orange:#FF8A00; --orange-dark:#e07a00; --orange-soft:#FFF3E0;
+      --green:#0d9f6e; --green-soft:#e6f7f0;
+      --blue:#2563eb; --blue-soft:#eff4ff;
+      --purple:#7c3aed; --purple-soft:#f3eeff;
+      --red:#dc2626; --red-soft:#fef2f2;
+      --gray50:#FAFAFA; --gray100:#F5F5F0; --gray200:#E8E8E0; --gray300:#D4D4C8;
+      --gray400:#BABAB0; --gray500:#8a8a7a; --gray700:#4a4a3e; --gray900:#1a1a2e;
+      --shadow-sm:0 1px 4px rgba(0,0,0,0.04); --shadow-md:0 2px 12px rgba(0,0,0,0.06);
+      --shadow-lg:0 4px 24px rgba(0,0,0,0.08); --shadow-xl:0 8px 40px rgba(0,0,0,0.12);
+      --radius-sm:6px; --radius-md:10px; --radius-lg:14px; --radius-xl:20px;
     }
     *{margin:0;padding:0;box-sizing:border-box;}
-    body{font-family:'Noto Sans JP',sans-serif;background:var(--paper);color:var(--ink);}
+    body{font-family:'Noto Sans JP',sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;}
 
     /* NAV */
-    .landing-nav{display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:68px;background:white;border-bottom:1px solid var(--gray200);position:sticky;top:0;z-index:100;}
-    .logo{font-family:'Outfit',sans-serif;font-weight:800;font-size:22px;color:var(--ink);display:flex;align-items:center;gap:10px;cursor:pointer;}
-    .logo-mark{width:34px;height:34px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:white;}
+    .landing-nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:72px;background:var(--white);border-bottom:1px solid var(--gray200);position:sticky;top:0;z-index:100;}
+    .logo{font-family:'Outfit',sans-serif;font-weight:800;font-size:20px;color:var(--ink);display:flex;align-items:center;gap:10px;cursor:pointer;letter-spacing:-0.3px;}
+    .logo-mark{width:32px;height:32px;background:var(--brand);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:white;}
     .nav-btns{display:flex;gap:10px;align-items:center;}
-    .btn-ghost{padding:10px 24px;border-radius:100px;background:white;border:2px solid var(--gray200);color:var(--ink);font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;}
-    .btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
-    .btn-accent{padding:10px 24px;border-radius:100px;background:var(--accent);border:none;color:white;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(232,83,14,0.35);transition:all 0.25s;}
-    .btn-accent:hover{background:var(--accent2);transform:translateY(-1px);}
+    .btn-ghost{padding:9px 22px;border-radius:100px;background:var(--white);border:1.5px solid var(--gray300);color:var(--gray700);font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+    .btn-ghost:hover{border-color:var(--brand);color:var(--brand);}
+    .btn-accent{padding:10px 22px;border-radius:100px;background:var(--orange);border:none;color:white;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+    .btn-accent:hover{background:var(--orange-dark);transform:translateY(-1px);}
 
     /* HERO */
-    .hero-section{position:relative;min-height:560px;display:flex;align-items:center;overflow:hidden;background:white;}
-    .hero-blob{position:absolute;top:0;right:0;width:58%;height:100%;pointer-events:none;}
-    .hero-left{position:relative;z-index:2;padding:72px 0 72px 64px;max-width:520px;}
-    .hero-right{position:absolute;right:0;top:0;width:58%;height:100%;display:flex;align-items:center;justify-content:center;z-index:2;pointer-events:none;}
-    .hero-eyebrow{font-size:13px;font-weight:600;color:var(--accent);margin-bottom:20px;display:flex;align-items:center;gap:6px;}
-    .hero-eyebrow::before{content:'●';font-size:8px;}
-    .hero h1{font-family:'Noto Sans JP',sans-serif;font-size:38px;font-weight:900;color:var(--ink);line-height:1.4;letter-spacing:-1px;margin-bottom:20px;}
-    .hero h1 .accent-line{display:flex;align-items:baseline;gap:4px;flex-wrap:wrap;font-size:44px;color:var(--ink);}
-    .hero h1 .accent-line .num{font-family:'Outfit',sans-serif;font-size:64px;font-weight:800;color:var(--accent);}
-    .hero p{font-size:15px;color:var(--gray500);line-height:1.9;margin-bottom:32px;max-width:420px;}
-    .hero-tags{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:36px;}
-    .hero-tag{display:flex;flex-direction:column;align-items:center;gap:8px;width:90px;}
-    .hero-tag-icon{width:56px;height:56px;border-radius:50%;background:#2B4E8C;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;}
-    .hero-tag-label{font-size:12px;font-weight:600;color:var(--ink);}
-    .cta-buttons{display:flex;gap:14px;flex-wrap:wrap;align-items:center;}
-    .btn-cta-primary{padding:17px 44px;border-radius:100px;background:var(--accent);border:none;color:white;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 8px 28px rgba(232,83,14,0.45);transition:all 0.3s;}
-    .btn-cta-primary:hover{background:var(--accent2);transform:translateY(-3px);}
-    .btn-cta-secondary{padding:15px 40px;border-radius:100px;background:white;border:2px solid var(--gray300);color:var(--ink);font-size:16px;font-weight:600;cursor:pointer;transition:all 0.2s;}
-    .btn-cta-secondary:hover{border-color:var(--accent);color:var(--accent);}
+    .hero-section{position:relative;min-height:520px;display:flex;align-items:center;overflow:hidden;background:var(--white);}
+    .hero-bg-shape{position:absolute;top:0;right:0;width:52%;height:100%;background:linear-gradient(135deg,#EAF7EE 0%,#DCF3E3 50%,#EAF7EE 100%);clip-path:polygon(8% 0%,100% 0%,100% 100%,0% 100%);pointer-events:none;}
+    .hero-left{position:relative;z-index:2;padding:64px 0 64px 60px;max-width:520px;}
+    .hero-right{position:absolute;right:0;top:0;width:52%;height:100%;display:flex;align-items:center;justify-content:center;z-index:2;pointer-events:none;}
+    .hero-eyebrow{font-size:12px;font-weight:700;color:var(--brand);margin-bottom:18px;display:inline-flex;align-items:center;gap:6px;background:var(--brand-soft);padding:5px 14px;border-radius:100px;}
+    .hero h1{font-family:'Noto Sans JP',sans-serif;font-size:36px;font-weight:900;color:var(--ink);line-height:1.45;letter-spacing:-0.5px;margin-bottom:16px;}
+    .hero h1 .highlight{color:var(--orange);}
+    .hero p{font-size:15px;color:var(--gray500);line-height:1.9;margin-bottom:28px;max-width:420px;}
+    .hero-stats{display:flex;gap:24px;margin-bottom:32px;}
+    .hero-stat{display:flex;flex-direction:column;gap:2px;}
+    .hero-stat-num{font-family:'Outfit',sans-serif;font-size:28px;font-weight:800;color:var(--orange);line-height:1;}
+    .hero-stat-label{font-size:11px;color:var(--gray500);font-weight:500;}
+    .hero-stat-divider{width:1px;background:var(--gray200);}
+    .cta-buttons{display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
+    .btn-cta-primary{padding:15px 36px;border-radius:100px;background:var(--orange);border:none;color:white;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(255,138,0,0.35);transition:all 0.2s;}
+    .btn-cta-primary:hover{background:var(--orange-dark);transform:translateY(-2px);}
+    .btn-cta-secondary{padding:13px 30px;border-radius:100px;background:var(--white);border:2px solid var(--brand);color:var(--brand);font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+    .btn-cta-secondary:hover{background:var(--brand-soft);}
+
+    /* CATEGORY BANNERS */
+    .category-banners{max-width:1100px;margin:0 auto;padding:32px 40px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+    .cat-banner{background:var(--white);border:2.5px solid var(--brand);border-radius:var(--radius-lg);padding:18px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.2s;}
+    .cat-banner:hover{background:var(--brand-soft);transform:translateY(-2px);box-shadow:var(--shadow-md);}
+    .cat-banner-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+    .cat-banner-text{flex:1;}
+    .cat-banner-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px;}
+    .cat-banner-sub{font-size:11px;color:var(--gray500);}
 
     /* FEATURES */
     .features-section{background:var(--gray100);border-top:1px solid var(--gray200);border-bottom:1px solid var(--gray200);}
     .features-strip{display:grid;grid-template-columns:repeat(4,1fr);max-width:1100px;margin:0 auto;}
-    .feature-item{padding:36px 28px;text-align:center;border-right:1px solid var(--gray200);transition:background 0.2s;}
+    .feature-item{padding:32px 24px;text-align:center;border-right:1px solid var(--gray200);transition:background 0.2s;}
     .feature-item:last-child{border-right:none;}
-    .feature-item:hover{background:white;}
-    .feature-icon{font-size:28px;margin-bottom:12px;}
-    .feature-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+    .feature-item:hover{background:var(--white);}
+    .feature-icon{font-size:26px;margin-bottom:10px;}
+    .feature-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:5px;}
     .feature-desc{font-size:12px;color:var(--gray500);line-height:1.6;}
 
     /* ABOUT */
     .about-section{padding:80px 64px;display:flex;align-items:center;gap:72px;max-width:1100px;margin:0 auto;}
-    .about-illo{flex:0 0 380px;}
+    .about-illo{flex:0 0 360px;}
     .about-illo img{width:100%;}
     .about-text{flex:1;}
-    .about-eyebrow{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--gray500);margin-bottom:20px;}
-    .about-eyebrow::before{content:'—';color:var(--gray300);}
-    .about-title{font-size:32px;font-weight:900;color:var(--ink);line-height:1.3;margin-bottom:20px;letter-spacing:-0.5px;}
-    .about-desc{font-size:15px;color:var(--gray700);line-height:1.9;margin-bottom:32px;}
-    .target-check{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--gray700);margin-bottom:10px;}
-    .target-check::before{content:'✅';font-size:14px;}
+    .about-eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--brand);background:var(--brand-soft);padding:5px 14px;border-radius:100px;margin-bottom:20px;}
+    .about-title{font-size:30px;font-weight:900;color:var(--ink);line-height:1.35;margin-bottom:18px;letter-spacing:-0.5px;}
+    .about-desc{font-size:15px;color:var(--gray700);line-height:1.9;margin-bottom:28px;}
+    .target-check{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--gray700);margin-bottom:10px;}
+    .target-check-icon{width:20px;height:20px;border-radius:50%;background:var(--brand-soft);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;}
 
     /* CASES */
-    .cases-section{max-width:1100px;margin:0 auto;padding:72px 48px;}
-    .section-eyebrow{font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
-    .section-title{font-size:28px;font-weight:900;color:var(--ink);letter-spacing:-0.5px;margin-bottom:10px;}
-    .section-subtitle{font-size:14px;color:var(--gray500);line-height:1.7;margin-bottom:40px;}
-    .cases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:36px;}
-    .case-card{background:white;border-radius:16px;border:1px solid var(--gray200);padding:28px 24px;box-shadow:var(--shadow-sm);transition:all 0.25s;cursor:pointer;}
-    .case-card:hover{box-shadow:var(--shadow-md);transform:translateY(-3px);border-color:rgba(232,83,14,0.2);}
-    .case-card-top{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
-    .case-industry{font-size:11px;font-weight:600;color:var(--blue);background:var(--blue-soft);padding:4px 12px;border-radius:100px;}
-    .case-type-badge{font-size:11px;font-weight:600;color:var(--purple);background:var(--purple-soft);padding:4px 12px;border-radius:100px;}
-    .case-title{font-size:16px;font-weight:700;color:var(--ink);line-height:1.5;margin-bottom:20px;}
-    .case-detail-row{display:flex;gap:0;margin-bottom:16px;border:1px solid var(--gray200);border-radius:10px;overflow:hidden;}
-    .case-detail-item{flex:1;padding:10px 14px;border-right:1px solid var(--gray200);}
+    .cases-section{max-width:1100px;margin:0 auto;padding:64px 40px;}
+    .section-header{margin-bottom:36px;}
+    .section-eyebrow{font-size:11px;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;}
+    .section-title{font-size:26px;font-weight:900;color:var(--ink);letter-spacing:-0.3px;margin-bottom:8px;}
+    .section-subtitle{font-size:14px;color:var(--gray500);line-height:1.7;}
+    .cases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:32px;}
+    .case-card{background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--gray200);padding:0;box-shadow:var(--shadow-sm);transition:all 0.25s;cursor:pointer;overflow:hidden;}
+    .case-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px);border-color:var(--brand);}
+    .case-card-banner{background:linear-gradient(135deg,var(--brand-soft) 0%,var(--brand-mid) 100%);padding:18px 20px 14px;border-bottom:1px solid var(--brand-mid);}
+    .case-card-body{padding:20px;}
+    .case-card-top{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+    .case-industry{font-size:11px;font-weight:600;color:var(--brand-dark);background:var(--brand-soft);padding:3px 10px;border-radius:100px;border:1px solid var(--brand-mid);}
+    .case-type-badge{font-size:11px;font-weight:600;color:var(--orange);background:var(--orange-soft);padding:3px 10px;border-radius:100px;}
+    .case-title{font-size:15px;font-weight:700;color:var(--ink);line-height:1.5;margin-bottom:0;}
+    .case-detail-row{display:flex;gap:0;margin:14px 0;border:1px solid var(--brand-mid);border-radius:var(--radius-md);overflow:hidden;}
+    .case-detail-item{flex:1;padding:10px 12px;border-right:1px solid var(--brand-mid);background:var(--white);}
     .case-detail-item:last-child{border-right:none;}
-    .case-detail-label{font-size:10px;font-weight:700;color:var(--gray500);margin-bottom:4px;}
-    .case-detail-value{font-size:13px;font-weight:700;color:var(--ink);}
-    .case-detail-value.rate{color:var(--red);}
-    .case-section-label{font-size:11px;font-weight:700;color:var(--gray700);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;margin-top:14px;}
-    .case-desc{font-size:13px;color:var(--gray700);line-height:1.7;}
-    .case-skills{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
-    .case-skill{font-size:11px;padding:4px 10px;border-radius:100px;background:var(--gray100);color:var(--gray700);border:1px solid var(--gray200);font-weight:500;}
-    .case-divider{height:1px;background:var(--gray200);margin:14px 0;}
-    .cases-cta{text-align:center;padding:40px;background:linear-gradient(135deg,#fff5f0 0%,#fff8f5 100%);border-radius:20px;border:1px solid rgba(232,83,14,0.12);}
+    .case-detail-label{font-size:10px;font-weight:700;color:var(--brand-dark);margin-bottom:3px;}
+    .case-detail-value{font-size:12px;font-weight:700;color:var(--ink);}
+    .case-detail-value.rate{color:var(--orange);}
+    .case-section-label{font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:0.5px;margin-bottom:5px;margin-top:12px;}
+    .case-desc{font-size:12px;color:var(--gray700);line-height:1.7;}
+    .case-skills{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px;}
+    .case-skill{font-size:11px;padding:3px 9px;border-radius:100px;background:var(--gray100);color:var(--gray700);border:1px solid var(--gray200);font-weight:500;}
+    .case-divider{height:1px;background:var(--gray200);margin:12px 0;}
+    .cases-cta{text-align:center;padding:40px;background:linear-gradient(135deg,var(--brand-soft) 0%,#f0fff4 100%);border-radius:var(--radius-xl);border:1.5px solid var(--brand-mid);}
     .cases-cta-title{font-size:20px;font-weight:700;color:var(--ink);margin-bottom:8px;}
     .cases-cta-sub{font-size:14px;color:var(--gray500);margin-bottom:24px;}
-    .landing-footer{background:var(--ink);color:rgba(255,255,255,0.5);text-align:center;padding:32px 48px;font-size:13px;}
-    .landing-footer .footer-logo{font-family:'Outfit',sans-serif;font-weight:800;color:white;font-size:18px;margin-bottom:12px;}
+    .landing-footer{background:var(--ink);color:rgba(255,255,255,0.45);text-align:center;padding:36px 48px;font-size:13px;}
+    .landing-footer .footer-logo{font-family:'Outfit',sans-serif;font-weight:800;color:white;font-size:18px;margin-bottom:10px;}
 
     /* AUTH */
-    .auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--gray100) 0%,var(--paper) 100%);padding:40px 20px;}
-    .auth-card{width:100%;max-width:480px;background:white;border-radius:20px;padding:48px 40px;box-shadow:var(--shadow-xl);position:relative;}
-    .auth-card::before{content:'';position:absolute;top:0;left:32px;right:32px;height:4px;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:0 0 4px 4px;}
+    .auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--paper);padding:40px 20px;}
+    .auth-card{width:100%;max-width:480px;background:var(--white);border-radius:var(--radius-xl);padding:48px 40px;box-shadow:var(--shadow-xl);position:relative;border:1px solid var(--gray200);}
+    .auth-card::before{content:'';position:absolute;top:0;left:32px;right:32px;height:3px;background:linear-gradient(90deg,var(--brand),var(--orange));border-radius:0 0 4px 4px;}
     .auth-back{font-size:13px;color:var(--gray500);cursor:pointer;display:flex;align-items:center;gap:4px;margin-bottom:24px;}
     .auth-card h2{font-size:26px;font-weight:700;margin-bottom:8px;}
     .auth-card .subtitle{font-size:14px;color:var(--gray500);margin-bottom:32px;}
-    .form-group{margin-bottom:20px;}
-    .form-label{display:block;font-size:13px;font-weight:600;color:var(--gray700);margin-bottom:6px;}
+    .form-group{margin-bottom:18px;}
+    .form-label{display:block;font-size:13px;font-weight:600;color:var(--gray700);margin-bottom:5px;}
     .form-label .req{color:var(--red);margin-left:2px;}
-    .form-input{width:100%;padding:12px 16px;border:1.5px solid var(--gray200);border-radius:10px;font-size:15px;font-family:'Noto Sans JP',sans-serif;background:var(--gray100);transition:all 0.2s;outline:none;}
-    .form-input:focus{border-color:var(--accent);background:white;box-shadow:0 0 0 3px rgba(232,83,14,0.08);}
-    .form-select{width:100%;padding:12px 16px;border:1.5px solid var(--gray200);border-radius:10px;font-size:15px;font-family:'Noto Sans JP',sans-serif;background:var(--gray100);outline:none;cursor:pointer;}
-    .chip-group{display:flex;flex-wrap:wrap;gap:8px;}
-    .chip{padding:6px 14px;border-radius:100px;font-size:13px;cursor:pointer;border:1.5px solid var(--gray200);background:white;transition:all 0.15s;user-select:none;}
-    .chip.active{background:var(--accent);color:white;border-color:var(--accent);}
-    .btn-submit{width:100%;padding:14px;border-radius:10px;background:var(--accent);border:none;color:white;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.25s;margin-top:8px;}
-    .btn-submit:hover{background:var(--accent2);transform:translateY(-1px);}
+    .form-input{width:100%;padding:12px 16px;border:1.5px solid var(--gray200);border-radius:var(--radius-md);font-size:14px;font-family:'Noto Sans JP',sans-serif;background:var(--gray100);transition:all 0.2s;outline:none;}
+    .form-input:focus{border-color:var(--brand);background:var(--white);box-shadow:0 0 0 3px rgba(36,166,74,0.1);}
+    .form-select{width:100%;padding:12px 16px;border:1.5px solid var(--gray200);border-radius:var(--radius-md);font-size:14px;font-family:'Noto Sans JP',sans-serif;background:var(--gray100);outline:none;cursor:pointer;}
+    .chip-group{display:flex;flex-wrap:wrap;gap:7px;}
+    .chip{padding:5px 13px;border-radius:100px;font-size:12px;cursor:pointer;border:1.5px solid var(--gray200);background:var(--white);transition:all 0.15s;user-select:none;color:var(--gray700);}
+    .chip.active{background:var(--brand);color:white;border-color:var(--brand);}
+    .btn-submit{width:100%;padding:14px;border-radius:var(--radius-md);background:var(--orange);border:none;color:white;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:8px;}
+    .btn-submit:hover{background:var(--orange-dark);transform:translateY(-1px);}
     .auth-switch{text-align:center;margin-top:24px;font-size:13px;color:var(--gray500);}
-    .auth-switch span{color:var(--accent);font-weight:600;cursor:pointer;}
-    .error-box{background:#fef2f2;color:#dc2626;padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:16px;border:1px solid #fecaca;}
+    .auth-switch span{color:var(--brand);font-weight:600;cursor:pointer;}
+    .error-box{background:#fef2f2;color:#dc2626;padding:12px 16px;border-radius:var(--radius-sm);font-size:13px;margin-bottom:16px;border:1px solid #fecaca;}
 
     /* DASHBOARD */
-    .dashboard{min-height:100vh;background:var(--gray100);}
-    .dash-nav{background:white;border-bottom:1px solid var(--gray200);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
-    .dash-nav-right{display:flex;align-items:center;gap:20px;}
-    .user-pill{display:flex;align-items:center;gap:10px;padding:6px 16px 6px 6px;border-radius:100px;background:var(--gray100);cursor:pointer;transition:background 0.2s;position:relative;}
+    .dashboard{min-height:100vh;background:var(--paper);}
+    .dash-nav{background:var(--white);border-bottom:1px solid var(--gray200);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+    .dash-nav-right{display:flex;align-items:center;gap:16px;}
+    .user-pill{display:flex;align-items:center;gap:8px;padding:5px 14px 5px 5px;border-radius:100px;background:var(--gray100);cursor:pointer;transition:background 0.2s;position:relative;}
     .user-pill:hover{background:var(--gray200);}
-    .user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
+    .user-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--brand),var(--orange));color:white;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
     .user-name{font-size:14px;font-weight:500;}
-    .dropdown{position:absolute;top:48px;right:0;background:white;border-radius:12px;box-shadow:var(--shadow-lg);overflow:hidden;min-width:180px;border:1px solid var(--gray200);}
+    .dropdown{position:absolute;top:46px;right:0;background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);overflow:hidden;min-width:180px;border:1px solid var(--gray200);}
     .dropdown-item{padding:12px 20px;font-size:14px;cursor:pointer;transition:background 0.15s;}
     .dropdown-item:hover{background:var(--gray100);}
     .dropdown-item.danger{color:var(--red);}
-    .dropdown-item.admin-link{color:var(--accent);font-weight:700;}
-    .applied-count{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;background:var(--green-soft);color:var(--green);font-size:13px;font-weight:600;}
-    .dash-tabs{display:flex;gap:0;background:white;border-bottom:1px solid var(--gray200);padding:0 32px;}
+    .dropdown-item.admin-link{color:var(--brand);font-weight:700;}
+    .applied-count{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;background:var(--brand-soft);color:var(--brand-dark);font-size:13px;font-weight:600;}
+    .dash-tabs{display:flex;gap:0;background:var(--white);border-bottom:1px solid var(--gray200);padding:0 32px;}
     .dash-tab{padding:14px 20px;font-size:14px;font-weight:600;color:var(--gray500);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;}
-    .dash-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
-    .dash-body{display:flex;max-width:1280px;margin:0 auto;padding:28px 32px;gap:28px;}
-    .sidebar{width:280px;flex-shrink:0;background:white;border-radius:16px;padding:24px;box-shadow:var(--shadow-sm);height:fit-content;position:sticky;top:92px;border:1px solid var(--gray200);}
-    .sidebar h3{font-size:16px;font-weight:700;margin-bottom:20px;}
-    .filter-section{margin-bottom:24px;}
-    .filter-title{font-size:13px;font-weight:600;color:var(--gray500);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;}
-    .filter-toggle{display:flex;align-items:center;gap:10px;padding:8px 4px;cursor:pointer;transition:all 0.15s;}
-    .toggle-box{width:18px;height:18px;border-radius:4px;border:2px solid var(--gray300);display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
-    .toggle-box.active{background:var(--accent);border-color:var(--accent);}
-    .toggle-label{font-size:14px;color:var(--gray700);}
-    .clear-filters{font-size:13px;color:var(--accent);cursor:pointer;font-weight:600;padding:8px 0;}
-    .main-content{flex:1;}
-    .search-bar{background:white;border-radius:12px;padding:14px 20px;box-shadow:var(--shadow-sm);border:1px solid var(--gray200);display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+    .dash-tab.active{color:var(--brand);border-bottom-color:var(--brand);}
+    .dash-body{display:flex;max-width:1280px;margin:0 auto;padding:24px 32px;gap:24px;}
+    .sidebar{width:260px;flex-shrink:0;background:var(--white);border-radius:var(--radius-lg);padding:22px;box-shadow:var(--shadow-sm);height:fit-content;position:sticky;top:88px;border:1px solid var(--gray200);}
+    .sidebar h3{font-size:15px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:8px;}
+    .filter-section{margin-bottom:22px;}
+    .filter-title{font-size:12px;font-weight:700;color:var(--gray500);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;}
+    .filter-toggle{display:flex;align-items:center;gap:10px;padding:7px 4px;cursor:pointer;border-radius:6px;transition:all 0.15s;}
+    .filter-toggle:hover{background:var(--gray100);}
+    .toggle-box{width:17px;height:17px;border-radius:4px;border:2px solid var(--gray300);display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0;}
+    .toggle-box.active{background:var(--brand);border-color:var(--brand);}
+    .toggle-label{font-size:13px;color:var(--gray700);}
+    .clear-filters{font-size:12px;color:var(--brand);cursor:pointer;font-weight:600;padding:8px 4px;}
+    .main-content{flex:1;min-width:0;}
+    .search-bar{background:var(--white);border-radius:var(--radius-lg);padding:14px 20px;box-shadow:var(--shadow-sm);border:1px solid var(--gray200);display:flex;align-items:center;gap:12px;margin-bottom:14px;transition:border-color 0.2s;}
+    .search-bar:focus-within{border-color:var(--brand);}
     .search-input-wrap{display:flex;align-items:center;gap:10px;flex:1;}
-    .search-input{border:none;outline:none;font-size:15px;font-family:'Noto Sans JP',sans-serif;flex:1;background:transparent;}
-    .result-count{font-size:14px;color:var(--gray500);margin-bottom:16px;}
-    .job-list{display:flex;flex-direction:column;gap:14px;}
-    .job-card{background:white;border-radius:16px;padding:24px;box-shadow:var(--shadow-sm);border:1px solid var(--gray200);cursor:pointer;transition:all 0.25s;}
-    .job-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);border-color:rgba(232,83,14,0.15);}
-    .job-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-    .job-type{font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px;background:var(--blue-soft);color:var(--blue);}
-    .job-type.reward{background:var(--purple-soft);color:var(--purple);}
+    .search-input{border:none;outline:none;font-size:14px;font-family:'Noto Sans JP',sans-serif;flex:1;background:transparent;}
+    .result-count{font-size:13px;color:var(--gray500);margin-bottom:14px;}
+    .job-list{display:flex;flex-direction:column;gap:12px;}
+    .job-card{background:var(--white);border-radius:var(--radius-lg);padding:0;box-shadow:var(--shadow-sm);border:1px solid var(--gray200);cursor:pointer;transition:all 0.2s;overflow:hidden;}
+    .job-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px);border-color:var(--brand);}
+    .job-card-header{background:linear-gradient(135deg,var(--brand-soft) 0%,var(--brand-mid) 100%);padding:14px 20px 10px;border-bottom:1px solid var(--brand-mid);}
+    .job-card-body{padding:16px 20px 18px;}
+    .job-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+    .job-type{font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;background:var(--brand-soft);color:var(--brand-dark);border:1px solid var(--brand-mid);}
+    .job-type.reward{background:var(--orange-soft);color:var(--orange);border-color:#FFD699;}
     .job-date{font-size:12px;color:var(--gray500);}
-    .job-badges{display:flex;gap:6px;margin-bottom:10px;}
-    .badge{padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;}
-    .badge.remote{background:#dbeafe;color:#1d4ed8;}
-    .badge.urgent{background:#fef3c7;color:#b45309;}
-    .badge.highpay{background:#fce7f3;color:#be185d;}
-    .badge.lowexp{background:#d1fae5;color:#065f46;}
-    .job-title{font-size:16px;font-weight:700;margin-bottom:4px;}
-    .job-company{font-size:13px;color:var(--gray500);margin-bottom:12px;}
-    .job-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+    .job-badges{display:flex;gap:5px;margin-bottom:0;}
+    .badge{padding:2px 8px;border-radius:100px;font-size:10px;font-weight:700;}
+    .badge.remote{background:var(--brand-soft);color:var(--brand-dark);border:1px solid var(--brand-mid);}
+    .badge.urgent{background:#FFF3CD;color:#996600;}
+    .badge.highpay{background:#FEE2E2;color:#991B1B;}
+    .badge.lowexp{background:#EDE9FE;color:#5B21B6;}
+    .job-title{font-size:15px;font-weight:700;margin-bottom:3px;color:var(--ink);}
+    .job-company{font-size:13px;color:var(--gray500);margin-bottom:10px;display:flex;align-items:center;gap:4px;}
+    .job-meta{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px;}
     .meta-pill{padding:4px 10px;border-radius:6px;font-size:12px;font-weight:500;background:var(--gray100);color:var(--gray700);}
-    .meta-pill.rate{background:var(--red-soft);color:var(--red);font-weight:600;}
-    .job-tags{display:flex;flex-wrap:wrap;gap:6px;}
-    .tag{padding:3px 10px;border-radius:100px;font-size:11px;font-weight:500;background:var(--blue-soft);color:var(--blue);}
+    .meta-pill.rate{background:var(--orange-soft);color:var(--orange);font-weight:700;}
+    .job-tags{display:flex;flex-wrap:wrap;gap:5px;}
+    .tag{padding:3px 10px;border-radius:100px;font-size:11px;font-weight:500;background:var(--brand-soft);color:var(--brand-dark);border:1px solid var(--brand-mid);}
 
     /* MODAL */
-    .modal-overlay{position:fixed;inset:0;background:rgba(26,26,46,0.5);backdrop-filter:blur(4px);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.2s;}
-    .modal{background:white;border-radius:20px;width:100%;max-width:640px;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow-xl);animation:slideUp 0.3s;}
-    .modal-header{padding:32px 32px 0;position:relative;}
-    .modal-close{position:absolute;top:20px;right:20px;width:36px;height:36px;border-radius:50%;background:var(--gray100);border:none;cursor:pointer;font-size:18px;color:var(--gray500);}
-    .modal-body{padding:24px 32px 32px;}
-    .detail-section{margin-bottom:20px;}
-    .detail-label{font-size:12px;font-weight:700;color:var(--gray500);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;}
-    .detail-text{font-size:15px;line-height:1.7;color:var(--gray700);}
-    .btn-apply{width:100%;padding:16px;border-radius:12px;background:var(--accent);border:none;color:white;font-size:16px;font-weight:700;cursor:pointer;margin-top:24px;box-shadow:0 4px 20px rgba(232,83,14,0.3);transition:all 0.2s;}
-    .btn-apply:hover{background:var(--accent2);}
-    .btn-apply.applied{background:var(--green-soft);color:var(--green);cursor:default;box-shadow:none;}
-    .apply-textarea{width:100%;padding:14px;border:1.5px solid var(--gray200);border-radius:10px;font-size:14px;font-family:'Noto Sans JP',sans-serif;resize:vertical;min-height:120px;outline:none;background:var(--gray100);}
-    .apply-textarea:focus{border-color:var(--accent);background:white;}
+    .modal-overlay{position:fixed;inset:0;background:rgba(26,26,46,0.45);backdrop-filter:blur(4px);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.2s;}
+    .modal{background:var(--white);border-radius:var(--radius-xl);width:100%;max-width:660px;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-xl);animation:slideUp 0.3s;border:1px solid var(--gray200);}
+    .modal-header{padding:28px 28px 0;position:relative;}
+    .modal-close{position:absolute;top:18px;right:18px;width:34px;height:34px;border-radius:50%;background:var(--gray100);border:none;cursor:pointer;font-size:18px;color:var(--gray500);transition:background 0.15s;}
+    .modal-close:hover{background:var(--gray200);}
+    .modal-body{padding:20px 28px 28px;}
+    .modal-detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0;}
+    .modal-detail-box{border:1px solid var(--brand-mid);border-radius:var(--radius-md);padding:12px 14px;background:var(--white);}
+    .detail-section{margin-bottom:18px;}
+    .detail-label{font-size:11px;font-weight:700;color:var(--brand-dark);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;}
+    .detail-text{font-size:14px;line-height:1.75;color:var(--gray700);}
+    .btn-apply{width:100%;padding:15px;border-radius:100px;background:var(--orange);border:none;color:white;font-size:16px;font-weight:700;cursor:pointer;margin-top:20px;box-shadow:0 4px 16px rgba(255,138,0,0.3);transition:all 0.2s;}
+    .btn-apply:hover{background:var(--orange-dark);}
+    .btn-apply.applied{background:var(--brand-soft);color:var(--brand-dark);cursor:default;box-shadow:none;border:1.5px solid var(--brand-mid);}
+    .apply-textarea{width:100%;padding:14px;border:1.5px solid var(--gray200);border-radius:var(--radius-md);font-size:14px;font-family:'Noto Sans JP',sans-serif;resize:vertical;min-height:120px;outline:none;background:var(--gray100);}
+    .apply-textarea:focus{border-color:var(--brand);background:var(--white);}
 
     /* MYPAGE */
-    .mypage-wrap{max-width:800px;margin:0 auto;padding:32px;}
-    .mypage-card{background:white;border-radius:16px;padding:32px;box-shadow:var(--shadow-sm);border:1px solid var(--gray200);margin-bottom:20px;}
-    .mypage-card h3{font-size:18px;font-weight:700;margin-bottom:24px;display:flex;align-items:center;gap:8px;}
-    .mypage-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-    .mypage-label{font-size:13px;font-weight:600;color:var(--gray700);margin-bottom:6px;display:block;}
-    .mypage-input{width:100%;padding:12px 16px;border:1.5px solid var(--gray200);border-radius:10px;font-size:14px;font-family:'Noto Sans JP',sans-serif;background:var(--gray100);outline:none;transition:all 0.2s;}
-    .mypage-input:focus{border-color:var(--accent);background:white;}
-    .mypage-textarea{width:100%;padding:12px 16px;border:1.5px solid var(--gray200);border-radius:10px;font-size:14px;font-family:'Noto Sans JP',sans-serif;background:var(--gray100);outline:none;resize:vertical;min-height:100px;transition:all 0.2s;}
-    .mypage-textarea:focus{border-color:var(--accent);background:white;}
-    .save-btn{padding:14px 40px;border-radius:100px;background:var(--accent);border:none;color:white;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(232,83,14,0.3);transition:all 0.2s;}
-    .save-btn:hover{background:var(--accent2);}
-    .app-history-item{padding:16px;border-radius:12px;border:1px solid var(--gray200);background:var(--gray100);margin-bottom:12px;}
+    .mypage-wrap{max-width:820px;margin:0 auto;padding:28px 32px;}
+    .mypage-card{background:var(--white);border-radius:var(--radius-lg);padding:28px;box-shadow:var(--shadow-sm);border:1px solid var(--gray200);margin-bottom:18px;}
+    .mypage-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid var(--gray200);}
+    .mypage-card-title{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px;color:var(--ink);}
+    .mypage-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .mypage-label{font-size:12px;font-weight:600;color:var(--gray700);margin-bottom:5px;display:block;}
+    .mypage-input{width:100%;padding:11px 14px;border:1.5px solid var(--gray200);border-radius:var(--radius-md);font-size:14px;font-family:'Noto Sans JP',sans-serif;background:var(--gray100);outline:none;transition:all 0.2s;}
+    .mypage-input:focus{border-color:var(--brand);background:var(--white);box-shadow:0 0 0 3px rgba(36,166,74,0.1);}
+    .mypage-textarea{width:100%;padding:11px 14px;border:1.5px solid var(--gray200);border-radius:var(--radius-md);font-size:14px;font-family:'Noto Sans JP',sans-serif;background:var(--gray100);outline:none;resize:vertical;min-height:90px;transition:all 0.2s;}
+    .mypage-textarea:focus{border-color:var(--brand);background:var(--white);}
+    .save-btn{padding:13px 36px;border-radius:100px;background:var(--orange);border:none;color:white;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 12px rgba(255,138,0,0.25);transition:all 0.2s;}
+    .save-btn:hover{background:var(--orange-dark);}
+    .app-history-item{padding:16px;border-radius:var(--radius-md);border:1px solid var(--gray200);background:var(--gray100);margin-bottom:10px;transition:all 0.15s;}
+    .app-history-item:hover{border-color:var(--brand);background:var(--brand-soft);}
     .app-history-title{font-size:14px;font-weight:700;margin-bottom:4px;}
     .app-history-meta{font-size:12px;color:var(--gray500);}
     .status-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;}
-    .status-badge.pending{background:#fef3c7;color:#b45309;}
-    .status-badge.done{background:var(--green-soft);color:var(--green);}
+    .status-badge.pending{background:#FFF3CD;color:#996600;}
+    .status-badge.done{background:var(--brand-soft);color:var(--brand-dark);}
 
     /* VERIFY EMAIL */
-    .verify-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--gray100) 0%,var(--paper) 100%);padding:40px 20px;}
-    .verify-card{width:100%;max-width:480px;background:white;border-radius:20px;padding:48px 40px;box-shadow:var(--shadow-xl);text-align:center;position:relative;}
-    .verify-card::before{content:'';position:absolute;top:0;left:32px;right:32px;height:4px;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:0 0 4px 4px;}
+    .verify-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--paper);padding:40px 20px;}
+    .verify-card{width:100%;max-width:480px;background:var(--white);border-radius:var(--radius-xl);padding:48px 40px;box-shadow:var(--shadow-xl);text-align:center;position:relative;border:1px solid var(--gray200);}
+    .verify-card::before{content:'';position:absolute;top:0;left:32px;right:32px;height:3px;background:linear-gradient(90deg,var(--brand),var(--orange));border-radius:0 0 4px 4px;}
     .verify-icon{font-size:56px;margin-bottom:20px;}
     .verify-title{font-size:24px;font-weight:700;margin-bottom:12px;}
     .verify-desc{font-size:14px;color:var(--gray500);line-height:1.8;margin-bottom:28px;}
     .verify-email-badge{background:var(--gray100);border-radius:8px;padding:10px 20px;font-size:14px;font-weight:600;color:var(--ink);margin-bottom:28px;display:inline-block;}
-    .verify-btn{width:100%;padding:14px;border-radius:10px;background:var(--accent);border:none;color:white;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:12px;transition:all 0.2s;}
-    .verify-btn:hover{background:var(--accent2);}
-    .verify-btn.secondary{background:white;border:1.5px solid var(--gray200);color:var(--gray700);}
+    .verify-btn{width:100%;padding:14px;border-radius:var(--radius-md);background:var(--orange);border:none;color:white;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:12px;transition:all 0.2s;}
+    .verify-btn:hover{background:var(--orange-dark);}
+    .verify-btn.secondary{background:var(--white);border:1.5px solid var(--gray200);color:var(--gray700);}
     .verify-note{font-size:12px;color:var(--gray500);margin-top:16px;}
-    .resume-upload-area{border:2px dashed var(--gray300);border-radius:12px;padding:32px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--gray100);}
-    .resume-upload-area:hover{border-color:var(--accent);background:#fff5f0;}
+    .resume-upload-area{border:2px dashed var(--gray300);border-radius:var(--radius-lg);padding:32px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--gray100);}
+    .resume-upload-area:hover{border-color:var(--brand);background:var(--brand-soft);}
     .resume-upload-icon{font-size:36px;margin-bottom:12px;}
     .resume-upload-title{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:6px;}
     .resume-upload-sub{font-size:12px;color:var(--gray500);}
-    .resume-uploaded{display:flex;align-items:center;gap:12px;background:var(--green-soft);border:1px solid rgba(13,159,110,0.2);border-radius:12px;padding:16px 20px;}
+    .resume-uploaded{display:flex;align-items:center;gap:12px;background:var(--brand-soft);border:1px solid var(--brand-mid);border-radius:var(--radius-lg);padding:16px 20px;}
     .resume-uploaded-icon{font-size:24px;}
-    .resume-uploaded-name{font-size:14px;font-weight:600;color:var(--green);flex:1;}
+    .resume-uploaded-name{font-size:14px;font-weight:600;color:var(--brand-dark);flex:1;}
     .resume-uploaded-actions{display:flex;gap:8px;}
-    .resume-view-btn{padding:6px 16px;border-radius:8px;background:var(--green);border:none;color:white;font-size:12px;font-weight:700;cursor:pointer;}
-    .resume-change-btn{padding:6px 16px;border-radius:8px;background:white;border:1px solid var(--gray300);color:var(--gray700);font-size:12px;font-weight:600;cursor:pointer;}
+    .resume-view-btn{padding:6px 16px;border-radius:8px;background:var(--brand);border:none;color:white;font-size:12px;font-weight:700;cursor:pointer;}
+    .resume-change-btn{padding:6px 16px;border-radius:8px;background:var(--white);border:1px solid var(--gray300);color:var(--gray700);font-size:12px;font-weight:600;cursor:pointer;}
     .section-divider{display:flex;align-items:center;gap:12px;margin:24px 0;}
     .section-divider-line{flex:1;height:1px;background:var(--gray200);}
     .section-divider-text{font-size:12px;font-weight:700;color:var(--gray500);white-space:nowrap;}
-    .career-list{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;}
-    .career-item{background:var(--gray100);border-radius:12px;padding:16px 20px;border:1px solid var(--gray200);display:flex;gap:16px;}
-    .career-item-left{flex:0 0 120px;}
-    .career-period{font-size:12px;font-weight:700;color:var(--accent);margin-bottom:4px;}
+    .career-list{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
+    .career-item{background:var(--white);border-radius:var(--radius-md);padding:16px 20px;border:1px solid var(--gray200);display:flex;gap:16px;transition:border-color 0.15s;}
+    .career-item:hover{border-color:var(--brand);}
+    .career-item-left{flex:0 0 130px;}
+    .career-period{font-size:11px;font-weight:700;color:var(--brand);margin-bottom:4px;}
     .career-company{font-size:14px;font-weight:700;color:var(--ink);}
     .career-role{font-size:12px;color:var(--gray500);margin-top:2px;}
     .career-item-right{flex:1;}
     .career-desc{font-size:13px;color:var(--gray700);line-height:1.7;}
     .career-actions{display:flex;gap:6px;margin-top:8px;}
-    .career-edit-btn{padding:4px 12px;border-radius:6px;background:var(--blue-soft);color:var(--blue);border:none;font-size:11px;font-weight:600;cursor:pointer;}
+    .career-edit-btn{padding:4px 12px;border-radius:6px;background:var(--brand-soft);color:var(--brand-dark);border:1px solid var(--brand-mid);font-size:11px;font-weight:600;cursor:pointer;}
     .career-delete-btn{padding:4px 12px;border-radius:6px;background:var(--red-soft);color:var(--red);border:none;font-size:11px;font-weight:600;cursor:pointer;}
-    .career-form{background:white;border:1.5px solid var(--accent);border-radius:12px;padding:20px;}
+    .career-form{background:var(--brand-soft);border:1.5px solid var(--brand-mid);border-radius:var(--radius-lg);padding:20px;}
 
     /* ADMIN */
-    .admin-page{min-height:100vh;background:var(--gray100);}
+    .admin-page{min-height:100vh;background:var(--paper);}
     .admin-nav{background:var(--ink);color:white;padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;}
     .admin-nav-title{font-size:16px;font-weight:700;}
     .admin-tabs{display:flex;gap:0;background:rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.1);}
     .admin-tab{padding:14px 24px;font-size:14px;font-weight:600;color:rgba(255,255,255,0.5);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;}
-    .admin-tab.active{color:white;border-bottom-color:var(--accent);}
+    .admin-tab.active{color:white;border-bottom-color:var(--brand);}
     .admin-body{max-width:1200px;margin:0 auto;padding:32px;}
-    .admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;}
-    .admin-card{background:white;border-radius:16px;padding:28px;box-shadow:var(--shadow-sm);border:1px solid var(--gray200);}
+    .admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+    .admin-card{background:var(--white);border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow-sm);border:1px solid var(--gray200);}
     .admin-card h3{font-size:16px;font-weight:700;margin-bottom:20px;}
     .admin-row{margin-bottom:14px;}
     .admin-label{font-size:12px;font-weight:700;color:var(--gray700);margin-bottom:4px;display:block;}
-    .admin-input{width:100%;padding:10px 14px;border:1.5px solid var(--gray200);border-radius:8px;font-size:14px;font-family:'Noto Sans JP',sans-serif;background:var(--gray100);outline:none;transition:all 0.2s;}
-    .admin-input:focus{border-color:var(--accent);background:white;}
-    .admin-textarea{width:100%;padding:10px 14px;border:1.5px solid var(--gray200);border-radius:8px;font-size:14px;font-family:'Noto Sans JP',sans-serif;background:var(--gray100);outline:none;resize:vertical;min-height:80px;}
-    .admin-select{width:100%;padding:10px 14px;border:1.5px solid var(--gray200);border-radius:8px;font-size:14px;background:var(--gray100);outline:none;}
+    .admin-input{width:100%;padding:10px 14px;border:1.5px solid var(--gray200);border-radius:var(--radius-sm);font-size:14px;font-family:'Noto Sans JP',sans-serif;background:var(--gray100);outline:none;transition:all 0.2s;}
+    .admin-input:focus{border-color:var(--brand);background:var(--white);}
+    .admin-textarea{width:100%;padding:10px 14px;border:1.5px solid var(--gray200);border-radius:var(--radius-sm);font-size:14px;font-family:'Noto Sans JP',sans-serif;background:var(--gray100);outline:none;resize:vertical;min-height:80px;}
+    .admin-select{width:100%;padding:10px 14px;border:1.5px solid var(--gray200);border-radius:var(--radius-sm);font-size:14px;background:var(--gray100);outline:none;}
     .admin-checks{display:flex;gap:16px;flex-wrap:wrap;margin-top:6px;}
     .admin-check{display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;}
-    .admin-btn{width:100%;padding:13px;border-radius:10px;background:var(--accent);border:none;color:white;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;transition:all 0.2s;}
-    .admin-btn:hover{background:var(--accent2);}
+    .admin-btn{width:100%;padding:13px;border-radius:var(--radius-md);background:var(--brand);border:none;color:white;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;transition:all 0.2s;}
+    .admin-btn:hover{background:var(--brand-dark);}
     .admin-btn.secondary{background:var(--gray200);color:var(--gray700);}
     .admin-job-list{display:flex;flex-direction:column;gap:10px;max-height:600px;overflow-y:auto;}
-    .admin-job-item{padding:14px;border-radius:10px;border:1px solid var(--gray200);background:var(--gray100);display:flex;align-items:center;justify-content:space-between;gap:12px;}
+    .admin-job-item{padding:14px;border-radius:var(--radius-md);border:1px solid var(--gray200);background:var(--gray100);display:flex;align-items:center;justify-content:space-between;gap:12px;}
     .admin-job-info{flex:1;}
     .admin-job-title{font-size:14px;font-weight:700;margin-bottom:3px;}
     .admin-job-meta{font-size:12px;color:var(--gray500);}
@@ -689,12 +715,12 @@ export default function App() {
     .admin-action-btn{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s;}
     .admin-action-btn.edit{background:var(--blue-soft);color:var(--blue);}
     .admin-action-btn.delete{background:var(--red-soft);color:var(--red);}
-    .admin-action-btn.pub{background:var(--green-soft);color:var(--green);}
+    .admin-action-btn.pub{background:var(--brand-soft);color:var(--brand-dark);}
     .admin-action-btn.unpub{background:var(--gray200);color:var(--gray500);}
     .pub-badge{font-size:10px;padding:2px 8px;border-radius:100px;font-weight:600;}
-    .pub-badge.on{background:var(--green-soft);color:var(--green);}
+    .pub-badge.on{background:var(--brand-soft);color:var(--brand-dark);}
     .pub-badge.off{background:var(--gray200);color:var(--gray500);}
-    .app-card{background:white;border-radius:12px;padding:20px;border:1px solid var(--gray200);margin-bottom:12px;}
+    .app-card{background:var(--white);border-radius:var(--radius-lg);padding:20px;border:1px solid var(--gray200);margin-bottom:12px;}
     .app-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
     .app-card-title{font-size:15px;font-weight:700;}
     .app-card-body{font-size:13px;color:var(--gray700);line-height:1.7;}
@@ -705,7 +731,7 @@ export default function App() {
     @keyframes fadeIn{from{opacity:0}to{opacity:1}}
     @keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
     @media(max-width:900px){
-      .hero-section{min-height:auto;}.hero-left{padding:48px 24px;max-width:100%;}.hero h1{font-size:28px;}.hero h1 .accent-line{font-size:36px;}.hero h1 .accent-line .num{font-size:52px;}.hero-right{display:none;}.hero-blob{display:none;}.features-strip{grid-template-columns:repeat(2,1fr);}.about-section{flex-direction:column;padding:48px 24px;gap:32px;}.about-illo{flex:none;width:100%;max-width:360px;margin:0 auto;}.cases-grid{grid-template-columns:1fr;}.cases-section{padding:48px 20px;}.dash-body{flex-direction:column;padding:16px;}.sidebar{width:100%;position:static;}.landing-nav{padding:0 20px;}.admin-grid{grid-template-columns:1fr;}
+      .hero-section{min-height:auto;}.hero-bg-shape{display:none;}.hero-left{padding:48px 24px;max-width:100%;}.hero h1{font-size:26px;}.hero-right{display:none;}.category-banners{grid-template-columns:repeat(2,1fr);padding:20px;}.features-strip{grid-template-columns:repeat(2,1fr);}.about-section{flex-direction:column;padding:48px 24px;gap:32px;}.about-illo{flex:none;width:100%;max-width:320px;margin:0 auto;}.cases-grid{grid-template-columns:1fr;}.cases-section{padding:40px 20px;}.dash-body{flex-direction:column;padding:16px;}.sidebar{width:100%;position:static;}.landing-nav{padding:0 20px;}.admin-grid{grid-template-columns:1fr;}.mypage-wrap{padding:16px;}.mypage-grid{grid-template-columns:1fr;}
     }
     /* CHAT */
     .chat-overlay{position:fixed;inset:0;background:rgba(26,26,46,0.5);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;}
@@ -879,50 +905,86 @@ export default function App() {
     );
   }
 
-  // VERIFY EMAIL PAGE
+  // LANDING PAGE
   if (page === "landing") {
     const featuredJobs = jobs.filter(j=>j.highPay && j.published!==false).slice(0,3);
+    const sampleFeatured = SAMPLE_JOBS.filter(j=>j.highPay).slice(0,3);
+    const displayJobs = featuredJobs.length > 0 ? featuredJobs : sampleFeatured;
     return (
       <>
         <style>{css}</style>
-        <div className="page-landing" style={{background:"white"}}>
+        <div className="page-landing" style={{background:"var(--paper)"}}>
+          {/* NAV */}
           <nav className="landing-nav">
             <div className="logo"><div className="logo-mark">S</div>SalesBoard</div>
-            <div className="nav-btns">
-              <button className="btn-ghost" onClick={()=>setPage("login")}>ログイン</button>
-              <button className="btn-accent" onClick={()=>setPage("register")}>無料登録</button>
+            <div style={{display:"flex",alignItems:"center",gap:20}}>
+              <span style={{fontSize:13,color:"var(--gray500)",cursor:"pointer"}} onClick={()=>setPage("login")}>採用担当者様はこちら</span>
+              <span style={{fontSize:13,color:"var(--gray700)",cursor:"pointer",fontWeight:600}} onClick={()=>setPage("login")}>案件を探す</span>
+              <div className="nav-btns">
+                <button className="btn-ghost" onClick={()=>setPage("login")}>ログイン</button>
+                <button className="btn-accent" onClick={()=>setPage("register")}>無料登録</button>
+              </div>
             </div>
           </nav>
 
+          {/* HERO */}
           <div className="hero-section">
-            <svg className="hero-blob" viewBox="0 0 700 560" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-              <path d="M 120 560 Q 30 480 20 350 Q 10 180 140 80 Q 260 -20 430 10 Q 590 40 660 180 Q 730 320 680 460 Q 620 560 120 560 Z" fill="#DBEAFE"/>
-            </svg>
+            <div className="hero-bg-shape"/>
             <div className="hero-left">
-              <div className="hero-eyebrow">営業フリーランスのための案件紹介サービス</div>
+              <div className="hero-eyebrow">営業フリーランス専門の案件紹介</div>
               <h1 className="hero">
-                営業フリーランスという働き方で<br/>
-                <span className="accent-line"><span className="num">月100万</span>円以上の収入実績も</span>
+                あなたの営業力を<br/>
+                <span className="highlight">最大限に活かす</span>案件が<br/>ここにあります
               </h1>
-              <p>目的に合わせた案件をオファーします</p>
-              <div className="hero-tags">
-                {[["🏠","フルリモート"],["📈","スキルアップ"],["💰","高待遇"],["🔄","副業/複業"]].map(([icon,label])=>(
-                  <div key={label} className="hero-tag">
-                    <div className="hero-tag-icon">{icon}</div>
-                    <div className="hero-tag-label">{label}</div>
-                  </div>
-                ))}
+              <p>SalesBoardは、営業フリーランス専門のマッチングサービス。<br/>高単価・リモート・長期案件を厳選してご紹介します。</p>
+              <div className="hero-stats">
+                <div className="hero-stat">
+                  <div className="hero-stat-num">300+</div>
+                  <div className="hero-stat-label">掲載案件数</div>
+                </div>
+                <div className="hero-stat-divider"/>
+                <div className="hero-stat">
+                  <div className="hero-stat-num">月100万</div>
+                  <div className="hero-stat-label">収入実績あり</div>
+                </div>
+                <div className="hero-stat-divider"/>
+                <div className="hero-stat">
+                  <div className="hero-stat-num">最短即日</div>
+                  <div className="hero-stat-label">稼働開始</div>
+                </div>
               </div>
               <div className="cta-buttons">
-                <button className="btn-cta-primary" onClick={()=>setPage("register")}>無料で会員登録 →</button>
-                <button className="btn-cta-secondary" onClick={()=>setPage("login")}>案件を探す</button>
+                <button className="btn-cta-primary" onClick={()=>setPage("register")}>無料で会員登録する →</button>
+                <button className="btn-cta-secondary" onClick={()=>setPage("login")}>案件を見る</button>
               </div>
             </div>
             <div className="hero-right">
-              <img src="/undraw_investor-update_ou4c.svg" alt="イメージ" style={{width:"85%",maxWidth:460,display:"block"}} />
+              <img src="/undraw_investor-update_ou4c.svg" alt="イメージ" style={{width:"82%",maxWidth:440,display:"block"}} />
             </div>
           </div>
 
+          {/* CATEGORY BANNERS */}
+          <div style={{background:"var(--white)",borderTop:"1px solid var(--gray200)",borderBottom:"1px solid var(--gray200)"}}>
+            <div className="category-banners">
+              {[
+                {icon:"🏠",bg:"#EAF7EE",title:"リモート案件",sub:"フルリモートで働ける案件",filter:"remote"},
+                {icon:"⚡",bg:"#FFF3CD",title:"急募案件",sub:"すぐに稼働できる案件",filter:"urgent"},
+                {icon:"💰",bg:"#FEE2E2",title:"高単価案件",sub:"月60万円以上の高収入案件",filter:"highPay"},
+                {icon:"🌱",bg:"#EDE9FE",title:"未経験OK案件",sub:"営業経験少なめでも応募可",filter:"lowExp"},
+              ].map(cat=>(
+                <div key={cat.title} className="cat-banner" onClick={()=>{setPage("login");}}>
+                  <div className="cat-banner-icon" style={{background:cat.bg}}>{cat.icon}</div>
+                  <div className="cat-banner-text">
+                    <div className="cat-banner-title">{cat.title}</div>
+                    <div className="cat-banner-sub">{cat.sub}</div>
+                  </div>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8a8a7a" strokeWidth="2"><path d="m9 18 6-6-6-6"/></svg>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* FEATURES */}
           <div className="features-section">
             <div className="features-strip">
               {[["💼","営業特化","営業職に特化した案件のみ掲載。ミスマッチなし"],["🏠","リモート案件","フルリモート・一部リモート案件を多数掲載"],["💰","高単価案件","月60万円〜の高単価案件を厳選してお届け"],["⚡","最短即日","応募から稼働開始まで最短即日マッチング"]].map(([icon,title,desc])=>(
@@ -935,47 +997,60 @@ export default function App() {
             </div>
           </div>
 
-          <div className="about-section">
-            <div className="about-illo">
-              <img src="/undraw_process_0wew.svg" alt="サービス説明" style={{width:"100%",maxWidth:380,display:"block"}} />
-            </div>
-            <div className="about-text">
-              <div className="about-eyebrow">About us</div>
-              <div className="about-title">SalesBoard<br/>とは</div>
-              <div className="about-desc">SalesBoardは、営業フリーランスのための案件紹介サービスです。豊富な案件からご希望にあった案件をご紹介。最短1週間でお仕事への参画が可能です。</div>
-              <div style={{marginBottom:20}}>
-                <div style={{fontSize:13,fontWeight:700,color:"var(--ink)",marginBottom:12}}>こんな人におすすめ</div>
-                {["他案件が落ち着いたので掛け持ちしたい","案件探しの負担を減らしたい","今より案件の単価を上げたい","スキルを広げたい・極めたい","独立に向けて経験を積みたい"].map(t=>(
-                  <div key={t} className="target-check">{t}</div>
-                ))}
+          {/* ABOUT */}
+          <div style={{background:"var(--white)"}}>
+            <div className="about-section">
+              <div className="about-illo">
+                <img src="/undraw_process_0wew.svg" alt="サービス説明" style={{width:"100%",maxWidth:360,display:"block"}} />
               </div>
-              <button className="btn-cta-primary" onClick={()=>setPage("register")}>無料で会員登録 →</button>
+              <div className="about-text">
+                <div className="about-eyebrow">About SalesBoard</div>
+                <div className="about-title">営業フリーランスに<br/>特化したサービス</div>
+                <div className="about-desc">SalesBoardは、営業フリーランスのための案件紹介サービスです。豊富な案件からご希望にあった案件をご紹介。最短1週間でお仕事への参画が可能です。</div>
+                <div style={{marginBottom:24}}>
+                  <div style={{fontSize:13,fontWeight:700,color:"var(--ink)",marginBottom:12}}>こんな方におすすめ</div>
+                  {["他案件が落ち着いたので掛け持ちしたい","案件探しの負担を減らしたい","今より案件の単価を上げたい","スキルを広げたい・極めたい","独立に向けて経験を積みたい"].map(t=>(
+                    <div key={t} className="target-check">
+                      <div className="target-check-icon">✓</div>
+                      {t}
+                    </div>
+                  ))}
+                </div>
+                <button className="btn-cta-primary" onClick={()=>setPage("register")}>無料で会員登録する →</button>
+              </div>
             </div>
           </div>
 
-          <div style={{background:"var(--gray100)",borderTop:"1px solid var(--gray200)",borderBottom:"1px solid var(--gray200)"}}>
+          {/* CASES */}
+          <div style={{background:"var(--paper)",borderTop:"1px solid var(--gray200)",borderBottom:"1px solid var(--gray200)"}}>
             <div className="cases-section">
-              <div className="section-eyebrow">Case Examples</div>
-              <div className="section-title">ご紹介案件例</div>
-              <div className="section-subtitle">高単価・リモート・フレックスなど、希望に合った案件をご紹介します</div>
+              <div className="section-header">
+                <div className="section-eyebrow">Case Examples</div>
+                <div className="section-title">ご紹介案件例</div>
+                <div className="section-subtitle">高単価・リモート・フレックスなど、希望に合った案件をご紹介します</div>
+              </div>
               <div className="cases-grid">
-                {featuredJobs.map(job=>(
+                {displayJobs.map(job=>(
                   <div key={job.id} className="case-card" onClick={()=>setPage("login")}>
-                    <div className="case-card-top">
-                      {job.tags.slice(0,2).map(t=><span key={t} className="case-industry">{t}</span>)}
-                      <span className="case-type-badge">{job.type}</span>
+                    <div className="case-card-banner">
+                      <div className="case-card-top">
+                        {job.tags.slice(0,2).map(t=><span key={t} className="case-industry">{t}</span>)}
+                        <span className="case-type-badge">{job.type}</span>
+                      </div>
+                      <div className="case-title">{job.title}</div>
                     </div>
-                    <div className="case-title">{job.title}</div>
-                    <div className="case-detail-row">
-                      <div className="case-detail-item"><div className="case-detail-label">⊙ 単価</div><div className="case-detail-value rate">{job.rate}</div></div>
-                      <div className="case-detail-item"><div className="case-detail-label">💼 働き方</div><div className="case-detail-value">{job.remote?"リモート可":"常駐"}</div></div>
-                      <div className="case-detail-item"><div className="case-detail-label">📅 期間</div><div className="case-detail-value">{job.period}</div></div>
+                    <div className="case-card-body">
+                      <div className="case-detail-row">
+                        <div className="case-detail-item"><div className="case-detail-label">単価</div><div className="case-detail-value rate">{job.rate}</div></div>
+                        <div className="case-detail-item"><div className="case-detail-label">働き方</div><div className="case-detail-value">{job.remote?"リモート可":"常駐"}</div></div>
+                        <div className="case-detail-item"><div className="case-detail-label">期間</div><div className="case-detail-value">{job.period}</div></div>
+                      </div>
+                      <div className="case-section-label">職務内容</div>
+                      <div className="case-desc">{job.description}</div>
+                      <div className="case-divider"/>
+                      <div className="case-section-label">活かせるスキル</div>
+                      <div className="case-skills">{job.requirements.split("、").slice(0,3).map((r,i)=><span key={i} className="case-skill">{r}</span>)}</div>
                     </div>
-                    <div className="case-section-label">💬 職務内容</div>
-                    <div className="case-desc">{job.description}</div>
-                    <div className="case-divider"/>
-                    <div className="case-section-label">✨ 活かせるスキル</div>
-                    <div className="case-skills">{job.requirements.split("、").map((r,i)=><span key={i} className="case-skill">{r}</span>)}</div>
                   </div>
                 ))}
               </div>
@@ -1169,30 +1244,35 @@ export default function App() {
               <div className="job-list">
                 {filteredJobs.map(job=>(
                   <div key={job.id} className="job-card" onClick={()=>setSelectedJob(job)}>
-                    <div className="job-card-top">
-                      <span className={`job-type ${job.type==="成果報酬"?"reward":""}`}>{job.type}</span>
-                      <span className="job-date">{daysAgo(job.posted)}</span>
+                    <div className="job-card-header">
+                      <div className="job-card-top">
+                        <span className={`job-type ${job.type==="成果報酬"?"reward":""}`}>{job.type}</span>
+                        <span className="job-date">{daysAgo(job.posted)}</span>
+                      </div>
+                      <div className="job-badges">
+                        {job.remote&&<span className="badge remote">🏠 リモート</span>}
+                        {job.urgent&&<span className="badge urgent">⚡ 急募</span>}
+                        {job.highPay&&<span className="badge highpay">💰 高単価</span>}
+                        {job.lowExp&&<span className="badge lowexp">🌱 未経験OK</span>}
+                      </div>
                     </div>
-                    <div className="job-badges">
-                      {job.remote&&<span className="badge remote">リモート</span>}
-                      {job.urgent&&<span className="badge urgent">急募</span>}
-                      {job.highPay&&<span className="badge highpay">高単価</span>}
-                      {job.lowExp&&<span className="badge lowexp">経験少なめOK</span>}
+                    <div className="job-card-body">
+                      <div className="job-title">{job.title}</div>
+                      <div className="job-company">🏢 {job.company}</div>
+                      <div className="job-meta">
+                        <span className="meta-pill rate">💴 {job.rate}</span>
+                        <span className="meta-pill">📍 {job.location}</span>
+                        <span className="meta-pill">📅 {job.period}</span>
+                      </div>
+                      <div className="job-tags">{job.tags.map(t=><span key={t} className="tag">{t}</span>)}</div>
+                      {appliedJobs.includes(job.id)&&<div style={{marginTop:10,fontSize:12,color:"var(--brand-dark)",fontWeight:700,background:"var(--brand-soft)",display:"inline-flex",alignItems:"center",gap:4,padding:"3px 10px",borderRadius:100,border:"1px solid var(--brand-mid)"}}>✓ 応募済み</div>}
                     </div>
-                    <div className="job-title">{job.title}</div>
-                    <div className="job-company">{job.company}</div>
-                    <div className="job-meta">
-                      <span className="meta-pill rate">{job.rate}</span>
-                      <span className="meta-pill">{job.location}</span>
-                      <span className="meta-pill">{job.period}</span>
-                    </div>
-                    <div className="job-tags">{job.tags.map(t=><span key={t} className="tag">{t}</span>)}</div>
-                    {appliedJobs.includes(job.id)&&<div style={{marginTop:10,fontSize:13,color:"var(--green)",fontWeight:600}}>✓ 応募済み</div>}
                   </div>
                 ))}
-                {filteredJobs.length===0&&<div style={{textAlign:"center",padding:60,color:"var(--gray500)"}}>
+                {filteredJobs.length===0&&<div style={{textAlign:"center",padding:60,color:"var(--gray500)",background:"var(--white)",borderRadius:"var(--radius-lg)",border:"1px solid var(--gray200)"}}>
                   <div style={{fontSize:40,marginBottom:12}}>📭</div>
                   <div style={{fontSize:16,fontWeight:600}}>該当する案件が見つかりませんでした</div>
+                  <div style={{fontSize:13,marginTop:6,color:"var(--gray400)"}}>条件を変えて検索してみてください</div>
                 </div>}
               </div>
             </div>
@@ -1204,7 +1284,10 @@ export default function App() {
           <div className="mypage-wrap">
             {/* 基本プロフィール */}
             <div className="mypage-card">
-              <h3>👤 基本プロフィール</h3>
+              <div className="mypage-card-header">
+                <div className="mypage-card-title">👤 基本プロフィール</div>
+                {isProfileComplete && <span style={{fontSize:12,background:"var(--brand-soft)",color:"var(--brand-dark)",padding:"3px 10px",borderRadius:100,fontWeight:700,border:"1px solid var(--brand-mid)"}}>✓ 完成</span>}
+              </div>
               <div className="mypage-grid">
                 <div>
                   <label className="mypage-label">氏名</label>
@@ -1250,7 +1333,10 @@ export default function App() {
 
             {/* 職務経歴書 */}
             <div className="mypage-card">
-              <h3>📄 職務経歴書</h3>
+              <div className="mypage-card-header">
+                <div className="mypage-card-title">📄 職務経歴書・経歴</div>
+                {careers.length > 0 && <span style={{fontSize:12,background:"var(--brand-soft)",color:"var(--brand-dark)",padding:"3px 10px",borderRadius:100,fontWeight:700,border:"1px solid var(--brand-mid)"}}>✓ {careers.length}社登録済</span>}
+              </div>
               <input type="file" ref={resumeInputRef} style={{display:"none"}} accept=".pdf,.doc,.docx" onChange={handleResumeUpload} />
               {resumeUrl ? (
                 <div className="resume-uploaded">
@@ -1376,23 +1462,26 @@ export default function App() {
           <div className="modal" onClick={e=>e.stopPropagation()}>
             <div className="modal-header">
               <button className="modal-close" onClick={()=>setSelectedJob(null)}>✕</button>
-              <span className={`job-type ${selectedJob.type==="成果報酬"?"reward":""}`}>{selectedJob.type}</span>
-              <h2 style={{fontSize:22,fontWeight:700,marginTop:12,lineHeight:1.4,paddingRight:40}}>{selectedJob.title}</h2>
-              <div style={{fontSize:14,color:"var(--gray500)",marginTop:4}}>{selectedJob.company}</div>
+              <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:10}}>
+                <span className={`job-type ${selectedJob.type==="成果報酬"?"reward":""}`}>{selectedJob.type}</span>
+                {selectedJob.remote&&<span className="badge remote">🏠 リモート</span>}
+                {selectedJob.urgent&&<span className="badge urgent">⚡ 急募</span>}
+                {selectedJob.highPay&&<span className="badge highpay">💰 高単価</span>}
+                {selectedJob.lowExp&&<span className="badge lowexp">🌱 未経験OK</span>}
+              </div>
+              <h2 style={{fontSize:20,fontWeight:700,lineHeight:1.45,paddingRight:40,color:"var(--ink)"}}>{selectedJob.title}</h2>
+              <div style={{fontSize:13,color:"var(--gray500)",marginTop:4,display:"flex",alignItems:"center",gap:4}}>🏢 {selectedJob.company}</div>
             </div>
             <div className="modal-body">
-              <div className="job-badges" style={{marginBottom:16}}>
-                {selectedJob.remote&&<span className="badge remote">リモート</span>}
-                {selectedJob.urgent&&<span className="badge urgent">急募</span>}
-                {selectedJob.highPay&&<span className="badge highpay">高単価</span>}
-                {selectedJob.lowExp&&<span className="badge lowexp">経験少なめOK</span>}
+              <div className="modal-detail-grid">
+                <div className="modal-detail-box"><div className="detail-label">報酬</div><div style={{fontSize:16,fontWeight:700,color:"var(--orange)"}}>{selectedJob.rate}</div></div>
+                <div className="modal-detail-box"><div className="detail-label">勤務地</div><div style={{fontSize:14,fontWeight:600,color:"var(--ink)"}}>{selectedJob.location}</div></div>
+                <div className="modal-detail-box"><div className="detail-label">契約期間</div><div style={{fontSize:14,fontWeight:600,color:"var(--ink)"}}>{selectedJob.period}</div></div>
+                <div className="modal-detail-box"><div className="detail-label">働き方</div><div style={{fontSize:14,fontWeight:600,color:"var(--ink)"}}>{selectedJob.remote?"リモート可":"常駐"}</div></div>
               </div>
-              <div className="detail-section"><div className="detail-label">報酬</div><div className="detail-text" style={{fontWeight:600,color:"var(--red)"}}>{selectedJob.rate}</div></div>
-              <div className="detail-section"><div className="detail-label">勤務地</div><div className="detail-text">{selectedJob.location}</div></div>
-              <div className="detail-section"><div className="detail-label">期間</div><div className="detail-text">{selectedJob.period}</div></div>
               <div className="detail-section"><div className="detail-label">案件概要</div><div className="detail-text">{selectedJob.description}</div></div>
               <div className="detail-section"><div className="detail-label">応募要件</div><div className="detail-text">{selectedJob.requirements}</div></div>
-              <div className="detail-section"><div className="detail-label">関連タグ</div><div className="job-tags">{selectedJob.tags.map(t=><span key={t} className="tag">{t}</span>)}</div></div>
+              <div className="detail-section"><div className="detail-label">関連タグ</div><div className="job-tags" style={{marginTop:6}}>{selectedJob.tags.map(t=><span key={t} className="tag">{t}</span>)}</div></div>
               {appliedJobs.includes(selectedJob.id)
                 ? <button className="btn-apply applied">✓ 応募済み</button>
                 : <button className="btn-apply" onClick={()=>setShowApplyModal(true)}>この案件に応募する →</button>
