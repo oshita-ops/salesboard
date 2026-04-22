@@ -427,9 +427,11 @@ export default function App() {
       --red:#dc2626; --red-soft:#fef2f2;
       --gray50:#FAFAFA; --gray100:#F5F5F0; --gray200:#E8E8E0; --gray300:#D4D4C8;
       --gray400:#BABAB0; --gray500:#8a8a7a; --gray700:#4a4a3e; --gray900:#1a1a2e;
-      --shadow-sm:0 1px 4px rgba(0,0,0,0.04); --shadow-md:0 2px 12px rgba(0,0,0,0.06);
-      --shadow-lg:0 4px 24px rgba(0,0,0,0.08); --shadow-xl:0 8px 40px rgba(0,0,0,0.12);
-      --radius-sm:6px; --radius-md:10px; --radius-lg:14px; --radius-xl:20px;
+      --shadow-sm:0 1px 3px rgba(0,0,0,0.05),0 1px 6px rgba(0,0,0,0.04);
+      --shadow-md:0 2px 8px rgba(0,0,0,0.06),0 4px 16px rgba(0,0,0,0.05);
+      --shadow-lg:0 8px 32px rgba(0,0,0,0.08);
+      --shadow-xl:0 16px 48px rgba(0,0,0,0.12);
+      --radius-sm:6px; --radius-md:10px; --radius-lg:16px; --radius-xl:24px; --radius-2xl:32px;
     }
     *{margin:0;padding:0;box-sizing:border-box;}
     body{font-family:'Noto Sans JP',sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;}
@@ -445,38 +447,45 @@ export default function App() {
     .btn-accent:hover{background:var(--orange-dark);transform:translateY(-1px);}
 
     /* HERO */
-    .hero-section{position:relative;min-height:520px;display:flex;align-items:center;overflow:hidden;background:var(--white);}
-    .hero-bg-shape{position:absolute;top:0;right:0;width:52%;height:100%;background:linear-gradient(135deg,#EAF7EE 0%,#DCF3E3 50%,#EAF7EE 100%);clip-path:polygon(8% 0%,100% 0%,100% 100%,0% 100%);pointer-events:none;}
-    .hero-left{position:relative;z-index:2;padding:64px 0 64px 60px;max-width:520px;}
-    .hero-right{position:absolute;right:0;top:0;width:52%;height:100%;display:flex;align-items:center;justify-content:center;z-index:2;pointer-events:none;}
-    .hero-eyebrow{font-size:12px;font-weight:700;color:var(--brand);margin-bottom:18px;display:inline-flex;align-items:center;gap:6px;background:var(--brand-soft);padding:5px 14px;border-radius:100px;}
-    .hero h1{font-family:'Noto Sans JP',sans-serif;font-size:36px;font-weight:900;color:var(--ink);line-height:1.45;letter-spacing:-0.5px;margin-bottom:16px;}
+    .hero-section{display:grid;grid-template-columns:1fr 1fr;min-height:580px;background:var(--white);overflow:hidden;}
+    .hero-left{display:flex;flex-direction:column;justify-content:center;padding:72px 56px 72px 64px;}
+    .hero-right{position:relative;overflow:hidden;background:#f0f4f0;}
+    .hero-right img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;}
+    .hero-eyebrow{font-size:12px;font-weight:700;color:var(--brand);margin-bottom:20px;display:inline-flex;align-items:center;gap:6px;background:var(--brand-soft);padding:6px 16px;border-radius:100px;letter-spacing:0.3px;width:fit-content;}
+    .hero h1{font-family:'Noto Sans JP',sans-serif;font-size:38px;font-weight:900;color:var(--ink);line-height:1.4;letter-spacing:-0.8px;margin-bottom:18px;}
     .hero h1 .highlight{color:var(--orange);}
-    .hero p{font-size:15px;color:var(--gray500);line-height:1.9;margin-bottom:28px;max-width:420px;}
-    .hero-trust{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px;}
-    .hero-trust-badge{display:inline-flex;align-items:center;gap:5px;background:var(--brand-soft);border:1px solid var(--brand-mid);border-radius:100px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--brand-dark);}
+    .hero-desc{font-size:15px;color:var(--gray500);line-height:1.95;margin-bottom:28px;max-width:400px;}
+    .hero-trust{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:36px;}
+    .hero-trust-badge{display:inline-flex;align-items:center;gap:5px;background:var(--white);border:1.5px solid var(--brand-mid);border-radius:100px;padding:6px 14px;font-size:12px;font-weight:600;color:var(--brand-dark);box-shadow:var(--shadow-sm);}
+    .hero-trust-badge::before{content:"✓";color:var(--brand);font-weight:800;}
     .cta-buttons{display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
-    .btn-cta-primary{padding:15px 36px;border-radius:100px;background:var(--orange);border:none;color:white;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(255,138,0,0.35);transition:all 0.2s;}
-    .btn-cta-primary:hover{background:var(--orange-dark);transform:translateY(-2px);}
-    .btn-cta-secondary{padding:13px 30px;border-radius:100px;background:var(--white);border:2px solid var(--brand);color:var(--brand);font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+    .btn-cta-primary{padding:16px 40px;border-radius:100px;background:var(--orange);border:none;color:white;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 24px rgba(255,138,0,0.32);transition:all 0.25s;letter-spacing:0.2px;}
+    .btn-cta-primary:hover{background:var(--orange-dark);transform:translateY(-2px);box-shadow:0 6px 28px rgba(255,138,0,0.42);}
+    .btn-cta-secondary{padding:14px 30px;border-radius:100px;background:transparent;border:2px solid var(--brand);color:var(--brand);font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;}
     .btn-cta-secondary:hover{background:var(--brand-soft);}
 
     /* CATEGORY BANNERS */
-    .category-banners{max-width:1100px;margin:0 auto;padding:32px 40px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
-    .cat-banner{background:var(--white);border:2.5px solid var(--brand);border-radius:var(--radius-lg);padding:18px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.2s;}
-    .cat-banner:hover{background:var(--brand-soft);transform:translateY(-2px);box-shadow:var(--shadow-md);}
-    .cat-banner-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+    .cat-strip{background:var(--white);border-top:1px solid var(--gray200);border-bottom:1px solid var(--gray200);}
+    .category-banners{max-width:1080px;margin:0 auto;padding:28px 40px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+    .cat-banner{background:var(--paper);border:1px solid var(--gray200);border-radius:var(--radius-lg);padding:16px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.2s;}
+    .cat-banner:hover{background:var(--white);border-color:var(--brand);box-shadow:var(--shadow-md);transform:translateY(-1px);}
+    .cat-banner-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
     .cat-banner-text{flex:1;}
     .cat-banner-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px;}
-    .cat-banner-sub{font-size:11px;color:var(--gray500);}
+    .cat-banner-sub{font-size:11px;color:var(--gray500);line-height:1.4;}
 
-    /* WHY CARD */
-    .why-card{background:var(--white);border-radius:var(--radius-xl);border:1px solid var(--gray200);padding:36px 28px;text-align:center;box-shadow:var(--shadow-sm);transition:all 0.25s;}
-    .why-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);}
-    .why-ring{position:relative;width:140px;height:140px;margin:0 auto 24px;}
-    .why-ring-label{font-size:11px;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px;}
-    .why-title{font-size:18px;font-weight:800;color:var(--ink);margin-bottom:10px;}
-    .why-desc{font-size:14px;color:var(--gray500);line-height:1.85;}
+    /* WHY CARD — image-led */
+    .why-section{background:var(--white);padding:96px 40px;}
+    .why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;max-width:1040px;margin:0 auto;}
+    .why-card{background:var(--white);border-radius:var(--radius-xl);border:1px solid var(--gray200);overflow:hidden;box-shadow:var(--shadow-sm);transition:all 0.3s;}
+    .why-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-4px);}
+    .why-card-img{aspect-ratio:1/1;overflow:hidden;background:#f4f7f4;}
+    .why-card-img img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;transition:transform 0.4s;}
+    .why-card:hover .why-card-img img{transform:scale(1.03);}
+    .why-card-body{padding:28px 28px 32px;}
+    .why-label{font-size:11px;font-weight:700;color:var(--brand);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;}
+    .why-title{font-size:19px;font-weight:800;color:var(--ink);margin-bottom:10px;letter-spacing:-0.3px;line-height:1.35;}
+    .why-desc{font-size:14px;color:var(--gray500);line-height:1.9;}
 
     /* ABOUT */
     .about-section{padding:80px 64px;display:flex;align-items:center;gap:72px;max-width:1100px;margin:0 auto;}
@@ -488,6 +497,18 @@ export default function App() {
     .about-desc{font-size:15px;color:var(--gray700);line-height:1.9;margin-bottom:28px;}
     .target-check{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--gray700);margin-bottom:10px;}
     .target-check-icon{width:20px;height:20px;border-radius:50%;background:var(--brand-soft);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;}
+
+    /* FLOW SECTION */
+    .flow-section{background:var(--paper);border-top:1px solid var(--gray200);padding:96px 40px;}
+    .flow-img-wrap{max-width:960px;margin:0 auto 48px;border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-lg);background:var(--white);}
+    .flow-img-wrap img{width:100%;height:auto;display:block;object-fit:contain;}
+    .flow-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;max-width:960px;margin:0 auto;}
+    .flow-step{padding:20px 20px 24px;border-right:1px solid var(--gray200);position:relative;}
+    .flow-step:last-child{border-right:none;}
+    .flow-step-num{width:32px;height:32px;border-radius:50%;background:var(--brand);color:white;font-family:'Outfit',sans-serif;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;}
+    .flow-step-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:6px;line-height:1.4;}
+    .flow-step-desc{font-size:12px;color:var(--gray500);line-height:1.75;}
+    .flow-badge{display:inline-block;background:var(--brand-soft);color:var(--brand-dark);font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:8px;}
 
     /* CASES */
     .cases-section{max-width:1100px;margin:0 auto;padding:64px 40px;}
@@ -515,13 +536,13 @@ export default function App() {
     .case-skills{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px;}
     .case-skill{font-size:11px;padding:3px 9px;border-radius:100px;background:var(--gray100);color:var(--gray700);border:1px solid var(--gray200);font-weight:500;}
     .case-divider{height:1px;background:var(--gray200);margin:12px 0;}
-    .cases-cta{text-align:center;padding:40px;background:linear-gradient(135deg,var(--brand-soft) 0%,#f0fff4 100%);border-radius:var(--radius-xl);border:1.5px solid var(--brand-mid);}
-    .cases-cta-title{font-size:20px;font-weight:700;color:var(--ink);margin-bottom:8px;}
-    .cases-cta-sub{font-size:14px;color:var(--gray500);margin-bottom:24px;}
-    .landing-footer{background:var(--ink);color:rgba(255,255,255,0.45);text-align:center;padding:48px;font-size:13px;}
-    .landing-footer .footer-logo{font-family:'Outfit',sans-serif;font-weight:800;color:white;font-size:20px;margin-bottom:10px;}
-    .landing-footer .footer-links{display:flex;justify-content:center;gap:24px;margin-bottom:16px;}
-    .landing-footer .footer-links a{color:rgba(255,255,255,0.6);text-decoration:none;font-size:13px;transition:color 0.2s;}
+    .cases-cta{text-align:center;padding:52px 40px;background:var(--brand-soft);border-radius:var(--radius-xl);}
+    .cases-cta-title{font-size:22px;font-weight:800;color:var(--ink);margin-bottom:8px;letter-spacing:-0.3px;}
+    .cases-cta-sub{font-size:14px;color:var(--gray500);margin-bottom:32px;line-height:1.7;}
+    .landing-footer{background:var(--ink);color:rgba(255,255,255,0.4);text-align:center;padding:56px 48px 48px;font-size:13px;}
+    .landing-footer .footer-logo{font-family:'Outfit',sans-serif;font-weight:800;color:white;font-size:22px;margin-bottom:16px;letter-spacing:-0.5px;}
+    .landing-footer .footer-links{display:flex;justify-content:center;gap:32px;margin-bottom:20px;}
+    .landing-footer .footer-links a{color:rgba(255,255,255,0.55);text-decoration:none;font-size:13px;transition:color 0.2s;}
     .landing-footer .footer-links a:hover{color:white;}
     /* CONSULTATION PAGE */
     .consult-page{min-height:100vh;background:var(--paper);}
@@ -734,7 +755,36 @@ export default function App() {
     @keyframes fadeIn{from{opacity:0}to{opacity:1}}
     @keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
     @media(max-width:900px){
-      .hero-section{min-height:auto;}.hero-bg-shape{display:none;}.hero-left{padding:48px 24px;max-width:100%;}.hero h1{font-size:28px;}.hero-right{display:none;}.category-banners{grid-template-columns:repeat(2,1fr);padding:20px;}.about-section{flex-direction:column;padding:48px 24px;gap:32px;}.about-illo{flex:none;width:100%;max-width:320px;margin:0 auto;}.cases-grid{grid-template-columns:1fr;}.cases-section{padding:40px 20px;}.dash-body{flex-direction:column;padding:16px;}.sidebar{width:100%;position:static;}.landing-nav{padding:0 20px;}.admin-grid{grid-template-columns:1fr;}.mypage-wrap{padding:16px;}.mypage-grid{grid-template-columns:1fr;}.why-card{padding:24px 16px;}.consult-card{padding:24px 20px;}.consult-form-wrap{padding:32px 16px;}
+      /* HERO */
+      .hero-section{grid-template-columns:1fr;min-height:auto;}
+      .hero-left{padding:52px 24px 36px;order:1;}
+      .hero h1{font-size:28px;}
+      .hero-desc{max-width:100%;}
+      .hero-right{order:2;height:300px;width:100%;position:relative;}
+      .hero-right img{width:100%;height:100%;object-fit:contain;object-position:center center;}
+      /* WHY */
+      .why-section{padding:64px 20px;}
+      .why-grid{grid-template-columns:1fr;gap:20px;}
+      /* FLOW */
+      .flow-section{padding:64px 20px;}
+      .flow-steps{grid-template-columns:1fr 1fr;}
+      .flow-step{border-right:none;border-bottom:1px solid var(--gray200);padding:16px;}
+      .flow-step:nth-child(odd){border-right:1px solid var(--gray200);}
+      .flow-step:last-child{border-bottom:none;}
+      /* COMMON */
+      .category-banners{grid-template-columns:repeat(2,1fr);padding:20px;}
+      .about-section{flex-direction:column;padding:48px 24px;gap:32px;}
+      .about-illo{flex:none;width:100%;max-width:320px;margin:0 auto;}
+      .cases-grid{grid-template-columns:1fr;}
+      .cases-section{padding:40px 20px;}
+      .dash-body{flex-direction:column;padding:16px;}
+      .sidebar{width:100%;position:static;}
+      .landing-nav{padding:0 20px;}
+      .admin-grid{grid-template-columns:1fr;}
+      .mypage-wrap{padding:16px;}
+      .mypage-grid{grid-template-columns:1fr;}
+      .consult-card{padding:24px 20px;}
+      .consult-form-wrap{padding:32px 16px;}
     }
     /* CHAT */
     .chat-overlay{position:fixed;inset:0;background:rgba(26,26,46,0.5);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;}
@@ -938,18 +988,17 @@ export default function App() {
 
           {/* HERO */}
           <div className="hero-section">
-            <div className="hero-bg-shape"/>
             <div className="hero-left">
-              <div className="hero-eyebrow">✦ 営業フリーランス専門の案件紹介プラットフォーム</div>
+              <div className="hero-eyebrow">営業フリーランス専門マッチング</div>
               <h1 className="hero">
                 あなたの営業スキルで<br/>
                 <span className="highlight">自由な働き方</span>を<br/>実現しませんか
               </h1>
-              <p>SalesBoardは、営業フリーランス専門のマッチングサービス。<br/>高単価・リモート・副業OKな案件を厳選してご紹介します。</p>
+              <p className="hero-desc">SalesBoardは、営業フリーランス専門のマッチングサービス。高単価・リモート・副業OKな案件を厳選してご紹介します。</p>
               <div className="hero-trust">
-                <span className="hero-trust-badge">✓ 高単価案件が豊富</span>
-                <span className="hero-trust-badge">✓ リモート案件多数</span>
-                <span className="hero-trust-badge">✓ 週2日〜OK</span>
+                <span className="hero-trust-badge">高単価案件が豊富</span>
+                <span className="hero-trust-badge">リモート案件多数</span>
+                <span className="hero-trust-badge">週2日〜OK</span>
               </div>
               <div className="cta-buttons">
                 <button className="btn-cta-primary" onClick={()=>setPage("register")}>無料で会員登録する →</button>
@@ -957,18 +1006,18 @@ export default function App() {
               </div>
             </div>
             <div className="hero-right">
-              <img src="/undraw_investor-update_ou4c.svg" alt="イメージ" style={{width:"82%",maxWidth:440,display:"block"}} />
+              <img src="/assets/hero.jpg" alt="営業フリーランスとして活躍する人材" />
             </div>
           </div>
 
           {/* CATEGORY BANNERS */}
-          <div style={{background:"var(--white)",borderTop:"1px solid var(--gray200)",borderBottom:"1px solid var(--gray200)"}}>
+          <div className="cat-strip">
             <div className="category-banners">
               {[
-                {icon:"🏠",bg:"#EAF7EE",title:"リモート案件",sub:"フルリモートで働ける案件"},
-                {icon:"⚡",bg:"#FFF3CD",title:"急募案件",sub:"すぐに稼働できる案件"},
-                {icon:"💰",bg:"#FEE2E2",title:"高単価案件",sub:"月60万円以上の高収入案件"},
-                {icon:"🌱",bg:"#EDE9FE",title:"未経験OK案件",sub:"営業経験少なめでも応募可"},
+                {icon:"🏠",bg:"#EAF7EE",title:"リモート案件",sub:"場所を選ばず働ける"},
+                {icon:"⚡",bg:"#FFF9E6",title:"急募案件",sub:"すぐに稼働できる"},
+                {icon:"💰",bg:"#FFF0E6",title:"高単価案件",sub:"月60万円以上"},
+                {icon:"🌱",bg:"#EDE9FE",title:"副業・週2日〜",sub:"本業と並行可能"},
               ].map(cat=>(
                 <div key={cat.title} className="cat-banner" onClick={()=>setPage("register")}>
                   <div className="cat-banner-icon" style={{background:cat.bg}}>{cat.icon}</div>
@@ -976,82 +1025,96 @@ export default function App() {
                     <div className="cat-banner-title">{cat.title}</div>
                     <div className="cat-banner-sub">{cat.sub}</div>
                   </div>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8a8a7a" strokeWidth="2"><path d="m9 18 6-6-6-6"/></svg>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gray400)" strokeWidth="2.5"><path d="m9 18 6-6-6-6"/></svg>
                 </div>
               ))}
             </div>
           </div>
 
           {/* SalesBoardが選ばれる3つの理由 */}
-          <div style={{background:"var(--paper)",padding:"80px 40px",borderTop:"1px solid var(--gray200)"}}>
-            <div style={{textAlign:"center",marginBottom:56}}>
-              <div style={{fontSize:12,fontWeight:700,color:"var(--brand)",letterSpacing:"2px",textTransform:"uppercase",marginBottom:10}}>Why SalesBoard</div>
-              <div style={{fontSize:32,fontWeight:900,color:"var(--ink)",letterSpacing:"-0.5px",lineHeight:1.25}}>SalesBoardが選ばれる<br/>3つの理由</div>
+          <div className="why-section">
+            <div style={{textAlign:"center",marginBottom:60}}>
+              <div style={{fontSize:12,fontWeight:700,color:"var(--brand)",letterSpacing:"2px",textTransform:"uppercase",marginBottom:12}}>Why SalesBoard</div>
+              <div style={{fontSize:34,fontWeight:900,color:"var(--ink)",letterSpacing:"-0.6px",lineHeight:1.25}}>SalesBoardが選ばれる<br/>3つの理由</div>
             </div>
-            <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:24,maxWidth:960,margin:"0 auto"}}>
+            <div className="why-grid">
               {[
-                {main:"高単価",sub:"案件が豊富",icon:"💰",desc:"月60万円〜の高単価案件を厳選して掲載。業務内容・スキルに見合った報酬で働けます。",color:"#24A64A",bg:"#EAF7EE",ring:"#24A64A"},
-                {main:"リモート",sub:"案件多数",icon:"🏡",desc:"フルリモート〜週1出社など、多様な働き方に対応した案件をラインナップ。場所を選ばず活躍できます。",color:"#FF8A00",bg:"#FFF3E0",ring:"#FF8A00"},
-                {main:"週2日〜",sub:"副業OK",icon:"📅",desc:"週2日〜の稼働が可能な案件が多数。本業と並行しながら、自分のペースでキャリアを広げられます。",color:"#2563eb",bg:"#eff4ff",ring:"#2563eb"},
-              ].map((m,i)=>(
+                {
+                  img:"/assets/high-value.jpg",
+                  label:"HIGH VALUE",
+                  title:"高単価案件が豊富",
+                  desc:"月60万円〜の高単価案件を厳選して掲載。業務内容・スキルに見合った報酬で、フリーランスとして理想の収入を目指せます。"
+                },
+                {
+                  img:"/assets/remote-work.jpg",
+                  label:"REMOTE FIRST",
+                  title:"リモート案件多数",
+                  desc:"フルリモート〜週1出社まで、多様な働き方に対応した案件をラインナップ。場所を選ばず、自分のライフスタイルに合わせて活躍できます。"
+                },
+                {
+                  img:"/assets/flexible-schedule.jpg",
+                  label:"FLEXIBLE",
+                  title:"週2日〜・副業OK",
+                  desc:"週2日〜の稼働が可能な案件が多数。本業と並行しながら、自分のペースで着実にキャリアを広げられます。"
+                },
+              ].map((c,i)=>(
                 <div key={i} className="why-card">
-                  <div style={{position:"relative",width:140,height:140,margin:"0 auto 24px"}}>
-                    <svg style={{position:"absolute",top:0,left:0}} width="140" height="140" viewBox="0 0 140 140">
-                      <circle cx="70" cy="70" r="64" fill={m.bg} stroke={m.ring} strokeWidth="5" strokeLinecap="round"/>
-                      <circle cx="70" cy="70" r="50" fill="white"/>
-                    </svg>
-                    <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
-                      <div style={{fontSize:28,marginBottom:4}}>{m.icon}</div>
-                      <div style={{fontSize:17,fontWeight:900,color:m.color,lineHeight:1.15,textAlign:"center"}}>{m.main}</div>
-                      <div style={{fontSize:12,color:m.color,fontWeight:700,marginTop:2}}>{m.sub}</div>
-                    </div>
+                  <div className="why-card-img">
+                    <img src={c.img} alt={c.title} />
                   </div>
-                  <div style={{fontSize:17,fontWeight:800,color:"var(--ink)",marginBottom:10}}>{m.main}{m.sub}</div>
-                  <div style={{fontSize:14,color:"var(--gray500)",lineHeight:1.85}}>{m.desc}</div>
+                  <div className="why-card-body">
+                    <div className="why-label">{c.label}</div>
+                    <div className="why-title">{c.title}</div>
+                    <div className="why-desc">{c.desc}</div>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* マッチングまでの流れ — SOKUDANスタイルステップ */}
-          <div style={{background:"var(--paper)",borderTop:"1px solid var(--gray200)",borderBottom:"1px solid var(--gray200)",padding:"72px 40px"}}>
+          {/* 登録から稼働開始まで */}
+          <div className="flow-section">
             <div style={{textAlign:"center",marginBottom:52}}>
-              <div style={{fontSize:11,fontWeight:700,color:"var(--brand)",letterSpacing:"1.5px",textTransform:"uppercase",marginBottom:8}}>How it works</div>
-              <div style={{fontSize:28,fontWeight:900,color:"var(--ink)",letterSpacing:"-0.3px"}}>登録から稼働開始まで</div>
-              <div style={{fontSize:14,color:"var(--gray500)",marginTop:8}}>最短1週間でお仕事への参画が可能です</div>
+              <div style={{fontSize:12,fontWeight:700,color:"var(--brand)",letterSpacing:"2px",textTransform:"uppercase",marginBottom:12}}>How it works</div>
+              <div style={{fontSize:34,fontWeight:900,color:"var(--ink)",letterSpacing:"-0.6px",lineHeight:1.25}}>登録から稼働開始まで</div>
+              <div style={{fontSize:15,color:"var(--gray500)",marginTop:12,lineHeight:1.8}}>最短1週間でお仕事への参画が可能。シンプルな4ステップで始められます。</div>
             </div>
-            <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:24,maxWidth:860,margin:"0 auto"}}>
+
+            {/* メインのフロー画像 */}
+            <div className="flow-img-wrap">
+              <img src="/assets/flow.jpg" alt="登録から稼働開始までの流れ" />
+            </div>
+
+            {/* 画像下のHTML補足ステップ */}
+            <div className="flow-steps">
               {[
-                {step:"1",title:"まずは基本情報を登録",badge:"たったの30秒",badgeColor:"#24A64A",desc:"FacebookやGoogleアカウントでもOK。メールアドレスだけで最短30秒で完了します。",icon:"📝",iconBg:"#EAF7EE"},
-                {step:"2",title:"職務経歴とスキルを入力",badge:"面談率UP",badgeColor:"#FF8A00",desc:"過去の実績・得意なスキルを入力。充実した情報で企業からオファーが来やすくなります。",icon:"💼",iconBg:"#FFF3E0"},
-                {step:"3",title:"希望案件へ応募",badge:"応募上限なし",badgeColor:"#24A64A",desc:"気になる案件に何件でも応募OK。担当エージェントがマッチングをサポートします。",icon:"🔍",iconBg:"#EAF7EE"},
-                {step:"4",title:"面談・契約・稼働スタート",badge:"即マッチング",badgeColor:"#2563eb",desc:"企業と面談し、条件が合えばそのまま契約。早ければ翌週から稼働スタートも可能です。",icon:"🚀",iconBg:"#eff4ff"},
+                {num:"1",badge:"30秒で完了",title:"基本情報を登録",desc:"メールアドレスだけで登録完了。必要な情報はあとから入力できます。"},
+                {num:"2",badge:"面談率UP",title:"経歴・スキルを入力",desc:"得意分野や実績を入力。充実した情報が企業とのマッチング精度を高めます。"},
+                {num:"3",badge:"応募上限なし",title:"希望案件へ応募",desc:"興味のある案件に何件でも応募OK。担当がしっかりサポートします。"},
+                {num:"4",badge:"最短翌週〜",title:"面談・稼働スタート",desc:"条件が合えばそのまま契約へ。スピーディーに稼働開始できます。"},
               ].map((s,i)=>(
-                <div key={i} style={{background:"var(--white)",borderRadius:14,border:"1px solid var(--gray200)",overflow:"hidden",display:"flex",gap:0,boxShadow:"0 2px 8px rgba(0,0,0,0.04)"}}>
-                  <div style={{background:s.iconBg,width:80,flexShrink:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:8,padding:"20px 0"}}>
-                    <div style={{width:36,height:36,borderRadius:"50%",background:"var(--brand)",color:"white",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Outfit',sans-serif",fontWeight:800,fontSize:16}}>{s.step}</div>
-                    <div style={{fontSize:28}}>{s.icon}</div>
-                  </div>
-                  <div style={{padding:"18px 20px",flex:1}}>
-                    <div style={{display:"inline-block",background:"var(--brand)",color:"white",fontSize:11,fontWeight:700,padding:"3px 10px",borderRadius:100,marginBottom:8}}>{s.badge}</div>
-                    <div style={{fontSize:15,fontWeight:700,color:"var(--ink)",marginBottom:6}}>{s.title}</div>
-                    <div style={{fontSize:13,color:"var(--gray500)",lineHeight:1.7}}>{s.desc}</div>
-                  </div>
+                <div key={i} className="flow-step">
+                  <div className="flow-badge">{s.badge}</div>
+                  <div className="flow-step-num">{s.num}</div>
+                  <div className="flow-step-title">{s.title}</div>
+                  <div className="flow-step-desc">{s.desc}</div>
                 </div>
               ))}
             </div>
-            <div style={{textAlign:"center",marginTop:36}}>
+
+            <div style={{textAlign:"center",marginTop:52}}>
               <button className="btn-cta-primary" onClick={()=>setPage("register")}>無料で会員登録する →</button>
+              <div style={{fontSize:13,color:"var(--gray400)",marginTop:14}}>登録費用・利用料は一切無料です</div>
             </div>
           </div>
 
           {/* CASES */}
-          <div style={{background:"var(--white)",padding:"72px 40px"}}>
+          <div style={{background:"var(--white)",padding:"96px 40px"}}>
             <div style={{maxWidth:1060,margin:"0 auto"}}>
-              <div style={{marginBottom:36}}>
+              <div style={{marginBottom:44}}>
                 <div className="section-eyebrow">Case Examples</div>
                 <div className="section-title">ご紹介案件例</div>
-                <div className="section-subtitle">高単価・リモート・フレックスなど、希望に合った案件をご紹介します</div>
+                <div className="section-subtitle">高単価・リモート・フレックスなど、あなたの希望に合った案件をご紹介します</div>
               </div>
               <div className="cases-grid">
                 {displayJobs.map(job=>(
@@ -1087,20 +1150,20 @@ export default function App() {
           </div>
 
           {/* 他社比較テーブル */}
-          <div style={{background:"var(--paper)",borderTop:"1px solid var(--gray200)",padding:"72px 40px"}}>
-            <div style={{maxWidth:800,margin:"0 auto"}}>
-              <div style={{textAlign:"center",marginBottom:40}}>
+          <div style={{background:"var(--paper)",borderTop:"1px solid var(--gray200)",padding:"96px 40px"}}>
+            <div style={{maxWidth:780,margin:"0 auto"}}>
+              <div style={{textAlign:"center",marginBottom:48}}>
                 <div className="section-eyebrow">Comparison</div>
                 <div className="section-title">他社サービスとの比較</div>
               </div>
-              <div style={{background:"var(--white)",borderRadius:14,border:"1px solid var(--gray200)",overflow:"hidden",boxShadow:"0 2px 12px rgba(0,0,0,0.05)"}}>
+              <div style={{background:"var(--white)",borderRadius:24,overflow:"hidden",boxShadow:"0 2px 8px rgba(0,0,0,0.06),0 4px 16px rgba(0,0,0,0.05)"}}>
                 <table style={{width:"100%",borderCollapse:"collapse"}}>
                   <thead>
-                    <tr style={{background:"var(--brand)"}}>
-                      <th style={{padding:"16px 20px",textAlign:"left",fontSize:14,fontWeight:700,color:"white",width:"34%"}}>比較項目</th>
-                      <th style={{padding:"16px 20px",textAlign:"center",fontSize:15,fontWeight:800,color:"white",width:"22%",background:"rgba(0,0,0,0.15)"}}>SalesBoard</th>
-                      <th style={{padding:"16px 20px",textAlign:"center",fontSize:14,fontWeight:700,color:"rgba(255,255,255,0.8)",width:"22%"}}>A社</th>
-                      <th style={{padding:"16px 20px",textAlign:"center",fontSize:14,fontWeight:700,color:"rgba(255,255,255,0.8)",width:"22%"}}>B社</th>
+                    <tr>
+                      <th style={{padding:"18px 24px",textAlign:"left",fontSize:13,fontWeight:700,color:"var(--gray500)",background:"var(--paper)",width:"36%",borderBottom:"2px solid var(--gray200)"}}>比較項目</th>
+                      <th style={{padding:"18px 24px",textAlign:"center",fontSize:14,fontWeight:800,color:"var(--brand)",background:"var(--brand-soft)",width:"21%",borderBottom:"2px solid var(--brand-mid)"}}>SalesBoard</th>
+                      <th style={{padding:"18px 24px",textAlign:"center",fontSize:13,fontWeight:600,color:"var(--gray500)",background:"var(--paper)",width:"21%",borderBottom:"2px solid var(--gray200)"}}>A社</th>
+                      <th style={{padding:"18px 24px",textAlign:"center",fontSize:13,fontWeight:600,color:"var(--gray500)",background:"var(--paper)",width:"22%",borderBottom:"2px solid var(--gray200)"}}>B社</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1112,11 +1175,14 @@ export default function App() {
                       ["担当エージェントサポート",true,false,false],
                       ["登録・利用料無料",true,true,true],
                     ].map(([label,sb,a,b],i)=>(
-                      <tr key={i} style={{background:i%2===0?"var(--white)":"var(--gray50)",borderBottom:"1px solid var(--gray200)"}}>
-                        <td style={{padding:"14px 20px",fontSize:14,fontWeight:600,color:"var(--ink)"}}>{label}</td>
-                        <td style={{padding:"14px 20px",textAlign:"center",background:i%2===0?"rgba(36,166,74,0.04)":"rgba(36,166,74,0.08)"}}><span style={{fontSize:18,color:sb?"var(--brand)":"var(--gray300)"}}>{sb?"✓":"✕"}</span></td>
-                        <td style={{padding:"14px 20px",textAlign:"center"}}><span style={{fontSize:16,color:a?"var(--gray500)":"var(--gray300)"}}>{a?"○":"✕"}</span></td>
-                        <td style={{padding:"14px 20px",textAlign:"center"}}><span style={{fontSize:16,color:b?"var(--gray500)":"var(--gray300)"}}>{b?"○":"✕"}</span></td>
+                      <tr key={i} style={{borderBottom:"1px solid var(--gray200)"}}>
+                        <td style={{padding:"15px 24px",fontSize:14,fontWeight:500,color:"var(--ink)"}}>{label}</td>
+                        <td style={{padding:"15px 24px",textAlign:"center",background:"rgba(36,166,74,0.04)"}}>
+                          {sb ? <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",width:24,height:24,borderRadius:"50%",background:"var(--brand)",color:"white",fontSize:13,fontWeight:800}}>✓</span>
+                               : <span style={{color:"var(--gray300)",fontSize:18}}>—</span>}
+                        </td>
+                        <td style={{padding:"15px 24px",textAlign:"center"}}><span style={{fontSize:15,color:a?"var(--gray500)":"var(--gray200)"}}>{a?"○":"—"}</span></td>
+                        <td style={{padding:"15px 24px",textAlign:"center"}}><span style={{fontSize:15,color:b?"var(--gray500)":"var(--gray200)"}}>{b?"○":"—"}</span></td>
                       </tr>
                     ))}
                   </tbody>
