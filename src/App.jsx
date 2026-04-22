@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, sendEmailVerification } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, sendEmailVerification, applyActionCode } from "firebase/auth";
 import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp, setDoc, getDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
@@ -44,9 +44,20 @@ function daysAgo(dateStr) {
 }
 
 
+// ── アプリ起動時に1回だけURLパラメータを読む（handleCodeInApp:true の場合にここに届く）──
+const _params = new URLSearchParams(window.location.search);
+const INIT_MODE = _params.get("mode");
+const INIT_OOB  = _params.get("oobCode");
+if (INIT_OOB) {
+  // パラメータをすぐ消す（Reactの再レンダリングで何度も読まないように）
+  window.history.replaceState({}, document.title, window.location.pathname);
+}
+
 export default function App() {
   // Auth
-  const [page, setPage] = useState("landing");
+  const [page, setPage] = useState(
+    INIT_MODE === "verifyEmail" && INIT_OOB ? "verifying" : "landing"
+  );
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [emailVerified, setEmailVerified] = useState(false);
@@ -114,11 +125,49 @@ export default function App() {
 
   const isAdmin = user?.email === ADMIN_EMAIL;
 
+  // ── handleCodeInApp:true で届いたoobCodeを処理 ──
+  useEffect(() => {
+    if (INIT_MODE !== "verifyEmail" || !INIT_OOB) return;
+    // "verifying"ページを表示してから処理
+    applyActionCode(auth, INIT_OOB)
+      .then(() => {
+        // 認証成功→ 現在のユーザー情報をリロードしてダッシュボードへ
+        const cu = auth.currentUser;
+        if (cu) {
+          cu.reload().then(() => {
+            const r = auth.currentUser;
+            setUser({ name: r.displayName || r.email, email: r.email });
+            setEmailVerified(true);
+            setPage("dashboard");
+            setDashTab("mypage");
+            showToast("メール認証が完了しました！プロフィールを入力してください😊");
+          });
+        } else {
+          // 未ログインの場合はログイン画面へ
+          setPage("login");
+          showToast("メール認証が完了しました！ログインしてください。");
+        }
+        setAuthLoading(false);
+      })
+      .catch((err) => {
+        const code = err.code || "";
+        let msg = "認証リンクが無効か期限切れです。「認証メールを再送する」から新しいリンクを取得してください。";
+        if (code === "auth/invalid-action-code")  msg = "認証リンクが無効です（使用済みまたはURL着尊）。「認証メールを再送する」を押してください。";
+        if (code === "auth/expired-action-code") msg = "認証リンクの有効期限（24時間）が切れています。「認証メールを再送する」を押してください。";
+        console.error("applyActionCode error:", code, err.message);
+        setVerifyError(msg);
+        setPage("verify-email");
+        setAuthLoading(false);
+      });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // ── Auth listener（onAuthStateChanged） ──
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (fu) => {
+      // oobCode処理中はスキップ（上のuseEffectが担当）
+      if (INIT_MODE === "verifyEmail" && INIT_OOB) return;
       if (fu) {
-        // ユーザー情報を最新に更新してからemailVerifiedを確認
         await fu.reload();
         const refreshed = auth.currentUser;
         setUser({ name: refreshed.displayName || refreshed.email, email: refreshed.email });
@@ -227,7 +276,7 @@ export default function App() {
       // continueUrl をアプリURLに設定し、認証後にアプリへ戻れるようにする
       const actionCodeSettings = {
         url: window.location.origin + "/",
-        handleCodeInApp: false,
+        handleCodeInApp: true,
       };
       await sendEmailVerification(result.user, actionCodeSettings);
       setVerificationSent(true);
@@ -420,6 +469,24 @@ export default function App() {
 
   if (authLoading) return <div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"100vh",fontFamily:"sans-serif",color:"#8a8a7a"}}>読み込み中...</div>;
 
+  // oobCode処理中のローディング画面
+  if (page === "verifying") {
+    return (
+      <div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"100vh",fontFamily:"'Noto Sans JP',sans-serif",background:"linear-gradient(135deg,#f5f5f0,#fafaf7)"}}>
+        <div style={{textAlign:"center",background:"white",borderRadius:20,padding:"48px 40px",boxShadow:"0 16px 48px rgba(26,26,46,0.16)",maxWidth:400,width:"100%"}}>
+          <div style={{fontSize:56,marginBottom:20}}>✉️</div>
+          <div style={{fontSize:22,fontWeight:700,marginBottom:12,color:"#1a1a2e"}}>メール認証を処理中...</div>
+          <div style={{fontSize:14,color:"#8a8a7a",lineHeight:1.8}}>しばらくお待ちください</div>
+          <div style={{marginTop:24,display:"flex",justifyContent:"center",gap:8}}>
+            {[0,1,2].map(i=>(
+              <div key={i} style={{width:10,height:10,borderRadius:"50%",background:"#e8530e",animation:`pulse 1.2s ease-in-out ${i*0.2}s infinite`}} />
+            ))}
+          </div>
+          <style>{`@keyframes pulse{0%,80%,100%{opacity:0.3;transform:scale(0.8)}40%{opacity:1;transform:scale(1)}}`}</style>
+        </div>
+      </div>
+    );
+  }
 
 
   const css = `
@@ -914,7 +981,7 @@ export default function App() {
         if (currentUser) {
           const actionCodeSettings = {
             url: window.location.origin + "/",
-            handleCodeInApp: false,
+            handleCodeInApp: true,
           };
           await sendEmailVerification(currentUser, actionCodeSettings);
           showToast("認証メールを再送信しました📧");
