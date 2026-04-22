@@ -111,6 +111,14 @@ export default function App() {
 
   const isAdmin = user?.email === ADMIN_EMAIL;
 
+  // プロフィール入力完了チェック（名前・経験年数・希望単価 + 経歴1社以上）
+  const isProfileComplete = !!(
+    profileForm.name &&
+    profileForm.experience &&
+    profileForm.desiredRate &&
+    careers.length >= 1
+  );
+
   // ── Auth listener（onAuthStateChanged） ──
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (fu) => {
@@ -133,9 +141,9 @@ export default function App() {
     return () => unsub();
   }, []);
 
-  // Firestore jobs listener（認証済みユーザーのみ）
+  // Firestore jobs listener（ログイン済みユーザーのみ）
   useEffect(() => {
-    if (!emailVerified) return; // 未認証時はリスナーを張らない
+    if (!user) return;
     const unsub = onSnapshot(collection(db, "jobs"), (snap) => {
       if (!snap.empty) {
         const fsJobs = snap.docs.map(d => ({
@@ -147,7 +155,7 @@ export default function App() {
       }
     }, () => {});
     return () => unsub();
-  }, [emailVerified]);
+  }, [user]);
 
   // Profile listener
   useEffect(() => {
@@ -219,22 +227,18 @@ export default function App() {
     try {
       const result = await createUserWithEmailAndPassword(auth, regForm.email, regForm.password);
       await updateProfile(result.user, { displayName: regForm.name });
-      // 登録成功→ そのままダッシュボードへ（メール認証なし）
-      showToast("登録が完了しました！ようこそ😊");
-        } catch(e) { setAuthError(getErrorMessage(e.code)); }
+      // 登録成功→ マイページ（プロフィール入力）へ誘導
+      showToast("登録が完了しました！プロフィールを入力してください😊");
+      setDashTab("mypage");
+    } catch(e) { setAuthError(getErrorMessage(e.code)); }
   };
 
   const handleLogin = async () => {
     setAuthError("");
     if (!loginForm.email || !loginForm.password) { showToast("メール・パスワードを入力してください"); return; }
     try {
-      const result = await signInWithEmailAndPassword(auth, loginForm.email, loginForm.password);
-      if (!result.user.emailVerified) {
-        setPage("verify-email");
-        showToast("メールアドレスの認証が完了していません");
-      } else {
-        showToast("ログインしました");
-      }
+      await signInWithEmailAndPassword(auth, loginForm.email, loginForm.password);
+      showToast("ログインしました");
     } catch(e) { setAuthError(getErrorMessage(e.code)); }
   };
 
@@ -259,10 +263,17 @@ export default function App() {
 
   const handleSaveProfile = async () => {
     if (!user) return;
+    if (!profileForm.name || !profileForm.experience || !profileForm.desiredRate) {
+      showToast("氏名・営業経験年数・希望単価は必須です");
+      return;
+    }
     try {
       await setDoc(doc(db, "profiles", user.email), { ...profileForm, email: user.email, resumeUrl, resumeFileName });
       showToast("プロフィールを保存しました！");
-    } catch(e) { showToast("保存に失敗しました"); }
+    } catch(e) {
+      console.error("save error:", e);
+      showToast("保存に失敗しました（権限エラーの場合はページを再読み込みしてください）");
+    }
   };
 
   const handleResumeUpload = async (e) => {
@@ -1078,12 +1089,49 @@ export default function App() {
 
         <div className="dash-tabs">
           {[["jobs","案件を探す"],["mypage","マイページ"],["history","応募履歴"]].map(([t,l])=>(
-            <div key={t} className={`dash-tab ${dashTab===t?"active":""}`} onClick={()=>setDashTab(t)}>{l}</div>
+            <div key={t}
+              className={`dash-tab ${dashTab===t?"active":""} ${t==="jobs"&&!isProfileComplete?"disabled":""}`}
+              onClick={()=>{
+                if(t==="jobs"&&!isProfileComplete){
+                  showToast("プロフィール・経歴を入力してから案件を見られます");
+                  setDashTab("mypage");
+                } else {
+                  setDashTab(t);
+                }
+              }}
+              style={t==="jobs"&&!isProfileComplete?{color:"var(--gray300)",cursor:"default",position:"relative"}:{}}
+            >
+              {l}
+              {t==="jobs"&&!isProfileComplete&&<span style={{fontSize:10,background:"var(--accent)",color:"white",borderRadius:4,padding:"1px 5px",marginLeft:6}}>要入力</span>}
+            </div>
           ))}
         </div>
 
+        {/* プロフィール未完了バナー */}
+        {!isProfileComplete && dashTab !== "mypage" && (
+          <div style={{background:"#fff7ed",borderBottom:"2px solid var(--accent)",padding:"12px 32px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:16}}>
+            <div style={{fontSize:14,color:"var(--ink)"}}>
+              📝 <strong>プロフィールと経歴（1社以上）を入力する</strong>と案件を閲覧できます
+            </div>
+            <button onClick={()=>setDashTab("mypage")} style={{background:"var(--accent)",color:"white",border:"none",borderRadius:8,padding:"8px 18px",fontWeight:700,cursor:"pointer",fontSize:13,whiteSpace:"nowrap"}}>
+              入力する →
+            </button>
+          </div>
+        )}
+
+        {/* プロフィール完了バナー */}
+        {isProfileComplete && dashTab === "mypage" && (
+          <div style={{background:"#f0fdf4",borderBottom:"2px solid var(--green)",padding:"12px 32px",display:"flex",alignItems:"center",gap:12}}>
+            <span style={{fontSize:16}}>✅</span>
+            <span style={{fontSize:14,color:"var(--green)",fontWeight:600}}>プロフィールが完成しています！案件を探してみましょう</span>
+            <button onClick={()=>setDashTab("jobs")} style={{marginLeft:"auto",background:"var(--green)",color:"white",border:"none",borderRadius:8,padding:"8px 18px",fontWeight:700,cursor:"pointer",fontSize:13}}>
+              案件を探す →
+            </button>
+          </div>
+        )}
+
         {/* 案件一覧 */}
-        {dashTab === "jobs" && (
+        {dashTab === "jobs" && isProfileComplete && (
           <div className="dash-body">
             <aside className="sidebar">
               <h3>🔍 絞り込み検索</h3>
