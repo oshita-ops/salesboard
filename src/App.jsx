@@ -167,22 +167,28 @@ export default function App() {
     const unsub = onAuthStateChanged(auth, async (fu) => {
       // oobCode処理中はスキップ（上のuseEffectが担当）
       if (INIT_MODE === "verifyEmail" && INIT_OOB) return;
-      if (fu) {
-        await fu.reload();
-        const refreshed = auth.currentUser;
-        setUser({ name: refreshed.displayName || refreshed.email, email: refreshed.email });
-        setEmailVerified(refreshed.emailVerified);
-        if (refreshed.emailVerified) {
-          setPage("dashboard");
+      try {
+        if (fu) {
+          try { await fu.reload(); } catch(e) { /* reloadが失敗してもキャッシュ値で続行 */ }
+          const refreshed = auth.currentUser;
+          setUser({ name: refreshed.displayName || refreshed.email, email: refreshed.email });
+          setEmailVerified(refreshed.emailVerified);
+          if (refreshed.emailVerified) {
+            setPage("dashboard");
+          } else {
+            setPage("verify-email");
+          }
         } else {
-          setPage("verify-email");
+          setUser(null);
+          setEmailVerified(false);
+          setPage("landing");
         }
-      } else {
-        setUser(null);
-        setEmailVerified(false);
+      } catch(e) {
+        console.error("onAuthStateChanged error:", e);
         setPage("landing");
+      } finally {
+        setAuthLoading(false);
       }
-      setAuthLoading(false);
     });
     return () => unsub();
   }, []);
@@ -398,6 +404,26 @@ export default function App() {
     );
     return () => unsub();
   }, [chatAppId]);
+
+  // verify-email ページ用：自動ポーリング（3秒ごとに認証状態をチェック）
+  useEffect(() => {
+    if (page !== "verify-email" || !auth.currentUser) return;
+    setIsPolling(true);
+    const interval = setInterval(async () => {
+      try {
+        await auth.currentUser.reload();
+        if (auth.currentUser.emailVerified) {
+          clearInterval(interval);
+          setIsPolling(false);
+          setEmailVerified(true);
+          setDashTab("mypage");
+          setPage("dashboard");
+          showToast("メール認証が完了しました！プロフィールを入力してください😊");
+        }
+      } catch(e) {}
+    }, 3000);
+    return () => { clearInterval(interval); setIsPolling(false); };
+  }, [page]);
 
   const handleSendMessage = async () => {
     if (!chatInput.trim() || !chatAppId) return;
@@ -952,25 +978,6 @@ export default function App() {
       </>
     );
   }
-  // verify-email ページ用：自動ポーリング（3秒ごとに認証状態をチェック）
-  useEffect(() => {
-    if (page !== "verify-email" || !auth.currentUser) return;
-    setIsPolling(true);
-    const interval = setInterval(async () => {
-      try {
-        await auth.currentUser.reload();
-        if (auth.currentUser.emailVerified) {
-          clearInterval(interval);
-          setIsPolling(false);
-          setEmailVerified(true);
-          setDashTab("mypage");
-          setPage("dashboard");
-          showToast("メール認証が完了しました！プロフィールを入力してください😊");
-        }
-      } catch(e) {}
-    }, 3000);
-    return () => { clearInterval(interval); setIsPolling(false); };
-  }, [page]);
 
   // VERIFY EMAIL PAGE
   if (page === "verify-email") {
