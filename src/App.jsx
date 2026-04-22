@@ -281,7 +281,7 @@ export default function App() {
       await updateProfile(result.user, { displayName: regForm.name });
       // continueUrl をアプリURLに設定し、認証後にアプリへ戻れるようにする
       const actionCodeSettings = {
-        url: window.location.origin + "/",
+        url: "https://salesboard.jcon.co.jp/",
         handleCodeInApp: true,
       };
       await sendEmailVerification(result.user, actionCodeSettings);
@@ -987,7 +987,7 @@ export default function App() {
         const currentUser = auth.currentUser;
         if (currentUser) {
           const actionCodeSettings = {
-            url: window.location.origin + "/",
+            url: "https://salesboard.jcon.co.jp/",
             handleCodeInApp: true,
           };
           await sendEmailVerification(currentUser, actionCodeSettings);
