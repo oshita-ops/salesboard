@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://salesboard.jcon.co.jp/sitemap.xml
+
+# Disallow admin paths
+Disallow: /admin
