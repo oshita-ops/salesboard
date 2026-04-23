@@ -1018,31 +1018,72 @@ export default function App() {
       .hero-left{padding:52px 24px 36px;order:1;}
       .hero h1{font-size:28px;}
       .hero-desc{max-width:100%;}
-      .hero-right{order:2;height:300px;width:100%;position:relative;}
+      .hero-right{order:2;height:240px;width:100%;position:relative;}
       .hero-right img{width:100%;height:100%;object-fit:contain;object-position:center center;}
       /* WHY */
-      .why-section{padding:64px 20px;}
-      .why-grid{grid-template-columns:1fr;gap:20px;}
+      .why-section{padding:48px 16px;}
+      .why-grid{grid-template-columns:1fr;gap:16px;}
       /* FLOW */
-      .flow-section{padding:64px 20px;}
+      .flow-section{padding:48px 16px;}
       .flow-steps{grid-template-columns:1fr 1fr;}
-      .flow-step{border-right:none;border-bottom:1px solid var(--gray200);padding:16px;}
+      .flow-step{border-right:none;border-bottom:1px solid var(--gray200);padding:14px;}
       .flow-step:nth-child(odd){border-right:1px solid var(--gray200);}
       .flow-step:last-child{border-bottom:none;}
       /* COMMON */
-      .category-banners{grid-template-columns:repeat(2,1fr);padding:20px;}
-      .about-section{flex-direction:column;padding:48px 24px;gap:32px;}
-      .about-illo{flex:none;width:100%;max-width:320px;margin:0 auto;}
+      .category-banners{grid-template-columns:repeat(2,1fr);padding:16px;}
+      .about-section{flex-direction:column;padding:40px 16px;gap:24px;}
+      .about-illo{flex:none;width:100%;max-width:280px;margin:0 auto;}
       .cases-grid{grid-template-columns:1fr;}
-      .cases-section{padding:40px 20px;}
-      .dash-body{flex-direction:column;padding:16px;}
+      .cases-section{padding:32px 16px;}
+      /* DASHBOARD */
+      .dash-nav{padding:0 16px;height:56px;}
+      .applied-count{font-size:12px;padding:5px 10px;}
+      .user-name{display:none;}
+      .dash-body{flex-direction:column;padding:12px 16px;gap:16px;}
       .sidebar{width:100%;position:static;}
-      .landing-nav{padding:0 20px;}
+      .landing-nav{padding:0 16px;}
+      .nav-btns{gap:6px;}
+      .btn-ghost{padding:7px 14px;font-size:13px;}
+      .btn-accent{padding:8px 14px;font-size:13px;}
       .admin-grid{grid-template-columns:1fr;}
-      .mypage-wrap{padding:16px;}
+      /* MYPAGE */
+      .mypage-wrap{padding:12px 16px;}
       .mypage-grid{grid-template-columns:1fr;}
-      .consult-card{padding:24px 20px;}
-      .consult-form-wrap{padding:32px 16px;}
+      .mypage-card{padding:18px;}
+      /* MODAL */
+      .modal{max-height:95vh;border-radius:var(--radius-lg) var(--radius-lg) 0 0;align-self:flex-end;margin:auto 0 0;}
+      .modal-overlay{align-items:flex-end;padding:0;}
+      .modal-header{padding:16px 18px 0;}
+      .modal-body{padding:14px 18px 24px;}
+      .modal-detail-grid{grid-template-columns:1fr;}
+      /* CONSULT */
+      .consult-card{padding:20px 16px;}
+      .consult-form-wrap{padding:24px 12px;}
+      /* SEARCH/FILTER */
+      .search-bar{padding:10px 14px;}
+      .dash-tabs{padding:0 16px;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;}
+    }
+    /* JOB DETAIL PAGE */
+    .job-detail-grid{grid-template-columns:1fr 300px;}
+    @media(max-width:700px){
+      .job-detail-grid{grid-template-columns:1fr;}
+    }
+    @media(max-width:480px){
+      .hero-left{padding:36px 16px 28px;}
+      .hero h1{font-size:24px;}
+      .hero-trust{gap:6px;}
+      .hero-trust-badge{font-size:11px;padding:5px 10px;}
+      .cta-buttons{flex-direction:column;gap:8px;}
+      .btn-cta-primary{padding:14px 28px;text-align:center;}
+      .btn-cta-secondary{padding:12px 24px;text-align:center;}
+      .landing-nav{height:60px;}
+      .logo{font-size:17px;}
+      .logo-mark{width:28px;height:28px;font-size:13px;}
+      .nav-btns .btn-ghost{display:none;}
+      .dash-body{padding:8px 12px;}
+      .mypage-wrap{padding:8px 12px;}
+      .modal-detail-grid{grid-template-columns:1fr;}
+      .job-detail-grid{padding:16px 12px 40px!important;}
     }
     /* CHAT */
     .chat-overlay{position:fixed;inset:0;background:rgba(26,26,46,0.5);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;}
@@ -1257,19 +1298,19 @@ export default function App() {
             </div>
           </nav>
           {/* ゲスト向けバナー */}
-          <div style={{background:"linear-gradient(135deg,var(--brand) 0%,var(--brand-dark) 100%)",padding:"28px 40px",color:"white"}}>
+          <div style={{background:"linear-gradient(135deg,var(--brand) 0%,var(--brand-dark) 100%)",padding:"24px 20px",color:"white"}}>
             <div style={{maxWidth:900,margin:"0 auto"}}>
-              <div style={{fontSize:13,opacity:0.85,marginBottom:6}}>📋 案件一覧（ログイン不要で閲覧可能）</div>
-              <div style={{fontSize:22,fontWeight:800,marginBottom:8}}>掲載中の案件一覧</div>
-              <div style={{fontSize:14,opacity:0.9,marginBottom:16}}>気になる案件は無料登録後すぐに応募できます。登録は30秒、利用料は完全無料です。</div>
+              <div style={{fontSize:12,opacity:0.85,marginBottom:5}}>📋 案件一覧（ログイン不要で閲覧可能）</div>
+              <div style={{fontSize:20,fontWeight:800,marginBottom:6}}>掲載中の案件一覧</div>
+              <div style={{fontSize:13,opacity:0.9,marginBottom:14}}>気になる案件は無料登録後すぐに応募できます。登録は30秒、利用料は完全無料です。</div>
               <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
-                <button style={{padding:"10px 24px",borderRadius:100,background:"white",color:"var(--brand-dark)",fontSize:14,fontWeight:700,border:"none",cursor:"pointer"}} onClick={()=>setPage("register")}>無料で登録して応募する →</button>
-                <button style={{padding:"10px 24px",borderRadius:100,background:"transparent",color:"white",fontSize:14,fontWeight:600,border:"2px solid rgba(255,255,255,0.6)",cursor:"pointer"}} onClick={()=>setPage("login")}>ログイン</button>
+                <button style={{padding:"10px 20px",borderRadius:100,background:"white",color:"var(--brand-dark)",fontSize:13,fontWeight:700,border:"none",cursor:"pointer"}} onClick={()=>setPage("register")}>無料で登録して応募する →</button>
+                <button style={{padding:"10px 20px",borderRadius:100,background:"transparent",color:"white",fontSize:13,fontWeight:600,border:"2px solid rgba(255,255,255,0.6)",cursor:"pointer"}} onClick={()=>setPage("login")}>ログイン</button>
               </div>
             </div>
           </div>
           {/* 案件リスト */}
-          <div style={{maxWidth:960,margin:"0 auto",padding:"28px 24px"}}>
+          <div style={{maxWidth:960,margin:"0 auto",padding:"20px 16px"}}>
             {/* 検索・フィルター */}
             <div style={{background:"white",borderRadius:"var(--radius-lg)",border:"1px solid var(--gray200)",padding:"20px",boxShadow:"var(--shadow-sm)",marginBottom:20}}>
               {/* 検索バー */}
@@ -1636,15 +1677,15 @@ export default function App() {
           </div>
 
           {/* 他社比較テーブル */}
-          <div style={{background:"var(--white)",borderTop:"1px solid var(--gray200)",padding:"80px 40px"}}>
+          <div style={{background:"var(--white)",borderTop:"1px solid var(--gray200)",padding:"60px 16px"}}>
             <div style={{maxWidth:800,margin:"0 auto"}}>
               <div style={{textAlign:"center",marginBottom:44}}>
                 <div className="section-eyebrow">Comparison</div>
                 <div className="section-title">他社サービスとの比較</div>
                 <div className="section-subtitle">営業フリーランスに特化した圧倒的な強み</div>
               </div>
-              <div style={{borderRadius:20,overflow:"hidden",border:"1px solid var(--gray200)",boxShadow:"0 4px 24px rgba(0,0,0,0.06)"}}>
-                <table style={{width:"100%",borderCollapse:"collapse"}}>
+              <div style={{borderRadius:16,overflow:"auto",border:"1px solid var(--gray200)",boxShadow:"0 4px 24px rgba(0,0,0,0.06)"}}>
+                <table style={{width:"100%",borderCollapse:"collapse",minWidth:340}}>
                   <thead>
                     <tr style={{background:"var(--gray50)"}}>
                       <th style={{padding:"16px 24px",textAlign:"left",fontSize:12,fontWeight:700,color:"var(--gray500)",letterSpacing:"0.5px",textTransform:"uppercase",borderBottom:"2px solid var(--gray200)",width:"38%"}}>比較項目</th>
@@ -1769,7 +1810,7 @@ export default function App() {
           </div>
 
           {/* メインコンテンツ */}
-          <div style={{maxWidth:860,margin:"0 auto",padding:"32px 24px 60px",display:"grid",gridTemplateColumns:"1fr 300px",gap:28,alignItems:"start"}}>
+          <div className="job-detail-grid" style={{maxWidth:860,margin:"0 auto",padding:"24px 16px 60px",display:"grid",gap:24,alignItems:"start"}}>
 
             {/* 左：案件詳細 */}
             <div>
