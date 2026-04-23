@@ -131,11 +131,30 @@ function getJobVisual(job) {
   return INDUSTRY_VISUAL["default"];
 }
 
-// 業界別SVGバナーを生成（SOKUDAN風ヘッダー画像の代わり）
+// 案件バナーコンポーネント
+// job.bannerImage が設定されていれば画像を表示、なければ業界カラーのSVGグラデーションを表示
 // showText=true のときだけタイトル・会社名をSVG内に描画（フルページ詳細用）
 function JobBannerSVG({ job, height = 200, showText = false }) {
   const vis = getJobVisual(job);
   const c1 = vis.accent;
+
+  // 企業が独自バナー画像を設定している場合は画像バナーを表示
+  if (job.bannerImage) {
+    return (
+      <div style={{width:"100%",height,overflow:"hidden",position:"relative"}}>
+        <img
+          src={job.bannerImage}
+          alt={`${job.company} バナー`}
+          style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"center",display:"block"}}
+          onError={e=>{e.currentTarget.style.display="none";e.currentTarget.nextSibling.style.display="block";}}
+        />
+        {/* 画像読み込み失敗時のフォールバック */}
+        <div style={{display:"none",width:"100%",height,background:`linear-gradient(135deg,${c1} 0%,${c1}cc 100%)`}}/>
+      </div>
+    );
+  }
+
+  // デフォルト：業界カラーのSVGグラデーションバナー
   const shapes = [
     { cx: "80%", cy: "30%", r: 120, op: 0.08 },
     { cx: "90%", cy: "80%", r: 80,  op: 0.06 },
@@ -162,9 +181,6 @@ function JobBannerSVG({ job, height = 200, showText = false }) {
       ))}
       {/* 大きいアイコン装飾（右寄り、半透明） */}
       <text x="88%" y="55%" fontSize={height*0.75} textAnchor="middle" dominantBaseline="middle" opacity="0.15">{vis.icon}</text>
-      {/* 業界ラベル（左上） */}
-      <rect x="20" y="16" rx="16" ry="16" width={vis.label.length*13+28} height="28" fill="white" fillOpacity="0.25"/>
-      <text x="34" y="34" fontSize="12" fontWeight="700" fill="white" opacity="0.95" fontFamily="'Noto Sans JP',sans-serif">{vis.label}専門</text>
       {/* showText=true のときのみタイトル・会社名を描画（フルページ詳細専用） */}
       {showText && (
         <>
@@ -255,7 +271,7 @@ export default function App() {
   // Admin
   const [adminTab, setAdminTab] = useState("jobs");
   const [adminApplications, setAdminApplications] = useState([]);
-  const [adminForm, setAdminForm] = useState({ title:"", company:"", type:"業務委託", rate:"", location:"", tags:"", remote:false, urgent:false, highPay:false, lowExp:false, description:"", requirements:"", period:"", published:true });
+  const [adminForm, setAdminForm] = useState({ title:"", company:"", type:"業務委託", rate:"", location:"", tags:"", remote:false, urgent:false, highPay:false, lowExp:false, description:"", requirements:"", period:"", published:true, bannerImage:"", companyInfo:"" });
   const [editingJob, setEditingJob] = useState(null);
   const [adminLoading, setAdminLoading] = useState(false);
 
@@ -628,7 +644,7 @@ export default function App() {
     } catch(e) { showToast("送信に失敗しました"); }
   };
   const resetAdminForm = () => {
-    setAdminForm({ title:"", company:"", type:"業務委託", rate:"", location:"", tags:"", remote:false, urgent:false, highPay:false, lowExp:false, description:"", requirements:"", period:"", published:true });
+    setAdminForm({ title:"", company:"", type:"業務委託", rate:"", location:"", tags:"", remote:false, urgent:false, highPay:false, lowExp:false, description:"", requirements:"", period:"", published:true, bannerImage:"", companyInfo:"" });
     setEditingJob(null);
   };
 
@@ -650,7 +666,7 @@ export default function App() {
   };
 
   const handleEditJob = (job) => {
-    setAdminForm({ title:job.title||"", company:job.company||"", type:job.type||"業務委託", rate:job.rate||"", location:job.location||"", tags:Array.isArray(job.tags)?job.tags.join(", "):(job.tags||""), remote:job.remote||false, urgent:job.urgent||false, highPay:job.highPay||false, lowExp:job.lowExp||false, description:job.description||"", requirements:job.requirements||"", period:job.period||"", published:job.published!==false });
+    setAdminForm({ title:job.title||"", company:job.company||"", type:job.type||"業務委託", rate:job.rate||"", location:job.location||"", tags:Array.isArray(job.tags)?job.tags.join(", "):(job.tags||""), remote:job.remote||false, urgent:job.urgent||false, highPay:job.highPay||false, lowExp:job.lowExp||false, description:job.description||"", requirements:job.requirements||"", period:job.period||"", published:job.published!==false, bannerImage:job.bannerImage||"", companyInfo:job.companyInfo||"" });
     setEditingJob(job);
   };
 
@@ -1149,6 +1165,17 @@ export default function App() {
                       <option value="成果報酬">成果報酬</option>
                     </select>
                   </div>
+                  {/* バナー画像URL */}
+                  <div className="admin-row">
+                    <label className="admin-label">🖼️ バナー画像URL（任意）</label>
+                    <input className="admin-input" placeholder="https://example.com/banner.jpg" value={adminForm.bannerImage} onChange={e=>setAdminForm({...adminForm,bannerImage:e.target.value})} />
+                    {adminForm.bannerImage && (
+                      <div style={{marginTop:8,borderRadius:8,overflow:"hidden",height:80,background:"var(--gray100)"}}>
+                        <img src={adminForm.bannerImage} alt="プレビュー" style={{width:"100%",height:"100%",objectFit:"cover"}} onError={e=>{e.currentTarget.parentNode.innerHTML='<div style="padding:8px;font-size:12px;color:#dc2626;">画像を読み込めませんでした</div>';}}/>
+                      </div>
+                    )}
+                    <div style={{fontSize:11,color:"var(--gray500)",marginTop:4}}>※ URLを入力すると業界カラーのSVGの代わりにこの画像がバナーとして表示されます</div>
+                  </div>
                   <div className="admin-row">
                     <label className="admin-label">案件概要</label>
                     <textarea className="admin-textarea" value={adminForm.description} onChange={e=>setAdminForm({...adminForm,description:e.target.value})} />
@@ -1156,6 +1183,10 @@ export default function App() {
                   <div className="admin-row">
                     <label className="admin-label">応募要件</label>
                     <textarea className="admin-textarea" value={adminForm.requirements} onChange={e=>setAdminForm({...adminForm,requirements:e.target.value})} />
+                  </div>
+                  <div className="admin-row">
+                    <label className="admin-label">会社情報（任意）</label>
+                    <textarea className="admin-textarea" placeholder="例：2018年設立。東京都渋谷区。SaaS型ツールを開発・販売。従業員80名。" value={adminForm.companyInfo} onChange={e=>setAdminForm({...adminForm,companyInfo:e.target.value})} />
                   </div>
                   <div className="admin-row">
                     <label className="admin-label">フラグ</label>
