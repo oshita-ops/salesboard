@@ -20,19 +20,116 @@ const storage = getStorage(firebaseApp);
 const ADMIN_EMAIL = "oshita@jcon.co.jp";
 
 const SAMPLE_JOBS = [
-  { id:"s1", title:"SaaS新規開拓営業", company:"株式会社テックブリッジ", type:"業務委託", rate:"月60〜80万円", location:"東京（一部リモート）", tags:["新規開拓","SaaS","IT"], remote:true, urgent:false, highPay:true, lowExp:false, description:"急成長SaaSプロダクトの新規開拓営業。リード獲得〜クロージングまで一貫してお任せします。", requirements:"法人営業経験3年以上、SaaS業界経験歓迎", period:"長期（6ヶ月〜）", posted:"2026-04-11", published:true },
-  { id:"s2", title:"人材紹介パートナー営業", company:"キャリアリンク株式会社", type:"業務委託", rate:"月40〜55万円", location:"フルリモート", tags:["人材","パートナー","ルート営業"], remote:true, urgent:true, highPay:false, lowExp:true, description:"人材紹介サービスのパートナー企業開拓。既存ネットワークを活かせる方歓迎。", requirements:"営業経験1年以上、人材業界経験あれば尚可", period:"中期（3〜6ヶ月）", posted:"2026-04-12", published:true },
-  { id:"s3", title:"DX推進コンサルティング営業", company:"デジタルシフト株式会社", type:"業務委託", rate:"月70〜100万円", location:"東京（週2出社）", tags:["DX","コンサル","IT"], remote:true, urgent:true, highPay:true, lowExp:false, description:"大手企業向けDX推進ソリューションの提案営業。経営層へのプレゼンテーション能力が求められます。", requirements:"コンサル営業経験5年以上、IT業界経験必須", period:"長期（1年〜）", posted:"2026-04-13", published:true },
-  { id:"s4", title:"医療機器代理店営業", company:"メディカルプロ株式会社", type:"業務委託", rate:"月55〜70万円", location:"全国（出張あり）", tags:["医療","代理店","BtoB"], remote:false, urgent:true, highPay:true, lowExp:false, description:"医療機器の代理店チャネル開拓・管理。医療業界での営業経験がある方を求めています。", requirements:"医療業界営業経験3年以上", period:"長期（6ヶ月〜）", posted:"2026-04-08", published:true },
-  { id:"s5", title:"スタートアップ資金調達支援", company:"ベンチャーキャピタルパートナーズ", type:"業務委託", rate:"月80〜120万円", location:"東京（一部リモート）", tags:["スタートアップ","資金調達","金融"], remote:true, urgent:false, highPay:true, lowExp:false, description:"スタートアップの資金調達支援。投資家とのリレーション構築・ピッチ支援を担当。", requirements:"金融・VC業界経験5年以上、広いネットワーク", period:"中期（3〜6ヶ月）", posted:"2026-04-07", published:true },
-  { id:"s6", title:"ECサイト広告営業", company:"アドクリエイト株式会社", type:"業務委託", rate:"月35〜50万円", location:"フルリモート", tags:["広告","EC","デジタル"], remote:true, urgent:false, highPay:false, lowExp:true, description:"ECサイト運営企業へのWeb広告ソリューション提案。丁寧にサポートします。", requirements:"営業経験1年以上、デジタルマーケティングに興味がある方", period:"中期（3ヶ月〜）", posted:"2026-04-09", published:true },
-  { id:"s7", title:"保険代理店向けルート営業", company:"インシュアテック株式会社", type:"業務委託", rate:"月30〜45万円", location:"大阪・名古屋", tags:["保険","ルート営業","代理店"], remote:false, urgent:false, highPay:false, lowExp:true, description:"保険代理店への新商品案内・フォローアップ営業。丁寧な対応ができる方歓迎。", requirements:"営業経験1年以上、保険業界経験あれば尚可", period:"長期（6ヶ月〜）", posted:"2026-04-06", published:true },
-  { id:"s8", title:"クラウドERP導入営業", company:"クラウドワークス株式会社", type:"業務委託", rate:"月65〜85万円", location:"東京（週1出社）", tags:["ERP","クラウド","IT"], remote:true, urgent:true, highPay:true, lowExp:false, description:"中堅企業向けクラウドERPの導入提案営業。業務改善提案からクロージングまで。", requirements:"IT営業経験3年以上、ERP関連知識歓迎", period:"長期（1年〜）", posted:"2026-04-13", published:true },
-  { id:"s9", title:"不動産投資セミナー集客営業", company:"グローバルアセット株式会社", type:"成果報酬", rate:"1件あたり3〜5万円", location:"東京・大阪", tags:["不動産","セミナー","成果報酬"], remote:false, urgent:false, highPay:true, lowExp:true, description:"富裕層向け不動産投資セミナーへの集客営業。成果報酬型で高収入を目指せます。", requirements:"営業経験不問、人脈・集客力のある方", period:"長期（継続案件）", posted:"2026-04-10", published:true },
-  { id:"s10", title:"飲食店向けデリバリーサービス営業", company:"フードコネクト株式会社", type:"成果報酬", rate:"1店舗あたり2万円", location:"全国（エリア選択可）", tags:["飲食","デリバリー","成果報酬"], remote:false, urgent:true, highPay:false, lowExp:true, description:"飲食店へのデリバリーサービス加盟営業。自分のペースで取り組めます。", requirements:"営業経験不問、行動力のある方", period:"自由（好きな時に稼働）", posted:"2026-04-12", published:true },
+  {
+    id:"s1", title:"SaaS新規開拓営業", company:"株式会社テックブリッジ", type:"業務委託",
+    rate:"月60〜80万円", location:"東京（一部リモート）", tags:["新規開拓","SaaS","IT"],
+    remote:true, urgent:false, highPay:true, lowExp:false,
+    description:"急成長中のSaaSプロダクト（顧客管理・MA系ツール）の新規開拓営業をお任せします。\n\n主な業務：\n・ターゲットリストの選定とアウトバウンドアプローチ\n・オンライン商談によるデモ実施・ヒアリング\n・提案書作成〜クロージングまでの一気通貫対応\n・CRMへの商談記録・進捗管理\n\n直販×インサイドセールスのハイブリッドスタイルです。月次目標KPI達成に応じてインセンティブが付与されます。",
+    requirements:"【必須】法人向け新規営業経験3年以上\n【歓迎】SaaS・IT系プロダクトの販売経験\n【歓迎】SalesforceやHubSpotなどCRM操作経験\n\n自己管理能力が高く、裁量を持って動ける方を歓迎します。",
+    period:"長期（6ヶ月〜）", posted:"2026-04-11", published:true
+  },
+  {
+    id:"s2", title:"人材紹介パートナー営業", company:"キャリアリンク株式会社", type:"業務委託",
+    rate:"月40〜55万円", location:"フルリモート", tags:["人材","パートナー","ルート営業"],
+    remote:true, urgent:true, highPay:false, lowExp:true,
+    description:"人材紹介サービスのパートナー企業開拓・既存代理店フォローをお任せします。\n\n主な業務：\n・新規パートナー企業への提案・説明会の実施\n・既存パートナーへの活用支援・定期訪問（オンライン可）\n・パートナー経由の求人獲得数の最大化\n・月次レポートの作成と報告\n\nリモートで完結できる環境が整っており、自分の裁量で動けます。経験の浅い方もOKです。",
+    requirements:"【必須】営業経験1年以上（業界不問）\n【歓迎】人材業界・採用支援での経験\n【歓迎】オンライン商談ツール（Zoom・Meet）の使用経験\n\nコミュニケーションを大切にでき、丁寧な対応が得意な方歓迎。",
+    period:"中期（3〜6ヶ月）", posted:"2026-04-12", published:true
+  },
+  {
+    id:"s3", title:"DX推進コンサルティング営業", company:"デジタルシフト株式会社", type:"業務委託",
+    rate:"月70〜100万円", location:"東京（週2出社）", tags:["DX","コンサル","IT"],
+    remote:true, urgent:true, highPay:true, lowExp:false,
+    description:"大手・中堅企業のDX推進を支援するコンサルティングサービスの提案営業を担当いただきます。\n\n主な業務：\n・既存顧客へのDXソリューション提案（業務自動化・データ活用など）\n・新規顧客開拓（経営企画・IT担当役員へのアプローチ）\n・提案書・RFP対応・見積もり作成\n・プロジェクト受注後の引き継ぎ・関係継続\n\n高度な提案力と経営レベルでのコミュニケーション能力が求められる、やりがいの高いポジションです。",
+    requirements:"【必須】コンサルティング営業経験5年以上\n【必須】IT業界または製造業・金融でのソリューション提案経験\n【歓迎】RFP対応・IT調達プロセスの理解\n【歓迎】PMP・ITストラテジスト等の資格\n\n論理的思考力・プレゼン力・自己管理能力が高い方を求めています。",
+    period:"長期（1年〜）", posted:"2026-04-13", published:true
+  },
+  {
+    id:"s4", title:"医療機器代理店営業", company:"メディカルプロ株式会社", type:"業務委託",
+    rate:"月55〜70万円", location:"全国（出張あり）", tags:["医療","代理店","BtoB"],
+    remote:false, urgent:true, highPay:true, lowExp:false,
+    description:"医療機器（診断・治療機器）の代理店チャネル開拓および関係管理をお任せします。\n\n主な業務：\n・医療機器専門商社・代理店へのアプローチ\n・新規代理店の開拓と契約交渉\n・既存代理店の売上管理・フォロー訪問\n・学会・展示会での情報収集・名刺交換活動\n\n医療業界特有の規制・商習慣への理解が必要なポジションです。専門性が高いぶん、報酬も高水準です。",
+    requirements:"【必須】医療業界での営業経験3年以上\n【必須】医療機器・医薬品・検査機器等の知識\n【歓迎】代理店管理・チャネルセールス経験\n【歓迎】MR・薬剤師免許（あれば優遇）\n\n出張が発生します（月数回、関東〜全国）。医療従事者とのコミュニケーションが得意な方。",
+    period:"長期（6ヶ月〜）", posted:"2026-04-08", published:true
+  },
+  {
+    id:"s5", title:"スタートアップ資金調達支援", company:"ベンチャーキャピタルパートナーズ", type:"業務委託",
+    rate:"月80〜120万円", location:"東京（一部リモート）", tags:["スタートアップ","資金調達","金融"],
+    remote:true, urgent:false, highPay:true, lowExp:false,
+    description:"シード〜シリーズBのスタートアップ向けに、資金調達支援・投資家マッチングを担うポジションです。\n\n主な業務：\n・スタートアップCEO・CFOへのヒアリングと課題整理\n・投資家（VC・CVC・エンジェル）とのリレーション構築\n・ピッチ資料のレビュー・改善支援\n・投資家紹介・アレンジメント\n・条件交渉のサポート\n\n業界全体への深い知見とネットワークが求められる高度なポジションです。",
+    requirements:"【必須】金融・VC・投資銀行・FAS等での経験5年以上\n【必須】スタートアップエコシステムへの理解\n【必須】VC・機関投資家との広いネットワーク\n【歓迎】公認会計士・中小企業診断士・MBA\n\n守秘義務の意識が高く、オーナーシップを持って動ける方。",
+    period:"中期（3〜6ヶ月）", posted:"2026-04-07", published:true
+  },
+  {
+    id:"s6", title:"ECサイト向けWeb広告営業", company:"アドクリエイト株式会社", type:"業務委託",
+    rate:"月35〜50万円", location:"フルリモート", tags:["広告","EC","デジタル"],
+    remote:true, urgent:false, highPay:false, lowExp:true,
+    description:"ECサイト運営企業へ、Meta広告・Google広告・LINE広告などのデジタル広告ソリューションを提案します。\n\n主な業務：\n・新規EC事業者へのテレアポ・問い合わせ対応\n・オンラインでのヒアリング・提案プレゼン\n・広告効果レポートの説明・改善提案\n・月次の継続受注管理\n\n未経験でも入社後に広告の基礎を学べる環境があります。デジタルマーケティングに興味のある方歓迎。",
+    requirements:"【必須】営業経験1年以上\n【歓迎】デジタル広告（Meta/Google等）の基礎知識\n【歓迎】EC業界・物販の知識\n\nコツコツ取り組める方、数字管理が得意な方に向いています。",
+    period:"中期（3ヶ月〜）", posted:"2026-04-09", published:true
+  },
+  {
+    id:"s7", title:"保険代理店向けルート営業", company:"インシュアテック株式会社", type:"業務委託",
+    rate:"月30〜45万円", location:"大阪・名古屋", tags:["保険","ルート営業","代理店"],
+    remote:false, urgent:false, highPay:false, lowExp:true,
+    description:"保険代理店（独立系・銀行系・不動産系）へ、新商品の案内とフォローアップ営業を担当します。\n\n主な業務：\n・既存代理店への定期訪問・新商品説明\n・販促ツール・資料の提供と活用支援\n・代理店担当者のモチベーション向上施策\n・月次の販売実績管理・報告\n\n対面でのコミュニケーションが中心のルート営業です。大阪・名古屋エリアが主な活動範囲です。",
+    requirements:"【必須】営業経験1年以上（ルート営業経験があれば尚可）\n【歓迎】保険・金融業界での経験\n【歓迎】FP資格（1〜3級）\n\n誠実に丁寧な対応ができる方、長期的な関係構築が好きな方に向いています。",
+    period:"長期（6ヶ月〜）", posted:"2026-04-06", published:true
+  },
+  {
+    id:"s8", title:"クラウドERP導入営業", company:"クラウドワークス株式会社", type:"業務委託",
+    rate:"月65〜85万円", location:"東京（週1出社）", tags:["ERP","クラウド","IT"],
+    remote:true, urgent:true, highPay:true, lowExp:false,
+    description:"中堅〜大手企業へのクラウドERP（会計・在庫・人事管理等）の導入提案営業を担当します。\n\n主な業務：\n・新規企業への課題ヒアリングと要件定義支援\n・ERP導入提案書・ROI試算書の作成\n・競合比較・評価選定プロセスへの対応\n・受注後の導入プロジェクト引き継ぎ・関係継続\n\nSI・ITベンダー出身者歓迎。提案型の営業が得意な方に最適なポジションです。",
+    requirements:"【必須】IT・システム営業経験3年以上\n【必須】ERP・基幹システム関連知識（SAP・Oracle・弥生等）\n【歓迎】ITコーディネーター・システムアーキテクト等の資格\n【歓迎】製造業・流通業などの業務プロセス理解\n\n顧客の業務課題を深く理解し、長期にわたって関係を構築できる方。",
+    period:"長期（1年〜）", posted:"2026-04-13", published:true
+  },
+  {
+    id:"s9", title:"不動産投資セミナー集客営業", company:"グローバルアセット株式会社", type:"成果報酬",
+    rate:"1件あたり3〜5万円", location:"東京・大阪", tags:["不動産","セミナー","成果報酬"],
+    remote:false, urgent:false, highPay:true, lowExp:true,
+    description:"富裕層・資産形成層向けの不動産投資セミナーへの集客営業をお任せします。\n\n主な業務：\n・個人ネットワーク・SNSを活用した集客\n・セミナー参加者の事前ヒアリング・アテンド\n・クロージングは専門スタッフが担当するため、集客に集中できます\n・月次の集客件数報告\n\n完全成果報酬型のため、動いた分だけ収入が得られます。副業としても取り組みやすい案件です。",
+    requirements:"【必須】人脈・集客力のある方\n【歓迎】不動産投資・資産運用に関する基礎知識\n【歓迎】SNSを活用した集客経験（Instagram・Facebook・Voicy等）\n\n営業未経験でも可。ネットワークをお持ちの方を歓迎します。",
+    period:"長期（継続案件）", posted:"2026-04-10", published:true
+  },
+  {
+    id:"s10", title:"飲食店向けデリバリーサービス加盟営業", company:"フードコネクト株式会社", type:"成果報酬",
+    rate:"1店舗あたり2万円", location:"全国（エリア選択可）", tags:["飲食","デリバリー","成果報酬"],
+    remote:false, urgent:true, highPay:false, lowExp:true,
+    description:"Uber Eats・出前館等のデリバリープラットフォームへの飲食店加盟促進営業を担当します。\n\n主な業務：\n・担当エリアの飲食店（個人店・小規模チェーン）への訪問営業\n・デリバリー導入のメリット説明・疑問対応\n・加盟申し込みのサポート・導入フォロー\n・月次の新規加盟件数管理\n\n自分のスケジュールで動ける完全成果報酬型です。エリアは全国から選択可能です。",
+    requirements:"【必須】行動力・コミュニケーション能力がある方\n【歓迎】飲食業界・F&B系の知識または経験\n【歓迎】個人事業主・フリーランスとして独立志向がある方\n\n営業未経験OK。車・バイクがあるとより活動しやすいです。",
+    period:"自由（好きな時に稼働）", posted:"2026-04-12", published:true
+  },
 ];
 
 const INDUSTRIES = ["IT","SaaS","人材","不動産","広告","医療","金融","保険","飲食","DX","コンサル","EC"];
+
+// 業界ごとのビジュアル設定
+const INDUSTRY_VISUAL = {
+  "IT":     { icon:"💻", bg:"#EFF6FF", accent:"#2563eb", label:"IT" },
+  "SaaS":   { icon:"☁️", bg:"#F0F9FF", accent:"#0284c7", label:"SaaS" },
+  "人材":   { icon:"👥", bg:"#F0FDF4", accent:"#16a34a", label:"人材" },
+  "不動産": { icon:"🏢", bg:"#FFF7ED", accent:"#ea580c", label:"不動産" },
+  "広告":   { icon:"📢", bg:"#FDF4FF", accent:"#9333ea", label:"広告" },
+  "医療":   { icon:"🏥", bg:"#FFF1F2", accent:"#e11d48", label:"医療" },
+  "金融":   { icon:"💴", bg:"#FEFCE8", accent:"#ca8a04", label:"金融" },
+  "保険":   { icon:"🛡️", bg:"#F0FDF4", accent:"#15803d", label:"保険" },
+  "飲食":   { icon:"🍽️", bg:"#FFF7ED", accent:"#c2410c", label:"飲食" },
+  "DX":     { icon:"🔄", bg:"#EFF6FF", accent:"#1d4ed8", label:"DX" },
+  "コンサル":{ icon:"📊", bg:"#F5F3FF", accent:"#7c3aed", label:"コンサル" },
+  "EC":     { icon:"🛒", bg:"#FFF7ED", accent:"#b45309", label:"EC" },
+  "ERP":    { icon:"⚙️", bg:"#F1F5F9", accent:"#475569", label:"ERP" },
+  "スタートアップ": { icon:"🚀", bg:"#FFF1F2", accent:"#be123c", label:"スタートアップ" },
+  "default":{ icon:"💼", bg:"#F5F5F0", accent:"#24A64A", label:"営業" },
+};
+
+function getJobVisual(job) {
+  // tagsからマッチするビジュアルを返す
+  for (const tag of (job.tags || [])) {
+    if (INDUSTRY_VISUAL[tag]) return INDUSTRY_VISUAL[tag];
+  }
+  return INDUSTRY_VISUAL["default"];
+}
 
 function daysAgo(dateStr) {
   const d = new Date(dateStr);
@@ -103,6 +200,11 @@ export default function App() {
   const [chatAppId, setChatAppId] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
   const [chatInput, setChatInput] = useState("");
+
+  // Guest job browse
+  const [guestSearch, setGuestSearch] = useState("");
+  const [guestFilters, setGuestFilters] = useState({ remote:false, urgent:false, highPay:false, lowExp:false });
+  const [guestSelectedJob, setGuestSelectedJob] = useState(null);
 
   const showToast = useCallback((msg) => {
     setToast(msg);
@@ -607,44 +709,51 @@ export default function App() {
     .search-input{border:none;outline:none;font-size:14px;font-family:'Noto Sans JP',sans-serif;flex:1;background:transparent;}
     .result-count{font-size:13px;color:var(--gray500);margin-bottom:14px;}
     .job-list{display:flex;flex-direction:column;gap:12px;}
-    .job-card{background:var(--white);border-radius:var(--radius-lg);padding:0;box-shadow:var(--shadow-sm);border:1px solid var(--gray200);cursor:pointer;transition:all 0.2s;overflow:hidden;}
-    .job-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px);border-color:var(--brand);}
-    .job-card-header{background:linear-gradient(135deg,var(--brand-soft) 0%,var(--brand-mid) 100%);padding:14px 20px 10px;border-bottom:1px solid var(--brand-mid);}
-    .job-card-body{padding:16px 20px 18px;}
-    .job-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+    .job-card{background:var(--white);border-radius:var(--radius-lg);padding:0;box-shadow:var(--shadow-sm);border:1px solid var(--gray200);cursor:pointer;transition:all 0.25s;overflow:hidden;display:flex;flex-direction:column;}
+    .job-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px);border-color:transparent;}
+    .job-card-visual{height:7px;flex-shrink:0;}
+    .job-card-header{padding:14px 20px 10px;border-bottom:1px solid var(--gray200);background:var(--white);}
+    .job-card-body{padding:16px 20px 20px;flex:1;display:flex;flex-direction:column;}
+    .job-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
     .job-type{font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;background:var(--brand-soft);color:var(--brand-dark);border:1px solid var(--brand-mid);}
     .job-type.reward{background:var(--orange-soft);color:var(--orange);border-color:#FFD699;}
     .job-date{font-size:12px;color:var(--gray500);}
-    .job-badges{display:flex;gap:5px;margin-bottom:0;}
-    .badge{padding:2px 8px;border-radius:100px;font-size:10px;font-weight:700;}
+    .job-badges{display:flex;gap:5px;flex-wrap:wrap;}
+    .badge{padding:3px 9px;border-radius:100px;font-size:10px;font-weight:700;}
     .badge.remote{background:var(--brand-soft);color:var(--brand-dark);border:1px solid var(--brand-mid);}
-    .badge.urgent{background:#FFF3CD;color:#996600;}
-    .badge.highpay{background:#FEE2E2;color:#991B1B;}
-    .badge.lowexp{background:#EDE9FE;color:#5B21B6;}
-    .job-title{font-size:15px;font-weight:700;margin-bottom:3px;color:var(--ink);}
-    .job-company{font-size:13px;color:var(--gray500);margin-bottom:10px;display:flex;align-items:center;gap:4px;}
-    .job-meta{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px;}
+    .badge.urgent{background:#FFF3CD;color:#996600;border:1px solid #FFD699;}
+    .badge.highpay{background:#FEE2E2;color:#991B1B;border:1px solid #FECACA;}
+    .badge.lowexp{background:#EDE9FE;color:#5B21B6;border:1px solid #DDD6FE;}
+    .job-industry-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:10px;flex-shrink:0;}
+    .job-title{font-size:15px;font-weight:700;margin-bottom:4px;color:var(--ink);line-height:1.5;}
+    .job-company{font-size:12px;color:var(--gray500);margin-bottom:12px;display:flex;align-items:center;gap:4px;}
+    .job-meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
     .meta-pill{padding:4px 10px;border-radius:6px;font-size:12px;font-weight:500;background:var(--gray100);color:var(--gray700);}
     .meta-pill.rate{background:var(--orange-soft);color:var(--orange);font-weight:700;}
-    .job-tags{display:flex;flex-wrap:wrap;gap:5px;}
+    .job-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:auto;padding-top:10px;}
     .tag{padding:3px 10px;border-radius:100px;font-size:11px;font-weight:500;background:var(--brand-soft);color:var(--brand-dark);border:1px solid var(--brand-mid);}
 
     /* MODAL */
-    .modal-overlay{position:fixed;inset:0;background:rgba(26,26,46,0.45);backdrop-filter:blur(4px);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.2s;}
-    .modal{background:var(--white);border-radius:var(--radius-xl);width:100%;max-width:660px;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-xl);animation:slideUp 0.3s;border:1px solid var(--gray200);}
-    .modal-header{padding:28px 28px 0;position:relative;}
-    .modal-close{position:absolute;top:18px;right:18px;width:34px;height:34px;border-radius:50%;background:var(--gray100);border:none;cursor:pointer;font-size:18px;color:var(--gray500);transition:background 0.15s;}
-    .modal-close:hover{background:var(--gray200);}
-    .modal-body{padding:20px 28px 28px;}
-    .modal-detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0;}
-    .modal-detail-box{border:1px solid var(--brand-mid);border-radius:var(--radius-md);padding:12px 14px;background:var(--white);}
-    .detail-section{margin-bottom:18px;}
-    .detail-label{font-size:11px;font-weight:700;color:var(--brand-dark);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;}
-    .detail-text{font-size:14px;line-height:1.75;color:var(--gray700);}
-    .btn-apply{width:100%;padding:15px;border-radius:100px;background:var(--orange);border:none;color:white;font-size:16px;font-weight:700;cursor:pointer;margin-top:20px;box-shadow:0 4px 16px rgba(255,138,0,0.3);transition:all 0.2s;}
-    .btn-apply:hover{background:var(--orange-dark);}
-    .btn-apply.applied{background:var(--brand-soft);color:var(--brand-dark);cursor:default;box-shadow:none;border:1.5px solid var(--brand-mid);}
-    .apply-textarea{width:100%;padding:14px;border:1.5px solid var(--gray200);border-radius:var(--radius-md);font-size:14px;font-family:'Noto Sans JP',sans-serif;resize:vertical;min-height:120px;outline:none;background:var(--gray100);}
+    .modal-overlay{position:fixed;inset:0;background:rgba(10,10,30,0.55);backdrop-filter:blur(6px);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px;animation:fadeIn 0.2s;}
+    .modal{background:var(--white);border-radius:var(--radius-xl);width:100%;max-width:680px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,0.18);animation:slideUp 0.3s;border:1px solid var(--gray200);}
+    .modal-top-bar{height:6px;border-radius:var(--radius-xl) var(--radius-xl) 0 0;}
+    .modal-header{padding:24px 28px 0;position:relative;}
+    .modal-close{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;background:var(--gray100);border:none;cursor:pointer;font-size:16px;color:var(--gray500);transition:all 0.15s;display:flex;align-items:center;justify-content:center;}
+    .modal-close:hover{background:var(--gray200);color:var(--ink);}
+    .modal-body{padding:20px 28px 32px;}
+    .modal-rate-bar{display:flex;align-items:center;gap:12px;margin:16px 0;padding:16px 20px;border-radius:var(--radius-md);border-left:4px solid var(--orange);background:var(--orange-soft);}
+    .modal-rate-label{font-size:11px;font-weight:700;color:var(--gray500);text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;}
+    .modal-rate-value{font-size:17px;font-weight:800;color:var(--orange);line-height:1.2;word-break:break-word;}
+    .modal-detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:16px 0;}
+    .modal-detail-box{border:1px solid var(--gray200);border-radius:var(--radius-md);padding:12px 14px;background:var(--gray50);}
+    .detail-section{margin-bottom:20px;}
+    .detail-label{font-size:11px;font-weight:700;color:var(--brand-dark);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;display:flex;align-items:center;gap:4px;}
+    .detail-text{font-size:14px;line-height:1.9;color:var(--gray700);white-space:pre-wrap;word-break:break-word;}
+    .modal-divider{height:1px;background:var(--gray200);margin:20px 0;}
+    .btn-apply{width:100%;padding:16px;border-radius:100px;background:var(--orange);border:none;color:white;font-size:16px;font-weight:700;cursor:pointer;margin-top:4px;box-shadow:0 4px 20px rgba(255,138,0,0.35);transition:all 0.2s;letter-spacing:0.3px;}
+    .btn-apply:hover{background:var(--orange-dark);transform:translateY(-1px);box-shadow:0 6px 24px rgba(255,138,0,0.45);}
+    .btn-apply.applied{background:var(--brand-soft);color:var(--brand-dark);cursor:default;box-shadow:none;border:1.5px solid var(--brand-mid);transform:none;}
+    .apply-textarea{width:100%;padding:14px;border:1.5px solid var(--gray200);border-radius:var(--radius-md);font-size:14px;font-family:'Noto Sans JP',sans-serif;resize:vertical;min-height:120px;outline:none;background:var(--gray100);box-sizing:border-box;}
     .apply-textarea:focus{border-color:var(--brand);background:var(--white);}
 
     /* MYPAGE */
@@ -964,6 +1073,167 @@ export default function App() {
     return null;
   }
 
+  // GUEST JOBS PAGE（ログイン不要の案件一覧）
+  if (page === "guest-jobs") {
+    const allJobs = jobs.filter(j=>j.published!==false);
+    const guestFiltered = allJobs.filter(j=>{
+      const kw = guestSearch.toLowerCase();
+      const matchKw = !kw || j.title.toLowerCase().includes(kw) || j.tags.some(t=>t.toLowerCase().includes(kw)) || j.company.toLowerCase().includes(kw);
+      const matchRemote = !guestFilters.remote || j.remote;
+      const matchUrgent = !guestFilters.urgent || j.urgent;
+      const matchHighPay = !guestFilters.highPay || j.highPay;
+      const matchLowExp = !guestFilters.lowExp || j.lowExp;
+      return matchKw && matchRemote && matchUrgent && matchHighPay && matchLowExp;
+    });
+    return (
+      <>
+        <style>{css}</style>
+        <div style={{minHeight:"100vh",background:"var(--paper)"}}>
+          {/* NAV */}
+          <nav className="landing-nav">
+            <div className="logo" onClick={()=>setPage("landing")}><div className="logo-mark">S</div>SalesBoard</div>
+            <div className="nav-btns">
+              <button className="btn-ghost" onClick={()=>setPage("landing")}>← トップへ</button>
+              <button className="btn-ghost" onClick={()=>setPage("login")}>ログイン</button>
+              <button className="btn-accent" onClick={()=>setPage("register")}>無料登録</button>
+            </div>
+          </nav>
+          {/* ゲスト向けバナー */}
+          <div style={{background:"linear-gradient(135deg,var(--brand) 0%,var(--brand-dark) 100%)",padding:"28px 40px",color:"white"}}>
+            <div style={{maxWidth:900,margin:"0 auto"}}>
+              <div style={{fontSize:13,opacity:0.85,marginBottom:6}}>📋 案件一覧（ログイン不要で閲覧可能）</div>
+              <div style={{fontSize:22,fontWeight:800,marginBottom:8}}>掲載中の案件一覧</div>
+              <div style={{fontSize:14,opacity:0.9,marginBottom:16}}>気になる案件は無料登録後すぐに応募できます。登録は30秒、利用料は完全無料です。</div>
+              <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+                <button style={{padding:"10px 24px",borderRadius:100,background:"white",color:"var(--brand-dark)",fontSize:14,fontWeight:700,border:"none",cursor:"pointer"}} onClick={()=>setPage("register")}>無料で登録して応募する →</button>
+                <button style={{padding:"10px 24px",borderRadius:100,background:"transparent",color:"white",fontSize:14,fontWeight:600,border:"2px solid rgba(255,255,255,0.6)",cursor:"pointer"}} onClick={()=>setPage("login")}>ログイン</button>
+              </div>
+            </div>
+          </div>
+          {/* 案件リスト */}
+          <div style={{maxWidth:900,margin:"0 auto",padding:"28px 24px"}}>
+            {/* 検索・フィルター */}
+            <div style={{display:"flex",gap:12,marginBottom:16,flexWrap:"wrap",alignItems:"center"}}>
+              <div style={{flex:1,minWidth:240,display:"flex",alignItems:"center",gap:10,background:"white",border:"1px solid var(--gray200)",borderRadius:"10px",padding:"10px 16px",boxShadow:"var(--shadow-sm)"}}>
+                <span style={{color:"var(--gray400)"}}>🔍</span>
+                <input style={{border:"none",outline:"none",fontSize:14,fontFamily:"'Noto Sans JP',sans-serif",flex:1,background:"transparent"}} placeholder="キーワードで検索（例：SaaS、新規開拓）" value={guestSearch} onChange={e=>setGuestSearch(e.target.value)} />
+              </div>
+              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                {[["remote","🏠 リモート"],["urgent","⚡ 急募"],["highPay","💰 高単価"],["lowExp","🌱 未経験OK"]].map(([key,label])=>(
+                  <button key={key} onClick={()=>setGuestFilters(f=>({...f,[key]:!f[key]}))} style={{padding:"8px 14px",borderRadius:100,fontSize:12,fontWeight:600,border:`1.5px solid ${guestFilters[key]?"var(--brand)":"var(--gray300)"}`,background:guestFilters[key]?"var(--brand-soft)":"white",color:guestFilters[key]?"var(--brand-dark)":"var(--gray700)",cursor:"pointer",transition:"all 0.15s"}}>{label}</button>
+                ))}
+              </div>
+            </div>
+            <div style={{fontSize:13,color:"var(--gray500)",marginBottom:14}}>検索結果: <strong>{guestFiltered.length}件</strong></div>
+            {/* 案件カード */}
+            <div style={{display:"flex",flexDirection:"column",gap:12}}>
+              {guestFiltered.map(job=>{
+                const vis = getJobVisual(job);
+                return (
+                  <div key={job.id} style={{background:"white",borderRadius:"var(--radius-lg)",border:"1px solid var(--gray200)",boxShadow:"var(--shadow-sm)",overflow:"hidden",cursor:"pointer",transition:"all 0.25s"}}
+                    onClick={()=>setGuestSelectedJob(job)}
+                    onMouseEnter={e=>{e.currentTarget.style.boxShadow="var(--shadow-lg)";e.currentTarget.style.transform="translateY(-2px)";}}
+                    onMouseLeave={e=>{e.currentTarget.style.boxShadow="var(--shadow-sm)";e.currentTarget.style.transform="translateY(0)";}}
+                  >
+                    <div style={{height:5,background:vis.accent}}/>
+                    <div style={{padding:"16px 20px 8px"}}>
+                      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
+                        <div style={{width:44,height:44,borderRadius:10,background:vis.bg,border:`1px solid ${vis.accent}30`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0}}>{vis.icon}</div>
+                        <div style={{flex:1,minWidth:0}}>
+                          <div style={{fontSize:15,fontWeight:700,color:"var(--ink)",lineHeight:1.45,marginBottom:2}}>{job.title}</div>
+                          <div style={{fontSize:12,color:"var(--gray500)"}}>🏢 {job.company}</div>
+                        </div>
+                        <div style={{fontSize:11,color:"var(--gray400)",flexShrink:0}}>{daysAgo(job.posted)}</div>
+                      </div>
+                      <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:10}}>
+                        <span style={{fontSize:11,fontWeight:700,padding:"2px 9px",borderRadius:100,background:"var(--brand-soft)",color:"var(--brand-dark)",border:"1px solid var(--brand-mid)"}}>{job.type}</span>
+                        {job.remote&&<span className="badge remote">🏠 リモート</span>}
+                        {job.urgent&&<span className="badge urgent">⚡ 急募</span>}
+                        {job.highPay&&<span className="badge highpay">💰 高単価</span>}
+                        {job.lowExp&&<span className="badge lowexp">🌱 未経験OK</span>}
+                      </div>
+                    </div>
+                    <div style={{padding:"0 20px 16px"}}>
+                      <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:10}}>
+                        <span style={{padding:"4px 10px",borderRadius:6,fontSize:12,fontWeight:700,background:"var(--orange-soft)",color:"var(--orange)"}}>💴 {job.rate}</span>
+                        <span style={{padding:"4px 10px",borderRadius:6,fontSize:12,background:"var(--gray100)",color:"var(--gray700)"}}>📍 {job.location}</span>
+                        <span style={{padding:"4px 10px",borderRadius:6,fontSize:12,background:"var(--gray100)",color:"var(--gray700)"}}>📅 {job.period}</span>
+                      </div>
+                      <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
+                        {job.tags.map(t=><span key={t} style={{padding:"3px 10px",borderRadius:100,fontSize:11,fontWeight:500,background:"var(--brand-soft)",color:"var(--brand-dark)",border:"1px solid var(--brand-mid)"}}>{t}</span>)}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+              {guestFiltered.length===0&&<div style={{textAlign:"center",padding:60,color:"var(--gray500)",background:"white",borderRadius:"var(--radius-lg)",border:"1px solid var(--gray200)"}}>
+                <div style={{fontSize:40,marginBottom:12}}>📭</div>
+                <div style={{fontSize:16,fontWeight:600}}>該当する案件が見つかりませんでした</div>
+                <div style={{fontSize:13,marginTop:6}}>条件を変えてお試しください</div>
+              </div>}
+            </div>
+            {/* 登録促進バナー */}
+            <div style={{marginTop:32,padding:"28px 32px",background:"linear-gradient(135deg,var(--brand-soft),var(--brand-mid))",borderRadius:"var(--radius-lg)",border:"1px solid var(--brand-mid)",textAlign:"center"}}>
+              <div style={{fontSize:18,fontWeight:700,color:"var(--ink)",marginBottom:8}}>気になる案件はありましたか？</div>
+              <div style={{fontSize:14,color:"var(--gray700)",marginBottom:16}}>無料登録するだけで応募・担当エージェントとのやり取りが可能になります</div>
+              <button style={{padding:"14px 40px",borderRadius:100,background:"var(--orange)",color:"white",fontSize:15,fontWeight:700,border:"none",cursor:"pointer",boxShadow:"0 4px 20px rgba(255,138,0,0.35)"}} onClick={()=>setPage("register")}>無料で登録して応募する →</button>
+              <div style={{fontSize:12,color:"var(--gray500)",marginTop:10}}>登録・利用料は完全無料</div>
+            </div>
+          </div>
+        </div>
+        {/* ゲスト用案件詳細モーダル */}
+        {guestSelectedJob&&(()=>{
+          const vis = getJobVisual(guestSelectedJob);
+          return (
+          <div className="modal-overlay" onClick={()=>setGuestSelectedJob(null)}>
+            <div className="modal" onClick={e=>e.stopPropagation()}>
+              <div className="modal-top-bar" style={{background:vis.accent}}/>
+              <div className="modal-header">
+                <button className="modal-close" onClick={()=>setGuestSelectedJob(null)}>✕</button>
+                <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}>
+                  <div style={{width:48,height:48,borderRadius:12,background:vis.bg,border:`1px solid ${vis.accent}30`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,flexShrink:0}}>{vis.icon}</div>
+                  <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+                    <span className={`job-type ${guestSelectedJob.type==="成果報酬"?"reward":""}`}>{guestSelectedJob.type}</span>
+                    {guestSelectedJob.remote&&<span className="badge remote">🏠 リモート</span>}
+                    {guestSelectedJob.urgent&&<span className="badge urgent">⚡ 急募</span>}
+                    {guestSelectedJob.highPay&&<span className="badge highpay">💰 高単価</span>}
+                    {guestSelectedJob.lowExp&&<span className="badge lowexp">🌱 未経験OK</span>}
+                  </div>
+                </div>
+                <h2 style={{fontSize:19,fontWeight:700,lineHeight:1.55,paddingRight:44,color:"var(--ink)",marginBottom:4}}>{guestSelectedJob.title}</h2>
+                <div style={{fontSize:13,color:"var(--gray500)",display:"flex",alignItems:"center",gap:4,paddingBottom:20}}>🏢 {guestSelectedJob.company}</div>
+              </div>
+              <div className="modal-body">
+                <div className="modal-rate-bar">
+                  <div className="modal-rate-label">報酬</div>
+                  <div className="modal-rate-value">{guestSelectedJob.rate}</div>
+                </div>
+                <div className="modal-detail-grid">
+                  <div className="modal-detail-box"><div className="detail-label">📍 勤務地</div><div style={{fontSize:14,fontWeight:600,color:"var(--ink)",lineHeight:1.5}}>{guestSelectedJob.location}</div></div>
+                  <div className="modal-detail-box"><div className="detail-label">📅 契約期間</div><div style={{fontSize:14,fontWeight:600,color:"var(--ink)",lineHeight:1.5}}>{guestSelectedJob.period}</div></div>
+                  <div className="modal-detail-box"><div className="detail-label">🏠 働き方</div><div style={{fontSize:14,fontWeight:600,color:"var(--ink)",lineHeight:1.5}}>{guestSelectedJob.remote?"リモート可":"常駐"}</div></div>
+                  <div className="modal-detail-box"><div className="detail-label">🏷️ 業界</div><div style={{fontSize:14,fontWeight:600,color:"var(--ink)",lineHeight:1.5}}>{guestSelectedJob.tags[0]||"営業"}</div></div>
+                </div>
+                <div className="modal-divider"/>
+                <div className="detail-section"><div className="detail-label">📋 案件概要</div><div className="detail-text">{guestSelectedJob.description}</div></div>
+                <div className="detail-section"><div className="detail-label">✅ 応募要件</div><div className="detail-text">{guestSelectedJob.requirements}</div></div>
+                <div className="detail-section"><div className="detail-label">🏷️ 関連タグ</div><div className="job-tags" style={{marginTop:6}}>{guestSelectedJob.tags.map(t=><span key={t} className="tag">{t}</span>)}</div></div>
+                {/* 応募はログイン必須 */}
+                <div style={{marginTop:20,padding:"20px 24px",background:"var(--brand-soft)",borderRadius:"var(--radius-md)",border:"1px solid var(--brand-mid)",textAlign:"center"}}>
+                  <div style={{fontSize:14,fontWeight:600,color:"var(--ink)",marginBottom:10}}>この案件に応募するには無料登録が必要です</div>
+                  <div style={{display:"flex",gap:10,justifyContent:"center",flexWrap:"wrap"}}>
+                    <button className="btn-apply" style={{width:"auto",padding:"12px 28px",marginTop:0}} onClick={()=>setPage("register")}>無料登録して応募する →</button>
+                    <button style={{padding:"12px 24px",borderRadius:100,background:"transparent",border:"1.5px solid var(--gray300)",color:"var(--gray700)",fontSize:14,fontWeight:600,cursor:"pointer"}} onClick={()=>setPage("login")}>ログインして応募</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );})()}
+      </>
+    );
+  }
+
   // LANDING PAGE
   if (page === "landing") {
     const featuredJobs = jobs.filter(j=>j.highPay && j.published!==false).slice(0,3);
@@ -1001,9 +1271,10 @@ export default function App() {
                 <span className="hero-trust-badge">週2日〜OK</span>
               </div>
               <div className="cta-buttons">
-                <button className="btn-cta-primary" onClick={()=>setPage("register")}>無料で会員登録する →</button>
-                <button className="btn-cta-secondary" onClick={()=>setPage("login")}>案件を見る</button>
+                <button className="btn-cta-primary" onClick={()=>setPage("register")}>無料で登録する →</button>
+                <button className="btn-cta-secondary" onClick={()=>setPage("guest-jobs")}>案件一覧を見る</button>
               </div>
+              <div style={{marginTop:10,fontSize:12,color:"var(--gray500)"}}>登録・利用料は完全無料 ・ 30秒で登録完了</div>
             </div>
             <div className="hero-right">
               <img src="/assets/hero.jpg" alt="営業フリーランスとして活躍する人材" />
@@ -1150,56 +1421,95 @@ export default function App() {
           </div>
 
           {/* 他社比較テーブル */}
-          <div style={{background:"var(--paper)",borderTop:"1px solid var(--gray200)",padding:"96px 40px"}}>
-            <div style={{maxWidth:780,margin:"0 auto"}}>
-              <div style={{textAlign:"center",marginBottom:48}}>
+          <div style={{background:"var(--white)",borderTop:"1px solid var(--gray200)",padding:"80px 40px"}}>
+            <div style={{maxWidth:800,margin:"0 auto"}}>
+              <div style={{textAlign:"center",marginBottom:44}}>
                 <div className="section-eyebrow">Comparison</div>
                 <div className="section-title">他社サービスとの比較</div>
+                <div className="section-subtitle">営業フリーランスに特化した圧倒的な強み</div>
               </div>
-              <div style={{background:"var(--white)",borderRadius:24,overflow:"hidden",boxShadow:"0 2px 8px rgba(0,0,0,0.06),0 4px 16px rgba(0,0,0,0.05)"}}>
+              <div style={{borderRadius:20,overflow:"hidden",border:"1px solid var(--gray200)",boxShadow:"0 4px 24px rgba(0,0,0,0.06)"}}>
                 <table style={{width:"100%",borderCollapse:"collapse"}}>
                   <thead>
-                    <tr>
-                      <th style={{padding:"18px 24px",textAlign:"left",fontSize:13,fontWeight:700,color:"var(--gray500)",background:"var(--paper)",width:"36%",borderBottom:"2px solid var(--gray200)"}}>比較項目</th>
-                      <th style={{padding:"18px 24px",textAlign:"center",fontSize:14,fontWeight:800,color:"var(--brand)",background:"var(--brand-soft)",width:"21%",borderBottom:"2px solid var(--brand-mid)"}}>SalesBoard</th>
-                      <th style={{padding:"18px 24px",textAlign:"center",fontSize:13,fontWeight:600,color:"var(--gray500)",background:"var(--paper)",width:"21%",borderBottom:"2px solid var(--gray200)"}}>A社</th>
-                      <th style={{padding:"18px 24px",textAlign:"center",fontSize:13,fontWeight:600,color:"var(--gray500)",background:"var(--paper)",width:"22%",borderBottom:"2px solid var(--gray200)"}}>B社</th>
+                    <tr style={{background:"var(--gray50)"}}>
+                      <th style={{padding:"16px 24px",textAlign:"left",fontSize:12,fontWeight:700,color:"var(--gray500)",letterSpacing:"0.5px",textTransform:"uppercase",borderBottom:"2px solid var(--gray200)",width:"38%"}}>比較項目</th>
+                      <th style={{padding:"16px 20px",textAlign:"center",fontSize:14,fontWeight:800,color:"var(--brand-dark)",background:"var(--brand-soft)",borderBottom:"2px solid var(--brand)",width:"20%"}}>
+                        <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:2}}>
+                          <span style={{fontSize:18}}>🌟</span>
+                          <span>SalesBoard</span>
+                        </div>
+                      </th>
+                      <th style={{padding:"16px 20px",textAlign:"center",fontSize:13,fontWeight:600,color:"var(--gray400)",borderBottom:"2px solid var(--gray200)",width:"21%"}}>A社<div style={{fontSize:11,fontWeight:400,marginTop:2}}>総合型</div></th>
+                      <th style={{padding:"16px 20px",textAlign:"center",fontSize:13,fontWeight:600,color:"var(--gray400)",borderBottom:"2px solid var(--gray200)",width:"21%"}}>B社<div style={{fontSize:11,fontWeight:400,marginTop:2}}>大手</div></th>
                     </tr>
                   </thead>
                   <tbody>
                     {[
-                      ["営業特化",true,false,false],
-                      ["フルリモート案件",true,true,false],
-                      ["高単価案件（月60万〜）",true,true,false],
-                      ["週2日〜の副業案件",true,false,true],
-                      ["担当エージェントサポート",true,false,false],
-                      ["登録・利用料無料",true,true,true],
+                      ["🎯 営業職に完全特化",true,false,false],
+                      ["🏠 フルリモート案件あり",true,true,false],
+                      ["💴 高単価案件（専門領域）",true,true,false],
+                      ["📅 週2日〜の副業案件",true,false,true],
+                      ["👤 専任エージェントサポート",true,false,false],
+                      ["✅ 登録・利用料は無料",true,true,true],
                     ].map(([label,sb,a,b],i)=>(
-                      <tr key={i} style={{borderBottom:"1px solid var(--gray200)"}}>
-                        <td style={{padding:"15px 24px",fontSize:14,fontWeight:500,color:"var(--ink)"}}>{label}</td>
-                        <td style={{padding:"15px 24px",textAlign:"center",background:"rgba(36,166,74,0.04)"}}>
-                          {sb ? <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",width:24,height:24,borderRadius:"50%",background:"var(--brand)",color:"white",fontSize:13,fontWeight:800}}>✓</span>
-                               : <span style={{color:"var(--gray300)",fontSize:18}}>—</span>}
+                      <tr key={i} style={{borderBottom:"1px solid var(--gray200)",background: i%2===0 ? "var(--white)" : "var(--gray50)"}}>
+                        <td style={{padding:"14px 24px",fontSize:14,fontWeight:500,color:"var(--ink)"}}>{label}</td>
+                        <td style={{padding:"14px 20px",textAlign:"center",background:"rgba(36,166,74,0.05)"}}>
+                          {sb
+                            ? <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",width:26,height:26,borderRadius:"50%",background:"var(--brand)",color:"white",fontSize:14,fontWeight:800}}>✓</span>
+                            : <span style={{color:"var(--gray300)",fontSize:16,fontWeight:500}}>—</span>}
                         </td>
-                        <td style={{padding:"15px 24px",textAlign:"center"}}><span style={{fontSize:15,color:a?"var(--gray500)":"var(--gray200)"}}>{a?"○":"—"}</span></td>
-                        <td style={{padding:"15px 24px",textAlign:"center"}}><span style={{fontSize:15,color:b?"var(--gray500)":"var(--gray200)"}}>{b?"○":"—"}</span></td>
+                        <td style={{padding:"14px 20px",textAlign:"center"}}>
+                          <span style={{fontSize:16,color:a?"var(--gray600)":"var(--gray200)",fontWeight:a?500:400}}>{a?"✓":"—"}</span>
+                        </td>
+                        <td style={{padding:"14px 20px",textAlign:"center"}}>
+                          <span style={{fontSize:16,color:b?"var(--gray600)":"var(--gray200)",fontWeight:b?500:400}}>{b?"✓":"—"}</span>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
+              <div style={{textAlign:"center",marginTop:28}}>
+                <button className="btn-cta-primary" onClick={()=>setPage("register")}>無料で登録する →</button>
+              </div>
             </div>
           </div>
 
-          <div className="landing-footer">
-            <div className="footer-logo">SalesBoard</div>
-            <div className="footer-links">
-              <span style={{cursor:"pointer",color:"rgba(255,255,255,0.6)"}} onClick={()=>setPage("consultation")}>採用担当者様・案件掲載相談</span>
-              <span style={{cursor:"pointer",color:"rgba(255,255,255,0.6)"}} onClick={()=>setPage("login")}>ログイン</span>
-              <span style={{cursor:"pointer",color:"rgba(255,255,255,0.6)"}} onClick={()=>setPage("register")}>新規登録</span>
+          {/* フッター */}
+          <footer style={{background:"#111827",color:"rgba(255,255,255,0.5)",padding:"52px 40px 36px"}}>
+            <div style={{maxWidth:900,margin:"0 auto"}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:40,flexWrap:"wrap",marginBottom:40}}>
+                <div>
+                  <div style={{fontFamily:"'Outfit',sans-serif",fontWeight:800,color:"white",fontSize:22,marginBottom:10,letterSpacing:"-0.5px"}}>
+                    <span style={{display:"inline-flex",alignItems:"center",gap:8}}><span style={{width:28,height:28,borderRadius:7,background:"var(--brand)",display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:900,color:"white"}}>S</span>SalesBoard</span>
+                  </div>
+                  <div style={{fontSize:13,color:"rgba(255,255,255,0.45)",lineHeight:1.7,maxWidth:260}}>営業フリーランス専門の<br/>案件紹介プラットフォーム</div>
+                </div>
+                <div style={{display:"flex",gap:60,flexWrap:"wrap"}}>
+                  <div>
+                    <div style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,0.4)",textTransform:"uppercase",letterSpacing:"0.8px",marginBottom:14}}>フリーランスの方</div>
+                    <div style={{display:"flex",flexDirection:"column",gap:10}}>
+                      <span style={{cursor:"pointer",color:"rgba(255,255,255,0.65)",fontSize:13,transition:"color 0.2s"}} onClick={()=>setPage("guest-jobs")}>案件一覧（ログイン不要）</span>
+                      <span style={{cursor:"pointer",color:"rgba(255,255,255,0.65)",fontSize:13}} onClick={()=>setPage("register")}>無料登録</span>
+                      <span style={{cursor:"pointer",color:"rgba(255,255,255,0.65)",fontSize:13}} onClick={()=>setPage("login")}>ログイン</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,0.4)",textTransform:"uppercase",letterSpacing:"0.8px",marginBottom:14}}>採用担当者様</div>
+                    <div style={{display:"flex",flexDirection:"column",gap:10}}>
+                      <span style={{cursor:"pointer",color:"rgba(255,255,255,0.65)",fontSize:13}} onClick={()=>setPage("consultation")}>案件掲載相談</span>
+                      <span style={{cursor:"pointer",color:"rgba(255,255,255,0.65)",fontSize:13}} onClick={()=>setPage("consultation")}>無料掲載のご案内</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div style={{borderTop:"1px solid rgba(255,255,255,0.08)",paddingTop:24,display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:12}}>
+                <div style={{fontSize:12,color:"rgba(255,255,255,0.3)"}}>© 2026 SalesBoard / ジェイコンサルティング株式会社</div>
+                <div style={{fontSize:12,color:"rgba(255,255,255,0.3)"}}>All rights reserved.</div>
+              </div>
             </div>
-            <div>© 2026 SalesBoard. All rights reserved.</div>
-          </div>
+          </footer>
         </div>
         {toast && <div className="toast">{toast}</div>}
       </>
@@ -1495,23 +1805,32 @@ export default function App() {
               </div>
               <div className="result-count">検索結果: <strong>{filteredJobs.length}件</strong></div>
               <div className="job-list">
-                {filteredJobs.map(job=>(
-                  <div key={job.id} className="job-card" onClick={()=>setSelectedJob(job)}>
+                {filteredJobs.map(job=>{
+                  const vis = getJobVisual(job);
+                  return (
+                  <div key={job.id} className="job-card" onClick={()=>setSelectedJob(job)} style={{"--job-accent":vis.accent}}>
+                    {/* 上部カラーバー */}
+                    <div className="job-card-visual" style={{background:vis.accent}}/>
                     <div className="job-card-header">
                       <div className="job-card-top">
-                        <span className={`job-type ${job.type==="成果報酬"?"reward":""}`}>{job.type}</span>
-                        <span className="job-date">{daysAgo(job.posted)}</span>
+                        <div style={{display:"flex",alignItems:"center",gap:8}}>
+                          <div className="job-industry-icon" style={{background:vis.bg,border:`1px solid ${vis.accent}22`}}>{vis.icon}</div>
+                          <div>
+                            <div className="job-title">{job.title}</div>
+                            <div className="job-company">🏢 {job.company}</div>
+                          </div>
+                        </div>
+                        <span className="job-date" style={{flexShrink:0,marginTop:2}}>{daysAgo(job.posted)}</span>
                       </div>
-                      <div className="job-badges">
+                    </div>
+                    <div className="job-card-body">
+                      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
+                        <span className={`job-type ${job.type==="成果報酬"?"reward":""}`}>{job.type}</span>
                         {job.remote&&<span className="badge remote">🏠 リモート</span>}
                         {job.urgent&&<span className="badge urgent">⚡ 急募</span>}
                         {job.highPay&&<span className="badge highpay">💰 高単価</span>}
                         {job.lowExp&&<span className="badge lowexp">🌱 未経験OK</span>}
                       </div>
-                    </div>
-                    <div className="job-card-body">
-                      <div className="job-title">{job.title}</div>
-                      <div className="job-company">🏢 {job.company}</div>
                       <div className="job-meta">
                         <span className="meta-pill rate">💴 {job.rate}</span>
                         <span className="meta-pill">📍 {job.location}</span>
@@ -1521,7 +1840,8 @@ export default function App() {
                       {appliedJobs.includes(job.id)&&<div style={{marginTop:10,fontSize:12,color:"var(--brand-dark)",fontWeight:700,background:"var(--brand-soft)",display:"inline-flex",alignItems:"center",gap:4,padding:"3px 10px",borderRadius:100,border:"1px solid var(--brand-mid)"}}>✓ 応募済み</div>}
                     </div>
                   </div>
-                ))}
+                );})}
+
                 {filteredJobs.length===0&&<div style={{textAlign:"center",padding:60,color:"var(--gray500)",background:"var(--white)",borderRadius:"var(--radius-lg)",border:"1px solid var(--gray200)"}}>
                   <div style={{fontSize:40,marginBottom:12}}>📭</div>
                   <div style={{fontSize:16,fontWeight:600}}>該当する案件が見つかりませんでした</div>
@@ -1710,31 +2030,67 @@ export default function App() {
       </div>
 
       {/* 案件詳細モーダル */}
-      {selectedJob && !showApplyModal && (
+      {selectedJob && !showApplyModal && (()=>{
+        const vis = getJobVisual(selectedJob);
+        return (
         <div className="modal-overlay" onClick={()=>setSelectedJob(null)}>
           <div className="modal" onClick={e=>e.stopPropagation()}>
+            {/* カラートップバー */}
+            <div className="modal-top-bar" style={{background:vis.accent}}/>
             <div className="modal-header">
               <button className="modal-close" onClick={()=>setSelectedJob(null)}>✕</button>
-              <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:10}}>
-                <span className={`job-type ${selectedJob.type==="成果報酬"?"reward":""}`}>{selectedJob.type}</span>
-                {selectedJob.remote&&<span className="badge remote">🏠 リモート</span>}
-                {selectedJob.urgent&&<span className="badge urgent">⚡ 急募</span>}
-                {selectedJob.highPay&&<span className="badge highpay">💰 高単価</span>}
-                {selectedJob.lowExp&&<span className="badge lowexp">🌱 未経験OK</span>}
+              {/* 業界アイコン + バッジ行 */}
+              <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}>
+                <div style={{width:48,height:48,borderRadius:12,background:vis.bg,border:`1px solid ${vis.accent}30`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,flexShrink:0}}>{vis.icon}</div>
+                <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+                  <span className={`job-type ${selectedJob.type==="成果報酬"?"reward":""}`}>{selectedJob.type}</span>
+                  {selectedJob.remote&&<span className="badge remote">🏠 リモート</span>}
+                  {selectedJob.urgent&&<span className="badge urgent">⚡ 急募</span>}
+                  {selectedJob.highPay&&<span className="badge highpay">💰 高単価</span>}
+                  {selectedJob.lowExp&&<span className="badge lowexp">🌱 未経験OK</span>}
+                </div>
               </div>
-              <h2 style={{fontSize:20,fontWeight:700,lineHeight:1.45,paddingRight:40,color:"var(--ink)"}}>{selectedJob.title}</h2>
-              <div style={{fontSize:13,color:"var(--gray500)",marginTop:4,display:"flex",alignItems:"center",gap:4}}>🏢 {selectedJob.company}</div>
+              <h2 style={{fontSize:19,fontWeight:700,lineHeight:1.55,paddingRight:44,color:"var(--ink)",marginBottom:4}}>{selectedJob.title}</h2>
+              <div style={{fontSize:13,color:"var(--gray500)",display:"flex",alignItems:"center",gap:4,paddingBottom:20}}>🏢 {selectedJob.company}</div>
             </div>
             <div className="modal-body">
-              <div className="modal-detail-grid">
-                <div className="modal-detail-box"><div className="detail-label">報酬</div><div style={{fontSize:16,fontWeight:700,color:"var(--orange)"}}>{selectedJob.rate}</div></div>
-                <div className="modal-detail-box"><div className="detail-label">勤務地</div><div style={{fontSize:14,fontWeight:600,color:"var(--ink)"}}>{selectedJob.location}</div></div>
-                <div className="modal-detail-box"><div className="detail-label">契約期間</div><div style={{fontSize:14,fontWeight:600,color:"var(--ink)"}}>{selectedJob.period}</div></div>
-                <div className="modal-detail-box"><div className="detail-label">働き方</div><div style={{fontSize:14,fontWeight:600,color:"var(--ink)"}}>{selectedJob.remote?"リモート可":"常駐"}</div></div>
+              {/* 報酬バー（目立たせるが折り返し可能に） */}
+              <div className="modal-rate-bar">
+                <div className="modal-rate-label">報酬</div>
+                <div className="modal-rate-value">{selectedJob.rate}</div>
               </div>
-              <div className="detail-section"><div className="detail-label">案件概要</div><div className="detail-text">{selectedJob.description}</div></div>
-              <div className="detail-section"><div className="detail-label">応募要件</div><div className="detail-text">{selectedJob.requirements}</div></div>
-              <div className="detail-section"><div className="detail-label">関連タグ</div><div className="job-tags" style={{marginTop:6}}>{selectedJob.tags.map(t=><span key={t} className="tag">{t}</span>)}</div></div>
+              {/* 詳細グリッド（勤務地・期間・働き方） */}
+              <div className="modal-detail-grid">
+                <div className="modal-detail-box">
+                  <div className="detail-label">📍 勤務地</div>
+                  <div style={{fontSize:14,fontWeight:600,color:"var(--ink)",lineHeight:1.5}}>{selectedJob.location}</div>
+                </div>
+                <div className="modal-detail-box">
+                  <div className="detail-label">📅 契約期間</div>
+                  <div style={{fontSize:14,fontWeight:600,color:"var(--ink)",lineHeight:1.5}}>{selectedJob.period}</div>
+                </div>
+                <div className="modal-detail-box">
+                  <div className="detail-label">🏠 働き方</div>
+                  <div style={{fontSize:14,fontWeight:600,color:"var(--ink)",lineHeight:1.5}}>{selectedJob.remote?"リモート可":"常駐"}</div>
+                </div>
+                <div className="modal-detail-box">
+                  <div className="detail-label">🏷️ 業界</div>
+                  <div style={{fontSize:14,fontWeight:600,color:"var(--ink)",lineHeight:1.5}}>{selectedJob.tags[0]||"営業"}</div>
+                </div>
+              </div>
+              <div className="modal-divider"/>
+              <div className="detail-section">
+                <div className="detail-label">📋 案件概要</div>
+                <div className="detail-text">{selectedJob.description}</div>
+              </div>
+              <div className="detail-section">
+                <div className="detail-label">✅ 応募要件</div>
+                <div className="detail-text">{selectedJob.requirements}</div>
+              </div>
+              <div className="detail-section">
+                <div className="detail-label">🏷️ 関連タグ</div>
+                <div className="job-tags" style={{marginTop:6}}>{selectedJob.tags.map(t=><span key={t} className="tag">{t}</span>)}</div>
+              </div>
               {appliedJobs.includes(selectedJob.id)
                 ? <button className="btn-apply applied">✓ 応募済み</button>
                 : <button className="btn-apply" onClick={()=>setShowApplyModal(true)}>この案件に応募する →</button>
@@ -1742,7 +2098,7 @@ export default function App() {
             </div>
           </div>
         </div>
-      )}
+      );})()}
 
       {/* 応募モーダル */}
       {showApplyModal && selectedJob && (
