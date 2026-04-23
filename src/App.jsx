@@ -132,12 +132,10 @@ function getJobVisual(job) {
 }
 
 // 業界別SVGバナーを生成（SOKUDAN風ヘッダー画像の代わり）
-function JobBannerSVG({ job, height = 200 }) {
+// showText=true のときだけタイトル・会社名をSVG内に描画（フルページ詳細用）
+function JobBannerSVG({ job, height = 200, showText = false }) {
   const vis = getJobVisual(job);
   const c1 = vis.accent;
-  // アクセントカラーをやや暗くした色
-  const c2 = vis.accent.replace(/^#/, '');
-  // SVGパターン（背景に幾何学模様）
   const shapes = [
     { cx: "80%", cy: "30%", r: 120, op: 0.08 },
     { cx: "90%", cy: "80%", r: 80,  op: 0.06 },
@@ -162,17 +160,20 @@ function JobBannerSVG({ job, height = 200 }) {
       {[0,1,2,3,4].map(i=>(
         <line key={i} x1={i*200} y1="0" x2={i*200} y2={height} stroke="white" strokeOpacity="0.04" strokeWidth="1"/>
       ))}
-      {/* アイコン（大きく中央左に配置） */}
-      <text x="48" y={height*0.58} fontSize={height*0.5} textAnchor="start" dominantBaseline="middle" opacity="0.18">{vis.icon}</text>
-      {/* 業界ラベル */}
-      <rect x="32" y="24" rx="20" ry="20" width={vis.label.length*14+32} height="32" fill="white" fillOpacity="0.2"/>
-      <text x="48" y="44" fontSize="13" fontWeight="700" fill="white" opacity="0.95" fontFamily="'Noto Sans JP',sans-serif">{vis.label}専門</text>
-      {/* タイトル */}
-      <text x="32" y={height*0.52} fontSize="22" fontWeight="800" fill="white" fontFamily="'Noto Sans JP',sans-serif" opacity="0.95">
-        {job.title.length > 28 ? job.title.substring(0,28)+'…' : job.title}
-      </text>
-      {/* 会社名 */}
-      <text x="32" y={height*0.52+34} fontSize="14" fill="white" opacity="0.8" fontFamily="'Noto Sans JP',sans-serif">{job.company}</text>
+      {/* 大きいアイコン装飾（右寄り、半透明） */}
+      <text x="88%" y="55%" fontSize={height*0.75} textAnchor="middle" dominantBaseline="middle" opacity="0.15">{vis.icon}</text>
+      {/* 業界ラベル（左上） */}
+      <rect x="20" y="16" rx="16" ry="16" width={vis.label.length*13+28} height="28" fill="white" fillOpacity="0.25"/>
+      <text x="34" y="34" fontSize="12" fontWeight="700" fill="white" opacity="0.95" fontFamily="'Noto Sans JP',sans-serif">{vis.label}専門</text>
+      {/* showText=true のときのみタイトル・会社名を描画（フルページ詳細専用） */}
+      {showText && (
+        <>
+          <text x="32" y={height*0.55} fontSize="26" fontWeight="800" fill="white" fontFamily="'Noto Sans JP',sans-serif" opacity="0.95">
+            {job.title.length > 26 ? job.title.substring(0,26)+'…' : job.title}
+          </text>
+          <text x="32" y={height*0.55+36} fontSize="14" fill="white" opacity="0.85" fontFamily="'Noto Sans JP',sans-serif">{job.company}</text>
+        </>
+      )}
     </svg>
   );
 }
@@ -267,6 +268,10 @@ export default function App() {
   const [guestSearch, setGuestSearch] = useState("");
   const [guestFilters, setGuestFilters] = useState({ remote:false, urgent:false, highPay:false, lowExp:false, shortTime:false, reward:false, minRate:0, sortBy:"newest" });
   const [guestSelectedJob, setGuestSelectedJob] = useState(null);
+
+  // Consultation form
+  const [consultForm, setConsultForm] = useState({ company:"", name:"", email:"", phone:"", jobType:"", headcount:"", budget:"", message:"" });
+  const [consultSending, setConsultSending] = useState(false);
 
   const showToast = useCallback((msg) => {
     setToast(msg);
@@ -468,6 +473,58 @@ export default function App() {
       console.error("save error:", e);
       showToast("保存に失敗しました（権限エラーの場合はページを再読み込みしてください）");
     }
+  };
+
+  // 相談フォーム送信（EmailJSでoshita@jcon.co.jpへ通知）
+  const handleConsult = async () => {
+    if (!consultForm.company || !consultForm.name || !consultForm.email) {
+      showToast("会社名・担当者名・メールアドレスは必須です");
+      return;
+    }
+    setConsultSending(true);
+    try {
+      // Firestoreに問い合わせを保存
+      await addDoc(collection(db, "consultations"), {
+        ...consultForm,
+        submittedAt: serverTimestamp(),
+        status: "未対応",
+      });
+    } catch(e) {
+      // Firestore保存失敗はサイレント（メール送信は試みる）
+      console.warn("consultation save error:", e);
+    }
+    try {
+      // EmailJSでoshita@jcon.co.jpへ通知メール送信
+      const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          service_id: "service_kgfb1pp",
+          template_id: "template_consult_notify",
+          user_id: "l-4JMsbbRt5ETL0Su",
+          template_params: {
+            to_email: "oshita@jcon.co.jp",
+            from_company: consultForm.company,
+            from_name: consultForm.name,
+            from_email: consultForm.email,
+            phone: consultForm.phone || "未記入",
+            job_type: consultForm.jobType || "未選択",
+            headcount: consultForm.headcount || "未選択",
+            budget: consultForm.budget || "未選択",
+            message: consultForm.message || "（メッセージなし）",
+            reply_to: consultForm.email,
+          }
+        })
+      });
+      if (!res.ok) throw new Error("EmailJS error: " + res.status);
+    } catch(emailErr) {
+      console.warn("consult notify email failed:", emailErr);
+      // メール送信失敗でもフォーム送信は成功扱い
+    }
+    setConsultSending(false);
+    setConsultForm({ company:"", name:"", email:"", phone:"", jobType:"", headcount:"", budget:"", message:"" });
+    showToast("お問い合わせを受け付けました！担当者より1営業日以内にご連絡します。");
+    setPage("landing");
   };
 
   const handleResumeUpload = async (e) => {
@@ -1905,26 +1962,26 @@ export default function App() {
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
                 <div className="form-group" style={{marginBottom:0}}>
                   <label className="form-label">会社名 <span className="req">*</span></label>
-                  <input className="form-input" placeholder="株式会社〇〇" />
+                  <input className="form-input" placeholder="株式会社〇〇" value={consultForm.company} onChange={e=>setConsultForm(f=>({...f,company:e.target.value}))} />
                 </div>
                 <div className="form-group" style={{marginBottom:0}}>
                   <label className="form-label">ご担当者名 <span className="req">*</span></label>
-                  <input className="form-input" placeholder="山田 太郎" />
+                  <input className="form-input" placeholder="山田 太郎" value={consultForm.name} onChange={e=>setConsultForm(f=>({...f,name:e.target.value}))} />
                 </div>
               </div>
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
                 <div className="form-group" style={{marginBottom:0}}>
                   <label className="form-label">メールアドレス <span className="req">*</span></label>
-                  <input className="form-input" type="email" placeholder="taro@example.com" />
+                  <input className="form-input" type="email" placeholder="taro@example.com" value={consultForm.email} onChange={e=>setConsultForm(f=>({...f,email:e.target.value}))} />
                 </div>
                 <div className="form-group" style={{marginBottom:0}}>
                   <label className="form-label">電話番号</label>
-                  <input className="form-input" placeholder="03-0000-0000" />
+                  <input className="form-input" placeholder="03-0000-0000" value={consultForm.phone} onChange={e=>setConsultForm(f=>({...f,phone:e.target.value}))} />
                 </div>
               </div>
               <div className="form-group">
                 <label className="form-label">募集したい営業の種類</label>
-                <select className="form-select">
+                <select className="form-select" value={consultForm.jobType} onChange={e=>setConsultForm(f=>({...f,jobType:e.target.value}))}>
                   <option value="">選択してください</option>
                   {["新規開拓営業","ルート営業","インサイドセールス","カスタマーサクセス","営業マネージャー","その他"].map(v=><option key={v} value={v}>{v}</option>)}
                 </select>
@@ -1932,14 +1989,14 @@ export default function App() {
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
                 <div className="form-group" style={{marginBottom:0}}>
                   <label className="form-label">募集人数</label>
-                  <select className="form-select">
+                  <select className="form-select" value={consultForm.headcount} onChange={e=>setConsultForm(f=>({...f,headcount:e.target.value}))}>
                     <option value="">選択してください</option>
                     {["1名","2〜3名","4〜5名","5名以上","未定"].map(v=><option key={v} value={v}>{v}</option>)}
                   </select>
                 </div>
                 <div className="form-group" style={{marginBottom:0}}>
                   <label className="form-label">想定予算（月額）</label>
-                  <select className="form-select">
+                  <select className="form-select" value={consultForm.budget} onChange={e=>setConsultForm(f=>({...f,budget:e.target.value}))}>
                     <option value="">選択してください</option>
                     {["〜30万円","30〜50万円","50〜80万円","80万円以上","応相談"].map(v=><option key={v} value={v}>{v}</option>)}
                   </select>
@@ -1947,12 +2004,12 @@ export default function App() {
               </div>
               <div className="form-group">
                 <label className="form-label">その他・ご要望</label>
-                <textarea className="form-input" rows={4} placeholder="業種、必要なスキル、稼働条件など、ご自由にご記入ください" style={{resize:"vertical",lineHeight:1.7}} />
+                <textarea className="form-input" rows={4} placeholder="業種、必要なスキル、稼働条件など、ご自由にご記入ください" style={{resize:"vertical",lineHeight:1.7}} value={consultForm.message} onChange={e=>setConsultForm(f=>({...f,message:e.target.value}))} />
               </div>
-              <button className="btn-submit" onClick={()=>{showToast("お問い合わせを受け付けました。担当者より1営業日以内にご連絡します。");setPage("landing");}}>
-                送信する（無料）
+              <button className="btn-submit" onClick={handleConsult} disabled={consultSending} style={{opacity:consultSending?0.7:1,cursor:consultSending?"not-allowed":"pointer"}}>
+                {consultSending ? "送信中..." : "送信する（無料）"}
               </button>
-              <p style={{fontSize:12,color:"var(--gray400)",textAlign:"center",marginTop:16}}>送信後、担当者より1営業日以内にご連絡いたします。</p>
+              <p style={{fontSize:12,color:"var(--gray400)",textAlign:"center",marginTop:16}}>送信後、担当者（oshita@jcon.co.jp）より1営業日以内にご連絡いたします。</p>
             </div>
 
             {/* 実績紹介 */}
