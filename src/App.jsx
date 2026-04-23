@@ -26,7 +26,8 @@ const SAMPLE_JOBS = [
     remote:true, urgent:false, highPay:true, lowExp:false,
     description:"急成長中のSaaSプロダクト（顧客管理・MA系ツール）の新規開拓営業をお任せします。\n\n主な業務：\n・ターゲットリストの選定とアウトバウンドアプローチ\n・オンライン商談によるデモ実施・ヒアリング\n・提案書作成〜クロージングまでの一気通貫対応\n・CRMへの商談記録・進捗管理\n\n直販×インサイドセールスのハイブリッドスタイルです。月次目標KPI達成に応じてインセンティブが付与されます。",
     requirements:"【必須】法人向け新規営業経験3年以上\n【歓迎】SaaS・IT系プロダクトの販売経験\n【歓迎】SalesforceやHubSpotなどCRM操作経験\n\n自己管理能力が高く、裁量を持って動ける方を歓迎します。",
-    period:"長期（6ヶ月〜）", posted:"2026-04-11", published:true
+    period:"長期（6ヶ月〜）", posted:"2026-04-11", published:true,
+    companyInfo:"2018年設立・東京都渋谷区。SaaS型の顧客管理・MAツール「BridgeCRM」を開発・販売。従業員数80名。年間成長率200%超の急成長スタートアップ。シリーズB資金調達済み。"
   },
   {
     id:"s2", title:"人材紹介パートナー営業", company:"キャリアリンク株式会社", type:"業務委託",
@@ -124,16 +125,69 @@ const INDUSTRY_VISUAL = {
 };
 
 function getJobVisual(job) {
-  // tagsからマッチするビジュアルを返す
   for (const tag of (job.tags || [])) {
     if (INDUSTRY_VISUAL[tag]) return INDUSTRY_VISUAL[tag];
   }
   return INDUSTRY_VISUAL["default"];
 }
 
+// 業界別SVGバナーを生成（SOKUDAN風ヘッダー画像の代わり）
+function JobBannerSVG({ job, height = 200 }) {
+  const vis = getJobVisual(job);
+  const c1 = vis.accent;
+  // アクセントカラーをやや暗くした色
+  const c2 = vis.accent.replace(/^#/, '');
+  // SVGパターン（背景に幾何学模様）
+  const shapes = [
+    { cx: "80%", cy: "30%", r: 120, op: 0.08 },
+    { cx: "90%", cy: "80%", r: 80,  op: 0.06 },
+    { cx: "10%", cy: "60%", r: 60,  op: 0.05 },
+    { cx: "50%", cy: "10%", r: 100, op: 0.04 },
+  ];
+  return (
+    <svg width="100%" height={height} viewBox={`0 0 800 ${height}`} preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id={`bg-${job.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor={c1} stopOpacity="1"/>
+          <stop offset="100%" stopColor={c1} stopOpacity="0.75"/>
+        </linearGradient>
+      </defs>
+      {/* 背景 */}
+      <rect width="800" height={height} fill={`url(#bg-${job.id})`}/>
+      {/* 幾何学的装飾円 */}
+      {shapes.map((s,i)=>(
+        <circle key={i} cx={s.cx} cy={s.cy} r={s.r} fill="white" fillOpacity={s.op}/>
+      ))}
+      {/* グリッドライン */}
+      {[0,1,2,3,4].map(i=>(
+        <line key={i} x1={i*200} y1="0" x2={i*200} y2={height} stroke="white" strokeOpacity="0.04" strokeWidth="1"/>
+      ))}
+      {/* アイコン（大きく中央左に配置） */}
+      <text x="48" y={height*0.58} fontSize={height*0.5} textAnchor="start" dominantBaseline="middle" opacity="0.18">{vis.icon}</text>
+      {/* 業界ラベル */}
+      <rect x="32" y="24" rx="20" ry="20" width={vis.label.length*14+32} height="32" fill="white" fillOpacity="0.2"/>
+      <text x="48" y="44" fontSize="13" fontWeight="700" fill="white" opacity="0.95" fontFamily="'Noto Sans JP',sans-serif">{vis.label}専門</text>
+      {/* タイトル */}
+      <text x="32" y={height*0.52} fontSize="22" fontWeight="800" fill="white" fontFamily="'Noto Sans JP',sans-serif" opacity="0.95">
+        {job.title.length > 28 ? job.title.substring(0,28)+'…' : job.title}
+      </text>
+      {/* 会社名 */}
+      <text x="32" y={height*0.52+34} fontSize="14" fill="white" opacity="0.8" fontFamily="'Noto Sans JP',sans-serif">{job.company}</text>
+    </svg>
+  );
+}
+
+// 単価文字列から最低金額を数値で抽出（並び順用）
+function extractMinRate(rateStr) {
+  if (!rateStr) return 0;
+  const m = rateStr.match(/(\d[\d,]*)/);
+  if (!m) return 0;
+  return parseInt(m[1].replace(/,/g,''), 10);
+}
+
 function daysAgo(dateStr) {
   const d = new Date(dateStr);
-  const now = new Date("2026-04-18");
+  const now = new Date("2026-04-23");
   const diff = Math.floor((now - d) / 86400000);
   if (diff === 0) return "本日";
   if (diff === 1) return "1日前";
@@ -158,8 +212,16 @@ export default function App() {
 
   // Dashboard
   const [search, setSearch] = useState("");
-  const [filters, setFilters] = useState({ remote:false, urgent:false, highPay:false, lowExp:false, industries:[] });
+  const [filters, setFilters] = useState({
+    remote:false, urgent:false, highPay:false, lowExp:false,
+    shortTime:false,  // 週2日〜
+    reward:false,     // 成果報酬型
+    industries:[],
+    minRate: 0,       // 単価下限（万円）
+  });
+  const [sortBy, setSortBy] = useState("newest"); // newest | rateDesc | rateAsc
   const [selectedJob, setSelectedJob] = useState(null);
+  const [jobDetailPage, setJobDetailPage] = useState(false); // true=フル画面詳細
   const [appliedJobs, setAppliedJobs] = useState([]);
   const [showApplyModal, setShowApplyModal] = useState(false);
   const [applyMsg, setApplyMsg] = useState("");
@@ -203,7 +265,7 @@ export default function App() {
 
   // Guest job browse
   const [guestSearch, setGuestSearch] = useState("");
-  const [guestFilters, setGuestFilters] = useState({ remote:false, urgent:false, highPay:false, lowExp:false });
+  const [guestFilters, setGuestFilters] = useState({ remote:false, urgent:false, highPay:false, lowExp:false, shortTime:false, reward:false, minRate:0, sortBy:"newest" });
   const [guestSelectedJob, setGuestSelectedJob] = useState(null);
 
   const showToast = useCallback((msg) => {
@@ -302,13 +364,24 @@ export default function App() {
 
   const filteredJobs = jobs.filter(job => {
     if (job.published === false) return false;
-    if (search && !job.title.includes(search) && !job.company.includes(search) && !job.tags.some(t=>t.includes(search))) return false;
+    const kw = search.toLowerCase();
+    if (kw && !job.title.toLowerCase().includes(kw) && !job.company.toLowerCase().includes(kw) && !job.tags.some(t=>t.toLowerCase().includes(kw))) return false;
     if (filters.remote && !job.remote) return false;
     if (filters.urgent && !job.urgent) return false;
     if (filters.highPay && !job.highPay) return false;
     if (filters.lowExp && !job.lowExp) return false;
+    if (filters.shortTime && !job.period?.includes("週")) return false;
+    if (filters.reward && job.type !== "成果報酬") return false;
     if (filters.industries.length > 0 && !job.tags.some(t=>filters.industries.includes(t))) return false;
+    if (filters.minRate > 0 && extractMinRate(job.rate) < filters.minRate) return false;
     return true;
+  }).sort((a,b) => {
+    if (sortBy === "rateDesc") return extractMinRate(b.rate) - extractMinRate(a.rate);
+    if (sortBy === "rateAsc")  return extractMinRate(a.rate) - extractMinRate(b.rate);
+    // newest: posted日時降順 (Firestore createdAt or posted string)
+    const da = a.createdAt?.seconds || new Date(a.posted||0).getTime()/1000;
+    const db2 = b.createdAt?.seconds || new Date(b.posted||0).getTime()/1000;
+    return db2 - da;
   });
 
   const getErrorMessage = (code) => {
@@ -329,7 +402,26 @@ export default function App() {
     try {
       const result = await createUserWithEmailAndPassword(auth, regForm.email, regForm.password);
       await updateProfile(result.user, { displayName: regForm.name });
-      // 登録成功→ マイページ（プロフィール入力）へ誘導
+      // 登録完了メール送信（EmailJS）
+      try {
+        await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            service_id: "service_kgfb1pp",
+            template_id: "template_welcome",
+            user_id: "l-4JMsbbRt5ETL0Su",
+            template_params: {
+              to_name: regForm.name,
+              to_email: regForm.email,
+              message: `SalesBoardへのご登録ありがとうございます！\n\n${regForm.name}様のアカウントが正常に作成されました。\n\nまずはプロフィールを入力して、案件への応募を開始しましょう。\n\nhttps://salesboard.jcon.co.jp/`,
+            }
+          })
+        });
+      } catch(emailErr) {
+        // メール送信失敗はサイレントに（登録自体は成功）
+        console.warn("welcome email failed:", emailErr);
+      }
       showToast("登録が完了しました！プロフィールを入力してください😊");
       setDashTab("mypage");
     } catch(e) { setAuthError(getErrorMessage(e.code)); }
@@ -1083,7 +1175,16 @@ export default function App() {
       const matchUrgent = !guestFilters.urgent || j.urgent;
       const matchHighPay = !guestFilters.highPay || j.highPay;
       const matchLowExp = !guestFilters.lowExp || j.lowExp;
-      return matchKw && matchRemote && matchUrgent && matchHighPay && matchLowExp;
+      const matchShortTime = !guestFilters.shortTime || j.period?.includes("週");
+      const matchReward = !guestFilters.reward || j.type === "成果報酬";
+      const matchMinRate = !guestFilters.minRate || extractMinRate(j.rate) >= guestFilters.minRate;
+      return matchKw && matchRemote && matchUrgent && matchHighPay && matchLowExp && matchShortTime && matchReward && matchMinRate;
+    }).sort((a,b)=>{
+      if (guestFilters.sortBy === "rateDesc") return extractMinRate(b.rate) - extractMinRate(a.rate);
+      if (guestFilters.sortBy === "rateAsc")  return extractMinRate(a.rate) - extractMinRate(b.rate);
+      const da = a.createdAt?.seconds || new Date(a.posted||0).getTime()/1000;
+      const db2 = b.createdAt?.seconds || new Date(b.posted||0).getTime()/1000;
+      return db2 - da;
     });
     return (
       <>
@@ -1111,40 +1212,65 @@ export default function App() {
             </div>
           </div>
           {/* 案件リスト */}
-          <div style={{maxWidth:900,margin:"0 auto",padding:"28px 24px"}}>
+          <div style={{maxWidth:960,margin:"0 auto",padding:"28px 24px"}}>
             {/* 検索・フィルター */}
-            <div style={{display:"flex",gap:12,marginBottom:16,flexWrap:"wrap",alignItems:"center"}}>
-              <div style={{flex:1,minWidth:240,display:"flex",alignItems:"center",gap:10,background:"white",border:"1px solid var(--gray200)",borderRadius:"10px",padding:"10px 16px",boxShadow:"var(--shadow-sm)"}}>
+            <div style={{background:"white",borderRadius:"var(--radius-lg)",border:"1px solid var(--gray200)",padding:"20px",boxShadow:"var(--shadow-sm)",marginBottom:20}}>
+              {/* 検索バー */}
+              <div style={{display:"flex",alignItems:"center",gap:10,background:"var(--gray50)",border:"1.5px solid var(--gray200)",borderRadius:10,padding:"10px 16px",marginBottom:14}}>
                 <span style={{color:"var(--gray400)"}}>🔍</span>
-                <input style={{border:"none",outline:"none",fontSize:14,fontFamily:"'Noto Sans JP',sans-serif",flex:1,background:"transparent"}} placeholder="キーワードで検索（例：SaaS、新規開拓）" value={guestSearch} onChange={e=>setGuestSearch(e.target.value)} />
+                <input style={{border:"none",outline:"none",fontSize:14,fontFamily:"'Noto Sans JP',sans-serif",flex:1,background:"transparent"}} placeholder="キーワードで検索（例：SaaS、新規開拓、DX）" value={guestSearch} onChange={e=>setGuestSearch(e.target.value)} />
               </div>
-              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-                {[["remote","🏠 リモート"],["urgent","⚡ 急募"],["highPay","💰 高単価"],["lowExp","🌱 未経験OK"]].map(([key,label])=>(
+              {/* フィルターボタン */}
+              <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:14}}>
+                {[["remote","🏠 リモート可"],["urgent","⚡ 急募"],["highPay","💰 高単価"],["lowExp","🌱 未経験OK"],["shortTime","📅 週2日〜"],["reward","💎 成果報酬"]].map(([key,label])=>(
                   <button key={key} onClick={()=>setGuestFilters(f=>({...f,[key]:!f[key]}))} style={{padding:"8px 14px",borderRadius:100,fontSize:12,fontWeight:600,border:`1.5px solid ${guestFilters[key]?"var(--brand)":"var(--gray300)"}`,background:guestFilters[key]?"var(--brand-soft)":"white",color:guestFilters[key]?"var(--brand-dark)":"var(--gray700)",cursor:"pointer",transition:"all 0.15s"}}>{label}</button>
                 ))}
               </div>
+              {/* 単価スライダー */}
+              <div style={{marginBottom:14}}>
+                <div style={{fontSize:12,fontWeight:700,color:"var(--gray600)",marginBottom:6}}>
+                  単価下限: <span style={{color:"var(--brand-dark)"}}>{guestFilters.minRate===0?"指定なし":`${guestFilters.minRate}万円/月 以上`}</span>
+                </div>
+                <input type="range" min={0} max={100} step={10} value={guestFilters.minRate}
+                  onChange={e=>setGuestFilters(f=>({...f,minRate:Number(e.target.value)}))}
+                  style={{width:"100%",accentColor:"var(--brand)",cursor:"pointer"}}
+                />
+                <div style={{display:"flex",justifyContent:"space-between",fontSize:11,color:"var(--gray400)",marginTop:2}}>
+                  <span>指定なし</span><span>50万円</span><span>100万円</span>
+                </div>
+              </div>
+              {/* 並び順・結果数 */}
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8}}>
+                <div style={{fontSize:13,color:"var(--gray600)"}}>検索結果: <strong style={{color:"var(--ink)"}}>{guestFiltered.length}件</strong></div>
+                <div style={{display:"flex",alignItems:"center",gap:8}}>
+                  <span style={{fontSize:12,color:"var(--gray500)",fontWeight:600}}>並び順：</span>
+                  <select value={guestFilters.sortBy} onChange={e=>setGuestFilters(f=>({...f,sortBy:e.target.value}))} style={{fontSize:13,padding:"6px 12px",borderRadius:8,border:"1.5px solid var(--gray200)",background:"white",color:"var(--ink)",fontFamily:"'Noto Sans JP',sans-serif",cursor:"pointer",outline:"none"}}>
+                    <option value="newest">掲載が新しい順</option>
+                    <option value="rateDesc">単価が高い順</option>
+                    <option value="rateAsc">単価が低い順</option>
+                  </select>
+                </div>
+              </div>
             </div>
-            <div style={{fontSize:13,color:"var(--gray500)",marginBottom:14}}>検索結果: <strong>{guestFiltered.length}件</strong></div>
             {/* 案件カード */}
-            <div style={{display:"flex",flexDirection:"column",gap:12}}>
+            <div style={{display:"flex",flexDirection:"column",gap:16}}>
               {guestFiltered.map(job=>{
                 const vis = getJobVisual(job);
                 return (
-                  <div key={job.id} style={{background:"white",borderRadius:"var(--radius-lg)",border:"1px solid var(--gray200)",boxShadow:"var(--shadow-sm)",overflow:"hidden",cursor:"pointer",transition:"all 0.25s"}}
-                    onClick={()=>setGuestSelectedJob(job)}
+                  <div key={job.id} style={{background:"white",borderRadius:"var(--radius-lg)",border:"1px solid var(--gray200)",boxShadow:"var(--shadow-sm)",overflow:"hidden",transition:"all 0.25s"}}
                     onMouseEnter={e=>{e.currentTarget.style.boxShadow="var(--shadow-lg)";e.currentTarget.style.transform="translateY(-2px)";}}
                     onMouseLeave={e=>{e.currentTarget.style.boxShadow="var(--shadow-sm)";e.currentTarget.style.transform="translateY(0)";}}
                   >
-                    <div style={{height:5,background:vis.accent}}/>
-                    <div style={{padding:"16px 20px 8px"}}>
-                      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
-                        <div style={{width:44,height:44,borderRadius:10,background:vis.bg,border:`1px solid ${vis.accent}30`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0}}>{vis.icon}</div>
-                        <div style={{flex:1,minWidth:0}}>
-                          <div style={{fontSize:15,fontWeight:700,color:"var(--ink)",lineHeight:1.45,marginBottom:2}}>{job.title}</div>
-                          <div style={{fontSize:12,color:"var(--gray500)"}}>🏢 {job.company}</div>
-                        </div>
-                        <div style={{fontSize:11,color:"var(--gray400)",flexShrink:0}}>{daysAgo(job.posted)}</div>
+                    {/* SOKUDANスタイルのバナー */}
+                    <div style={{position:"relative",overflow:"hidden",cursor:"pointer"}} onClick={()=>setGuestSelectedJob(job)}>
+                      <JobBannerSVG job={job} height={100}/>
+                      <div style={{position:"absolute",top:10,right:10}}>
+                        <span style={{background:"rgba(0,0,0,0.35)",color:"white",borderRadius:100,padding:"3px 10px",fontSize:11,fontWeight:600}}>{daysAgo(job.posted)}</span>
                       </div>
+                    </div>
+                    <div style={{padding:"14px 20px 8px",cursor:"pointer"}} onClick={()=>setGuestSelectedJob(job)}>
+                      <div style={{fontSize:16,fontWeight:700,color:"var(--ink)",lineHeight:1.45,marginBottom:4}}>{job.title}</div>
+                      <div style={{fontSize:12,color:"var(--gray500)",marginBottom:10}}>🏢 {job.company}</div>
                       <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:10}}>
                         <span style={{fontSize:11,fontWeight:700,padding:"2px 9px",borderRadius:100,background:"var(--brand-soft)",color:"var(--brand-dark)",border:"1px solid var(--brand-mid)"}}>{job.type}</span>
                         {job.remote&&<span className="badge remote">🏠 リモート</span>}
@@ -1154,13 +1280,26 @@ export default function App() {
                       </div>
                     </div>
                     <div style={{padding:"0 20px 16px"}}>
-                      <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:10}}>
+                      <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:12}}>
                         <span style={{padding:"4px 10px",borderRadius:6,fontSize:12,fontWeight:700,background:"var(--orange-soft)",color:"var(--orange)"}}>💴 {job.rate}</span>
                         <span style={{padding:"4px 10px",borderRadius:6,fontSize:12,background:"var(--gray100)",color:"var(--gray700)"}}>📍 {job.location}</span>
                         <span style={{padding:"4px 10px",borderRadius:6,fontSize:12,background:"var(--gray100)",color:"var(--gray700)"}}>📅 {job.period}</span>
                       </div>
-                      <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
+                      <div style={{display:"flex",flexWrap:"wrap",gap:5,marginBottom:14}}>
                         {job.tags.map(t=><span key={t} style={{padding:"3px 10px",borderRadius:100,fontSize:11,fontWeight:500,background:"var(--brand-soft)",color:"var(--brand-dark)",border:"1px solid var(--brand-mid)"}}>{t}</span>)}
+                      </div>
+                      <div style={{display:"flex",gap:8}}>
+                        <button onClick={()=>setGuestSelectedJob(job)} style={{flex:1,padding:"10px",borderRadius:100,background:"var(--brand-soft)",border:"1.5px solid var(--brand-mid)",color:"var(--brand-dark)",fontSize:13,fontWeight:700,cursor:"pointer",transition:"all 0.15s"}}
+                          onMouseEnter={e=>{e.currentTarget.style.background="var(--brand)";e.currentTarget.style.color="white";}}
+                          onMouseLeave={e=>{e.currentTarget.style.background="var(--brand-soft)";e.currentTarget.style.color="var(--brand-dark)";}}>
+                          詳細を見る
+                        </button>
+                        <button onClick={()=>{setSelectedJob(job);setPage("job-detail");}} style={{padding:"10px 16px",borderRadius:100,background:"var(--gray100)",border:"1.5px solid var(--gray200)",color:"var(--gray600)",fontSize:12,fontWeight:600,cursor:"pointer",whiteSpace:"nowrap"}}
+                          title="別ページで詳細を開く"
+                          onMouseEnter={e=>{e.currentTarget.style.background="var(--gray200)";}}
+                          onMouseLeave={e=>{e.currentTarget.style.background="var(--gray100)";}}>
+                          ↗ 別ページ
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -1187,21 +1326,31 @@ export default function App() {
           return (
           <div className="modal-overlay" onClick={()=>setGuestSelectedJob(null)}>
             <div className="modal" onClick={e=>e.stopPropagation()}>
-              <div className="modal-top-bar" style={{background:vis.accent}}/>
-              <div className="modal-header">
-                <button className="modal-close" onClick={()=>setGuestSelectedJob(null)}>✕</button>
-                <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}>
-                  <div style={{width:48,height:48,borderRadius:12,background:vis.bg,border:`1px solid ${vis.accent}30`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,flexShrink:0}}>{vis.icon}</div>
-                  <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-                    <span className={`job-type ${guestSelectedJob.type==="成果報酬"?"reward":""}`}>{guestSelectedJob.type}</span>
-                    {guestSelectedJob.remote&&<span className="badge remote">🏠 リモート</span>}
-                    {guestSelectedJob.urgent&&<span className="badge urgent">⚡ 急募</span>}
-                    {guestSelectedJob.highPay&&<span className="badge highpay">💰 高単価</span>}
-                    {guestSelectedJob.lowExp&&<span className="badge lowexp">🌱 未経験OK</span>}
+              {/* SOKUDANスタイルのヘッダーバナー */}
+              <div style={{position:"relative",overflow:"hidden",borderRadius:"var(--radius-xl) var(--radius-xl) 0 0"}}>
+                <JobBannerSVG job={guestSelectedJob} height={150}/>
+                <button className="modal-close" style={{position:"absolute",top:12,right:12,background:"rgba(0,0,0,0.4)",color:"white",border:"none"}} onClick={()=>setGuestSelectedJob(null)}>✕</button>
+                <div style={{position:"absolute",bottom:14,left:20,display:"flex",alignItems:"center",gap:10}}>
+                  <div style={{width:44,height:44,borderRadius:10,background:"white",boxShadow:"0 2px 8px rgba(0,0,0,0.2)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22}}>{vis.icon}</div>
+                  <div>
+                    <div style={{fontSize:12,color:"rgba(255,255,255,0.85)",fontWeight:600}}>{vis.label}業界</div>
+                    <div style={{fontSize:14,color:"white",fontWeight:700}}>{guestSelectedJob.company}</div>
                   </div>
                 </div>
-                <h2 style={{fontSize:19,fontWeight:700,lineHeight:1.55,paddingRight:44,color:"var(--ink)",marginBottom:4}}>{guestSelectedJob.title}</h2>
-                <div style={{fontSize:13,color:"var(--gray500)",display:"flex",alignItems:"center",gap:4,paddingBottom:20}}>🏢 {guestSelectedJob.company}</div>
+                <button onClick={()=>{setSelectedJob(guestSelectedJob);setPage("job-detail");}} style={{position:"absolute",bottom:14,right:14,padding:"6px 12px",borderRadius:100,background:"rgba(255,255,255,0.2)",border:"1.5px solid rgba(255,255,255,0.5)",color:"white",fontSize:11,fontWeight:700,cursor:"pointer",backdropFilter:"blur(4px)"}}>
+                  ↗ 全画面で見る
+                </button>
+              </div>
+              <div className="modal-header" style={{paddingTop:16}}>
+                <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:10}}>
+                  <span className={`job-type ${guestSelectedJob.type==="成果報酬"?"reward":""}`}>{guestSelectedJob.type}</span>
+                  {guestSelectedJob.remote&&<span className="badge remote">🏠 リモート</span>}
+                  {guestSelectedJob.urgent&&<span className="badge urgent">⚡ 急募</span>}
+                  {guestSelectedJob.highPay&&<span className="badge highpay">💰 高単価</span>}
+                  {guestSelectedJob.lowExp&&<span className="badge lowexp">🌱 未経験OK</span>}
+                </div>
+                <h2 style={{fontSize:19,fontWeight:700,lineHeight:1.55,color:"var(--ink)",marginBottom:4}}>{guestSelectedJob.title}</h2>
+                <div style={{fontSize:13,color:"var(--gray500)",display:"flex",alignItems:"center",gap:4,paddingBottom:16}}>🏢 {guestSelectedJob.company}</div>
               </div>
               <div className="modal-body">
                 <div className="modal-rate-bar">
@@ -1217,6 +1366,15 @@ export default function App() {
                 <div className="modal-divider"/>
                 <div className="detail-section"><div className="detail-label">📋 案件概要</div><div className="detail-text">{guestSelectedJob.description}</div></div>
                 <div className="detail-section"><div className="detail-label">✅ 応募要件</div><div className="detail-text">{guestSelectedJob.requirements}</div></div>
+                {/* 掲載企業情報 */}
+                {guestSelectedJob.companyInfo && (
+                  <div className="detail-section">
+                    <div className="detail-label">🏢 掲載企業について</div>
+                    <div style={{fontSize:14,color:"var(--gray700)",lineHeight:1.9,padding:"14px 16px",background:"var(--gray50)",borderRadius:10,marginTop:6,borderLeft:`4px solid ${getJobVisual(guestSelectedJob).accent}`}}>
+                      {guestSelectedJob.companyInfo}
+                    </div>
+                  </div>
+                )}
                 <div className="detail-section"><div className="detail-label">🏷️ 関連タグ</div><div className="job-tags" style={{marginTop:6}}>{guestSelectedJob.tags.map(t=><span key={t} className="tag">{t}</span>)}</div></div>
                 {/* 応募はログイン必須 */}
                 <div style={{marginTop:20,padding:"20px 24px",background:"var(--brand-soft)",borderRadius:"var(--radius-md)",border:"1px solid var(--brand-mid)",textAlign:"center"}}>
@@ -1517,6 +1675,191 @@ export default function App() {
   }
 
 
+  // JOB DETAIL PAGE（案件詳細フルページ）
+  if (page === "job-detail" && selectedJob) {
+    const vis = getJobVisual(selectedJob);
+    const isApplied = appliedJobs.includes(selectedJob.id);
+    return (
+      <>
+        <style>{css}</style>
+        <div style={{minHeight:"100vh",background:"var(--paper)"}}>
+          {/* NAV */}
+          <nav className="landing-nav">
+            <div className="logo" style={{cursor:"pointer"}} onClick={()=>{setPage(user?"dashboard":"guest-jobs");}}><div className="logo-mark">S</div>SalesBoard</div>
+            <div className="nav-btns">
+              <button className="btn-ghost" onClick={()=>{setPage(user?"dashboard":"guest-jobs");}}>← 案件一覧に戻る</button>
+              {user ? (
+                <button className="btn-accent" onClick={()=>setShowApplyModal(true)} disabled={isApplied}>{isApplied?"✓ 応募済み":"この案件に応募する"}</button>
+              ) : (
+                <button className="btn-accent" onClick={()=>setPage("register")}>無料登録して応募する</button>
+              )}
+            </div>
+          </nav>
+
+          {/* ヘッダーバナー（SOKUDAN風） */}
+          <div style={{position:"relative",overflow:"hidden"}}>
+            <JobBannerSVG job={selectedJob} height={220}/>
+            {/* 会社ロゴプレート */}
+            <div style={{position:"absolute",bottom:20,left:32,display:"flex",alignItems:"center",gap:12}}>
+              <div style={{width:52,height:52,borderRadius:12,background:"white",boxShadow:"0 2px 12px rgba(0,0,0,0.15)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:24}}>
+                {vis.icon}
+              </div>
+              <div>
+                <div style={{fontSize:12,color:"rgba(255,255,255,0.8)",fontWeight:600}}>{vis.label}業界</div>
+                <div style={{fontSize:14,color:"white",fontWeight:700}}>{selectedJob.company}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* メインコンテンツ */}
+          <div style={{maxWidth:860,margin:"0 auto",padding:"32px 24px 60px",display:"grid",gridTemplateColumns:"1fr 300px",gap:28,alignItems:"start"}}>
+
+            {/* 左：案件詳細 */}
+            <div>
+              {/* バッジ行 */}
+              <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:16}}>
+                <span className={`job-type ${selectedJob.type==="成果報酬"?"reward":""}`}>{selectedJob.type}</span>
+                {selectedJob.remote&&<span className="badge remote">🏠 リモート</span>}
+                {selectedJob.urgent&&<span className="badge urgent">⚡ 急募</span>}
+                {selectedJob.highPay&&<span className="badge highpay">💰 高単価</span>}
+                {selectedJob.lowExp&&<span className="badge lowexp">🌱 未経験OK</span>}
+              </div>
+
+              {/* タイトル */}
+              <h1 style={{fontSize:24,fontWeight:800,lineHeight:1.5,color:"var(--ink)",marginBottom:8}}>{selectedJob.title}</h1>
+              <div style={{fontSize:13,color:"var(--gray500)",marginBottom:24,display:"flex",alignItems:"center",gap:6}}>
+                🏢 {selectedJob.company} ・ {daysAgo(selectedJob.posted)}掲載
+              </div>
+
+              {/* 基本情報グリッド */}
+              <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:12,marginBottom:28,padding:"20px",background:"var(--white)",borderRadius:16,border:"1px solid var(--gray200)",boxShadow:"var(--shadow-sm)"}}>
+                {[
+                  {icon:"💴",label:"報酬",val:selectedJob.rate,color:"var(--orange)",bold:true},
+                  {icon:"📍",label:"勤務地",val:selectedJob.location},
+                  {icon:"📅",label:"契約期間",val:selectedJob.period},
+                  {icon:"🏠",label:"働き方",val:selectedJob.remote?"リモート可":"常駐"},
+                ].map((item,i)=>(
+                  <div key={i} style={{padding:"14px 16px",background:"var(--gray50)",borderRadius:10,border:"1px solid var(--gray200)"}}>
+                    <div style={{fontSize:11,fontWeight:700,color:"var(--gray500)",marginBottom:4,display:"flex",alignItems:"center",gap:4}}>{item.icon} {item.label}</div>
+                    <div style={{fontSize:item.bold?18:14,fontWeight:item.bold?800:600,color:item.color||"var(--ink)",lineHeight:1.4}}>{item.val}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* タブ風セクション */}
+              {[
+                {label:"📋 案件概要",content:selectedJob.description},
+                {label:"✅ 応募要件・スキル",content:selectedJob.requirements},
+              ].map((sec,i)=>(
+                <div key={i} style={{marginBottom:24,background:"var(--white)",borderRadius:16,border:"1px solid var(--gray200)",overflow:"hidden",boxShadow:"var(--shadow-sm)"}}>
+                  <div style={{padding:"16px 24px",borderBottom:"1px solid var(--gray200)",background:"var(--gray50)"}}>
+                    <div style={{fontSize:15,fontWeight:700,color:"var(--ink)"}}>{sec.label}</div>
+                  </div>
+                  <div style={{padding:"20px 24px",fontSize:14,lineHeight:1.9,color:"var(--gray700)",whiteSpace:"pre-wrap",wordBreak:"break-word"}}>{sec.content}</div>
+                </div>
+              ))}
+
+              {/* 関連タグ */}
+              <div style={{marginBottom:24}}>
+                <div style={{fontSize:13,fontWeight:700,color:"var(--gray500)",marginBottom:10}}>🏷️ 関連タグ</div>
+                <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
+                  {selectedJob.tags.map(t=><span key={t} className="tag" style={{fontSize:13,padding:"5px 14px"}}>{t}</span>)}
+                </div>
+              </div>
+
+              {/* 会社情報 */}
+              <div style={{background:"var(--white)",borderRadius:16,border:"1px solid var(--gray200)",overflow:"hidden",boxShadow:"var(--shadow-sm)"}}>
+                <div style={{padding:"16px 24px",borderBottom:"1px solid var(--gray200)",background:"var(--gray50)"}}>
+                  <div style={{fontSize:15,fontWeight:700,color:"var(--ink)"}}>🏢 掲載企業について</div>
+                </div>
+                <div style={{padding:"20px 24px"}}>
+                  <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:16}}>
+                    <div style={{width:64,height:64,borderRadius:16,background:vis.bg,border:`2px solid ${vis.accent}30`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:32}}>{vis.icon}</div>
+                    <div>
+                      <div style={{fontSize:18,fontWeight:700,color:"var(--ink)"}}>{selectedJob.company}</div>
+                      <div style={{fontSize:13,color:vis.accent,fontWeight:600,marginTop:2}}>{vis.label}業界</div>
+                    </div>
+                  </div>
+                  {selectedJob.companyInfo ? (
+                    <div style={{fontSize:14,color:"var(--gray700)",lineHeight:1.9,padding:"16px 18px",background:"var(--gray50)",borderRadius:12,borderLeft:`4px solid ${vis.accent}`}}>
+                      {selectedJob.companyInfo}
+                    </div>
+                  ) : (
+                    <div style={{fontSize:13,color:"var(--gray600)",lineHeight:1.8,padding:"14px 16px",background:"var(--gray50)",borderRadius:10}}>
+                      本案件はSalesBoardを通じて掲載されています。企業の詳細情報・担当者へのご質問は、応募後にエージェントを通じてお伝えします。
+                    </div>
+                  )}
+                  <div style={{marginTop:14,padding:"12px 16px",background:"var(--brand-soft)",borderRadius:10,border:"1px solid var(--brand-mid)",fontSize:13,color:"var(--brand-dark)"}}>
+                    💬 企業への質問は、応募後に担当エージェントを通じてお伝えできます
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 右：サイドバー（固定CTA） */}
+            <div style={{position:"sticky",top:90}}>
+              <div style={{background:"var(--white)",borderRadius:16,border:"1px solid var(--gray200)",padding:"24px",boxShadow:"var(--shadow-md)",marginBottom:16}}>
+                <div style={{fontSize:13,fontWeight:700,color:"var(--gray500)",marginBottom:4}}>報酬</div>
+                <div style={{fontSize:22,fontWeight:800,color:"var(--orange)",marginBottom:20,lineHeight:1.3}}>{selectedJob.rate}</div>
+                {user ? (
+                  <>
+                    {isApplied ? (
+                      <div style={{padding:"14px",textAlign:"center",background:"var(--brand-soft)",borderRadius:100,color:"var(--brand-dark)",fontWeight:700,border:"1.5px solid var(--brand-mid)"}}>✓ 応募済みです</div>
+                    ) : (
+                      <button className="btn-apply" style={{marginTop:0}} onClick={()=>setShowApplyModal(true)}>この案件に応募する →</button>
+                    )}
+                  </>
+                ) : (
+                  <div>
+                    <button className="btn-apply" style={{marginTop:0}} onClick={()=>setPage("register")}>無料登録して応募する →</button>
+                    <div style={{textAlign:"center",marginTop:10,fontSize:12,color:"var(--gray500)"}}>登録・利用料は完全無料</div>
+                  </div>
+                )}
+              </div>
+              {/* 案件情報サマリー */}
+              <div style={{background:"var(--white)",borderRadius:16,border:"1px solid var(--gray200)",padding:"20px",boxShadow:"var(--shadow-sm)"}}>
+                <div style={{fontSize:13,fontWeight:700,color:"var(--gray500)",marginBottom:12}}>📊 案件情報</div>
+                {[
+                  ["契約形態",selectedJob.type],
+                  ["稼働期間",selectedJob.period],
+                  ["勤務地",selectedJob.location],
+                  ["リモート",selectedJob.remote?"リモート可":"常駐"],
+                  ["掲載日",daysAgo(selectedJob.posted)],
+                ].map(([k,v])=>(
+                  <div key={k} style={{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:"1px solid var(--gray100)",fontSize:13}}>
+                    <span style={{color:"var(--gray500)"}}>{k}</span>
+                    <span style={{fontWeight:600,color:"var(--ink)"}}>{v}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 応募モーダル */}
+        {showApplyModal && selectedJob && (
+          <div className="modal-overlay" onClick={()=>setShowApplyModal(false)}>
+            <div className="modal" style={{maxWidth:500}} onClick={e=>e.stopPropagation()}>
+              <div className="modal-header">
+                <button className="modal-close" onClick={()=>setShowApplyModal(false)}>✕</button>
+                <h2 style={{fontSize:20,fontWeight:700,paddingRight:40}}>応募する</h2>
+                <div style={{fontSize:14,color:"var(--gray500)",marginTop:4}}>{selectedJob.title}</div>
+              </div>
+              <div className="modal-body">
+                <div className="form-group">
+                  <label className="form-label">自己PR・メッセージ</label>
+                  <textarea className="apply-textarea" placeholder="これまでの営業経験やアピールポイントを記入してください..." value={applyMsg} onChange={e=>setApplyMsg(e.target.value)} />
+                </div>
+                <button className="btn-apply" onClick={handleApply}>応募を送信する</button>
+              </div>
+            </div>
+          </div>
+        )}
+        {toast && <div className="toast">{toast}</div>}
+      </>
+    );
+  }
+
   // CONSULTATION PAGE（案件掲載相談）
   if (page === "consultation") {
     return (
@@ -1792,8 +2135,33 @@ export default function App() {
                   ))}
                 </div>
               </div>
-              {(filters.remote||filters.urgent||filters.highPay||filters.lowExp||filters.industries.length>0)&&(
-                <div className="clear-filters" onClick={()=>setFilters({remote:false,urgent:false,highPay:false,lowExp:false,industries:[]})}>✕ 絞り込みをクリア</div>
+              <div className="filter-section">
+                <div className="filter-title">勤務形態</div>
+                {[["shortTime","週2日〜OK"],["reward","成果報酬型"]].map(f=>(
+                  <div key={f[0]} className="filter-toggle" onClick={()=>setFilters(prev=>({...prev,[f[0]]:!prev[f[0]]}))}
+                  >
+                    <div className={`toggle-box ${filters[f[0]]?"active":""}`}>{filters[f[0]]&&<span style={{color:"white",fontSize:12,fontWeight:700}}>✓</span>}</div>
+                    <span className="toggle-label">{f[1]}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="filter-section">
+                <div className="filter-title">単価下限（万円/月）</div>
+                <div style={{padding:"4px 0"}}>
+                  <div style={{display:"flex",justifyContent:"space-between",marginBottom:6,fontSize:13,color:"var(--ink)",fontWeight:600}}>
+                    <span>{filters.minRate===0?"下限なし":`${filters.minRate}万円以上`}</span>
+                  </div>
+                  <input type="range" min={0} max={100} step={10} value={filters.minRate}
+                    onChange={e=>setFilters(prev=>({...prev,minRate:Number(e.target.value)}))}
+                    style={{width:"100%",accentColor:"var(--brand)",cursor:"pointer"}}
+                  />
+                  <div style={{display:"flex",justifyContent:"space-between",fontSize:11,color:"var(--gray400)",marginTop:2}}>
+                    <span>0万</span><span>50万</span><span>100万</span>
+                  </div>
+                </div>
+              </div>
+              {(filters.remote||filters.urgent||filters.highPay||filters.lowExp||filters.shortTime||filters.reward||filters.industries.length>0||filters.minRate>0)&&(
+                <div className="clear-filters" onClick={()=>setFilters({remote:false,urgent:false,highPay:false,lowExp:false,shortTime:false,reward:false,industries:[],minRate:0})}>✕ 絞り込みをクリア</div>
               )}
             </aside>
             <div className="main-content">
@@ -1803,28 +2171,41 @@ export default function App() {
                   <input className="search-input" placeholder="キーワードで検索（例：SaaS、新規開拓）" value={search} onChange={e=>setSearch(e.target.value)} />
                 </div>
               </div>
-              <div className="result-count">検索結果: <strong>{filteredJobs.length}件</strong></div>
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14,flexWrap:"wrap",gap:8}}>
+                <div className="result-count" style={{margin:0}}>検索結果: <strong>{filteredJobs.length}件</strong></div>
+                <div style={{display:"flex",alignItems:"center",gap:8}}>
+                  <span style={{fontSize:12,color:"var(--gray500)",fontWeight:600}}>並び順：</span>
+                  <select value={sortBy} onChange={e=>setSortBy(e.target.value)} style={{fontSize:13,padding:"6px 12px",borderRadius:8,border:"1.5px solid var(--gray200)",background:"white",color:"var(--ink)",fontFamily:"'Noto Sans JP',sans-serif",cursor:"pointer",outline:"none"}}>
+                    <option value="newest">掲載が新しい順</option>
+                    <option value="rateDesc">単価が高い順</option>
+                    <option value="rateAsc">単価が低い順</option>
+                  </select>
+                </div>
+              </div>
               <div className="job-list">
                 {filteredJobs.map(job=>{
                   const vis = getJobVisual(job);
                   return (
-                  <div key={job.id} className="job-card" onClick={()=>setSelectedJob(job)} style={{"--job-accent":vis.accent}}>
-                    {/* 上部カラーバー */}
-                    <div className="job-card-visual" style={{background:vis.accent}}/>
-                    <div className="job-card-header">
+                  <div key={job.id} className="job-card" style={{"--job-accent":vis.accent}}>
+                    {/* SOKUDAN風ヘッダーバナー */}
+                    <div style={{position:"relative",overflow:"hidden",cursor:"pointer"}} onClick={()=>setSelectedJob(job)}>
+                      <JobBannerSVG job={job} height={110}/>
+                      <div style={{position:"absolute",top:10,right:10}}>
+                        <span className="job-date" style={{background:"rgba(0,0,0,0.35)",color:"white",borderRadius:100,padding:"3px 10px",fontSize:11,fontWeight:600}}>{daysAgo(job.posted)}</span>
+                      </div>
+                    </div>
+                    <div className="job-card-header" style={{cursor:"pointer"}} onClick={()=>setSelectedJob(job)}>
                       <div className="job-card-top">
                         <div style={{display:"flex",alignItems:"center",gap:8}}>
-                          <div className="job-industry-icon" style={{background:vis.bg,border:`1px solid ${vis.accent}22`}}>{vis.icon}</div>
                           <div>
                             <div className="job-title">{job.title}</div>
                             <div className="job-company">🏢 {job.company}</div>
                           </div>
                         </div>
-                        <span className="job-date" style={{flexShrink:0,marginTop:2}}>{daysAgo(job.posted)}</span>
                       </div>
                     </div>
                     <div className="job-card-body">
-                      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
+                      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10,flexWrap:"wrap"}}>
                         <span className={`job-type ${job.type==="成果報酬"?"reward":""}`}>{job.type}</span>
                         {job.remote&&<span className="badge remote">🏠 リモート</span>}
                         {job.urgent&&<span className="badge urgent">⚡ 急募</span>}
@@ -1836,8 +2217,21 @@ export default function App() {
                         <span className="meta-pill">📍 {job.location}</span>
                         <span className="meta-pill">📅 {job.period}</span>
                       </div>
-                      <div className="job-tags">{job.tags.map(t=><span key={t} className="tag">{t}</span>)}</div>
-                      {appliedJobs.includes(job.id)&&<div style={{marginTop:10,fontSize:12,color:"var(--brand-dark)",fontWeight:700,background:"var(--brand-soft)",display:"inline-flex",alignItems:"center",gap:4,padding:"3px 10px",borderRadius:100,border:"1px solid var(--brand-mid)"}}>✓ 応募済み</div>}
+                      <div className="job-tags" style={{marginBottom:12}}>{job.tags.map(t=><span key={t} className="tag">{t}</span>)}</div>
+                      {appliedJobs.includes(job.id)&&<div style={{marginBottom:10,fontSize:12,color:"var(--brand-dark)",fontWeight:700,background:"var(--brand-soft)",display:"inline-flex",alignItems:"center",gap:4,padding:"3px 10px",borderRadius:100,border:"1px solid var(--brand-mid)"}}>✓ 応募済み</div>}
+                      <div style={{display:"flex",gap:8,marginTop:"auto"}}>
+                        <button onClick={e=>{e.stopPropagation();setSelectedJob(job);}} style={{flex:1,padding:"10px",borderRadius:100,background:"var(--brand-soft)",border:"1.5px solid var(--brand-mid)",color:"var(--brand-dark)",fontSize:13,fontWeight:700,cursor:"pointer",transition:"all 0.15s"}}
+                          onMouseEnter={e=>{e.currentTarget.style.background="var(--brand)";e.currentTarget.style.color="white";}}
+                          onMouseLeave={e=>{e.currentTarget.style.background="var(--brand-soft)";e.currentTarget.style.color="var(--brand-dark)";}}>
+                          詳細を見る
+                        </button>
+                        <button onClick={e=>{e.stopPropagation();setSelectedJob(job);setPage("job-detail");}} style={{padding:"10px 16px",borderRadius:100,background:"var(--gray100)",border:"1.5px solid var(--gray200)",color:"var(--gray600)",fontSize:12,fontWeight:600,cursor:"pointer",transition:"all 0.15s",whiteSpace:"nowrap"}}
+                          title="別ページで詳細を開く"
+                          onMouseEnter={e=>{e.currentTarget.style.background="var(--gray200)";}}
+                          onMouseLeave={e=>{e.currentTarget.style.background="var(--gray100)";}}>
+                          ↗ 別ページ
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );})}
@@ -2035,23 +2429,34 @@ export default function App() {
         return (
         <div className="modal-overlay" onClick={()=>setSelectedJob(null)}>
           <div className="modal" onClick={e=>e.stopPropagation()}>
-            {/* カラートップバー */}
-            <div className="modal-top-bar" style={{background:vis.accent}}/>
-            <div className="modal-header">
-              <button className="modal-close" onClick={()=>setSelectedJob(null)}>✕</button>
-              {/* 業界アイコン + バッジ行 */}
-              <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}>
-                <div style={{width:48,height:48,borderRadius:12,background:vis.bg,border:`1px solid ${vis.accent}30`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,flexShrink:0}}>{vis.icon}</div>
-                <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-                  <span className={`job-type ${selectedJob.type==="成果報酬"?"reward":""}`}>{selectedJob.type}</span>
-                  {selectedJob.remote&&<span className="badge remote">🏠 リモート</span>}
-                  {selectedJob.urgent&&<span className="badge urgent">⚡ 急募</span>}
-                  {selectedJob.highPay&&<span className="badge highpay">💰 高単価</span>}
-                  {selectedJob.lowExp&&<span className="badge lowexp">🌱 未経験OK</span>}
+            {/* SOKUDANスタイルのヘッダーバナー */}
+            <div style={{position:"relative",overflow:"hidden",borderRadius:"var(--radius-xl) var(--radius-xl) 0 0"}}>
+              <JobBannerSVG job={selectedJob} height={150}/>
+              <button className="modal-close" style={{position:"absolute",top:12,right:12,background:"rgba(0,0,0,0.4)",color:"white",border:"none"}} onClick={()=>setSelectedJob(null)}>✕</button>
+              {/* 会社情報オーバーレイ */}
+              <div style={{position:"absolute",bottom:14,left:20,display:"flex",alignItems:"center",gap:10}}>
+                <div style={{width:44,height:44,borderRadius:10,background:"white",boxShadow:"0 2px 8px rgba(0,0,0,0.2)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22}}>{vis.icon}</div>
+                <div>
+                  <div style={{fontSize:12,color:"rgba(255,255,255,0.85)",fontWeight:600}}>{vis.label}業界</div>
+                  <div style={{fontSize:14,color:"white",fontWeight:700}}>{selectedJob.company}</div>
                 </div>
               </div>
-              <h2 style={{fontSize:19,fontWeight:700,lineHeight:1.55,paddingRight:44,color:"var(--ink)",marginBottom:4}}>{selectedJob.title}</h2>
-              <div style={{fontSize:13,color:"var(--gray500)",display:"flex",alignItems:"center",gap:4,paddingBottom:20}}>🏢 {selectedJob.company}</div>
+              {/* 別ページで開くボタン */}
+              <button onClick={()=>setPage("job-detail")} style={{position:"absolute",bottom:14,right:14,padding:"6px 12px",borderRadius:100,background:"rgba(255,255,255,0.2)",border:"1.5px solid rgba(255,255,255,0.5)",color:"white",fontSize:11,fontWeight:700,cursor:"pointer",backdropFilter:"blur(4px)"}}
+                title="別ページで詳細を開く">
+                ↗ 全画面で見る
+              </button>
+            </div>
+            <div className="modal-header" style={{paddingTop:16}}>
+              {/* バッジ行 */}
+              <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:10}}>
+                <span className={`job-type ${selectedJob.type==="成果報酬"?"reward":""}`}>{selectedJob.type}</span>
+                {selectedJob.remote&&<span className="badge remote">🏠 リモート</span>}
+                {selectedJob.urgent&&<span className="badge urgent">⚡ 急募</span>}
+                {selectedJob.highPay&&<span className="badge highpay">💰 高単価</span>}
+                {selectedJob.lowExp&&<span className="badge lowexp">🌱 未経験OK</span>}
+              </div>
+              <h2 style={{fontSize:19,fontWeight:700,lineHeight:1.55,color:"var(--ink)",marginBottom:4}}>{selectedJob.title}</h2>
             </div>
             <div className="modal-body">
               {/* 報酬バー（目立たせるが折り返し可能に） */}
@@ -2087,6 +2492,14 @@ export default function App() {
                 <div className="detail-label">✅ 応募要件</div>
                 <div className="detail-text">{selectedJob.requirements}</div>
               </div>
+              {selectedJob.companyInfo && (
+                <div className="detail-section">
+                  <div className="detail-label">🏢 掲載企業について</div>
+                  <div style={{fontSize:13,color:"var(--gray700)",lineHeight:1.9,padding:"12px 14px",background:"var(--gray50)",borderRadius:10,marginTop:6,borderLeft:`4px solid ${vis.accent}`}}>
+                    {selectedJob.companyInfo}
+                  </div>
+                </div>
+              )}
               <div className="detail-section">
                 <div className="detail-label">🏷️ 関連タグ</div>
                 <div className="job-tags" style={{marginTop:6}}>{selectedJob.tags.map(t=><span key={t} className="tag">{t}</span>)}</div>
